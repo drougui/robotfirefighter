@@ -1,0 +1,103 @@
+<!-- <header class="hero-unit" id="banner">
+  <div class="container">
+    <h1>'Allo, 'Allo!</h1>
+    <p class="lead">Kick-start your next web app with Angular Fullstack</p>
+    <img src="assets/images/yeoman.png" alt="I'm Yeoman">
+  </div>
+</header>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Features:</h1>
+      <ul class="nav nav-tabs nav-stacked col-md-4 col-lg-4 col-sm-6" ng-repeat="thing in $ctrl.awesomeThings">
+        <li><a href="#" uib-tooltip="{{thing.info}}">{{thing.name}}<button type="button" class="close" ng-click="$ctrl.deleteThing(thing)">&times;</button></a></li>
+      </ul>
+    </div>
+  </div>
+
+  <form class="thing-form">
+    <label>Syncs in realtime across clients</label>
+    <p class="input-group">
+      <input type="text" class="form-control" placeholder="Add a new thing here." ng-model="$ctrl.newThing">
+      <span class="input-group-btn">
+        <button type="submit" class="btn btn-primary" ng-click="$ctrl.addThing()">Add New</button>
+      </span>
+    </p>
+  </form>
+</div> -->
+
+<div class="screen" ng-keypress="myFunct($event)">
+	<div class="camerablock">
+		<div class="cameracontainer">
+<!-- <input ng-keypress="count = count + 1" ng-init="count=0"> key up count: {{count}} -->
+			<iframe class="streamcamera" src="http://localhost:8080/?action=stream"   scrolling="no" frameBorder="0">		 	
+			</iframe>
+			<div class="splatchContainer">
+                        	<div class="splatch" ng-class="{visiblesplatch: waterize}" >
+                        	</div>
+			</div>
+		</div>	
+	</div>
+	<div class="dashboardblock">
+		<div class="dashboard">
+			<div class="matbblock">
+				<!--<div class="matb">
+				</div>-->
+                                <div class="title"> WATER MANAGEMENT </div>
+                                <div class="robinetcontainer">
+					<div class="robinet" ng-style="{left: xrobinet+'%'}"> </div>
+					<div class="robinetwater" ng-style="{left: xrobinetwater+'%', width: widthwaterflow + 'px'}"> </div>
+					<div class="tankcontainer">
+						<div class="tankcontainerwater" ng-style="{height: watlevelContainer+'%'}"> 
+						</div>                                	
+					</div>
+					<div  class="controltitle"> <span> values close to 0 <i class="fa fa-arrow-right" aria-hidden="true"></i> filling! </span> </div>
+				</div>
+				<div class="controlband">
+					<div class="mainbutton" ng-click="faucetctrlfctminus()"> <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
+ </div>
+	                                <span> {{faucetcontrol}} </span>
+					<div class="mainbutton" ng-click="faucetctrlfctplus()"> <i class="fa fa-chevron-circle-right" aria-hidden="true"></i> </div>
+					<div class="controlnames"> FAUCET POSITION <span>{{faucetxaxis}} </span> </div>
+                                </div>
+				<div class="controlband">
+					<div class="mainbutton" ng-click="openingctrlfctminus()"> <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
+ </div>
+	                                <span> {{openingcontrol}} </span>
+					<div class="mainbutton" ng-click="openingctrlfctplus()"> <i class="fa fa-chevron-circle-right" aria-hidden="true"></i> </div>
+					<div class="controlnames"> VALVE OPENING <span> {{valveopening}} </span> </div>
+                                </div>                               
+			</div>		
+			<div class="mapblock"> 
+				<div class="map">
+					<div class="point" ng-style="{top: propFromTop, left: propFromLeft}">
+				
+					</div>
+					<div class="tree" ng-repeat="(key, value) in trees" ng-style="{top: value.y, left: value.x}">
+					</div>
+
+					<div class="loadlocB" ng-style="{top: batteryZoneFromTop, left: batteryZoneFromLeft}">
+					</div>
+					<div class="loadlocW" ng-style="{top: waterZoneFromTop, left: waterZoneFromLeft}">
+					</div>
+
+
+				</div>
+			</div>
+			<div class="warningsblock"> 
+				<div class="title"> ROBOT </div>
+				<div class="battery full" ng-style="{width: battlevel+'%'}"></div>
+				<div class="gps">
+					<span>GPS</span>				
+				</div>
+				<div class="waterlevel">				
+				</div>
+				<div class="waterempty" ng-style="{top: watlevel+'px'}">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- TODO -->
+<!-- http://stackoverflow.com/questions/6633248/how-to-grab-keyboard-events-on-an-element-which-doesnt-accept-focus -->
