@@ -39,22 +39,109 @@
 	height: 50%;
 	width: 100%;
 	align-items:center;
+	justify-content: center;
+	/*background-color:green;*/
 }
 .cameracontainer{
 	/*width: 610px;*/
-	width: 100%;
+	width: 650px;
 	display: flex;
 	justify-content: center;
+	background-color:green;
+}
+
+
+.temperature{
+	/*background-color: red;*/
+	width: 250px;
+	height: 100%;
+	position: relative;
+}
+
+
+.scores{
+	/*background-color: red;*/
+	width: 250px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
 	
 }
+
+.score{
+	width: 100%;
+	height: 100px;
+	font-size: 70px;
+	color: white;
+	display: flex;
+ 	align-items: flex-end;
+}
+
+.unit{
+	font-size: 40px;
+	color: white;
+	margin-bottom: 8px;
+}
+
+.nbfighted{
+	width: 100%;
+	height: 100px;
+	font-size: 70px;
+	color: white;
+	display: flex;
+ 	align-items: flex-end;
+}
+
+.nbonfire{
+	width: 100%;
+	height: 100px;
+	font-size: 70px;
+	color: white;
+	display: flex;
+ 	align-items: flex-end;
+}
+
+.remainingtime{
+	width: 100%;
+	height: 100px;
+	font-size: 70px;
+	color: white;
+	display: flex;
+ 	align-items: flex-end;
+}
+
+
+
 
 .splatchContainer{
 	position: absolute;
 	top: 0;
 	width: 100%;
-	/*background-color: blue;*/
 	display: flex;
 	justify-content: center;
+}
+
+.redhotContainer{
+	position: absolute;
+	top: 0;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	margin-left: -5px;
+}
+
+.redhot{
+	z-index: 2;
+	width: 580px;
+	height: 430px;
+        left: 39%;
+	background-size: 420px 420px;
+	margin-top: 15px;
+	background-color:red;
+        background: radial-gradient(rgba(255, 0, 0,0), rgba(255, 0, 0,1));
+        /*background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,1)), url("/assets/images/splatch.png");*/
 }
 
 .splatch{
@@ -91,9 +178,9 @@
 }
 .dashboardblock{
 	display: flex;
-	height: 45%;
-	width: 90%;
-/*	background-color: red;*/
+	height: 50%;
+	width: 100%;
+	/*background-color: red;*/
 	justify-content: center;
 	align-items: center;
 
@@ -103,6 +190,7 @@
 	justify-content: space-between;
 	align-items: center;
 	width: 1000px;
+	/*background-color: red;*/
 }
 
 .mapblock{
@@ -121,12 +209,13 @@
 .map{
 	width: 100%;
 	height: 100%;
-	background-color: #296f39;
+/*        background-image:linear-gradient(to right, white, black);*/
+	background-color: #439656;
 	position: relative;
 }
 
 .point{
-	background-image: url("/assets/images/gps.png");
+	background-image: url("/assets/images/arrow.png");
 	position: absolute;
 	top: 10%;
 	left: 30%;
@@ -145,6 +234,22 @@
 	width: 30px;
 	height: 30px;
 	background-size: 30px 30px;
+	z-index: 8;
+}
+
+.fire{
+	background-image: url("/assets/images/fire.png");
+	position: absolute;
+	top: 10%;
+	left: 30%;
+	width: 30px;
+	height: 30px;
+	background-size: 30px 30px;
+	z-index: 9;
+}
+
+.fireFlipped{
+	transform: scaleX(-1);
 }
 
 
@@ -331,4 +436,44 @@
 .controlnames span{
     font-size: 20px;
     font-weight: bold;
+}
+
+.thermometer{
+	background-color: white;
+	width: 50px;
+	height: 300px;
+	top: 60px;
+	left: 50px;
+	position: absolute;
+}
+
+.mercure{
+	/*background-color: #4F849E;*/
+	background-color: red;
+	width: 40px;
+	height: 200px;
+	bottom: 100px;
+	left: 55px;
+	position: absolute;
+}
+
+.cercle{
+	border-radius: 50%;
+	width: 90px;
+	height: 90px;
+	background-color: white;
+	position: absolute;
+	top:320px;
+	left: 30px;
+}
+
+.bluecercle{
+	border-radius: 50%;
+	width: 80px;
+	height: 80px;
+	/*background-color: #4F849E;*/
+	background-color: red;
+	position: absolute;
+	top: 325px;
+	left: 35px;
 }

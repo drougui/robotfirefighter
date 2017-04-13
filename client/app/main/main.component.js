@@ -2,6 +2,9 @@ import angular from 'angular';
 import uiRouter from 'angular-ui-router';
 import routing from './main.routes';
 
+
+//"use strict";
+
 export class MainController {
   $http;
   socket;
@@ -10,16 +13,20 @@ export class MainController {
 //  var pending = false;
 
 
-
   /*@ngInject*/
   constructor($http, $scope, socket, hotkeys, $timeout, $interval) {
+
+    $scope.score = 42;
+    $scope.nbfighted = 20;
+    
+
     this.$http = $http;
     this.socket = socket;
     $scope.$on('$destroy', function() {
       socket.unsyncUpdates('thing');
     });
     var pending = false;
-
+    var debug = true;
     //$scope.propFromTop = "60%";
     //$scope.propFromLeft = "30%";
     var translationX = 19;
@@ -28,8 +35,6 @@ export class MainController {
     var normalizationY = 38;
     $scope.battlevel = 24;
     $scope.watlevel = 160;
-
-    console.log($scope.trees);
     $scope.realToCssPoseX = function(realPose) {
       return (-5 + (realPose+translationX)*100.0/normalizationX) + "%";
     };
@@ -39,17 +44,64 @@ export class MainController {
 
     $scope.batteryZoneFromTop = $scope.realToCssPoseY(16.1);
     $scope.batteryZoneFromLeft = $scope.realToCssPoseX(16.2);
-    $scope.trees = [{x: -2.44471*6, y: 0.75846*6}, {x: -2.45842*6, y: -0.12255*6}, {x: -2.62746*6, y: -2.51691*6}, {x: -1.12375*6, y: -0.43365*6}, {x: -1.17007*6, y: -0.22193*6}, {x:2.09745*6, y: 2.76382*6}, {x:2.66992*6, y:2.81181*6}, {x:2.70651*6, y: 0.1013*6}, {x: 2.70651*6, y:-2.77563*6} ];
+    var treeslocations;
+    $scope.trees = [];
+    $scope.firesloc = [];
+    $scope.opacityfire = [];
+    $http.get('/api/control').then(response => {
+        if(response.status === 200) {
+            treeslocations = JSON.parse(response.data);
+            $scope.trees = treeslocations;
+            //$scope.firesloc = treeslocations;
+            for (var i = 0; i < treeslocations.length; i++) {
+                var xVal = $scope.realToCssPoseX(parseFloat(treeslocations[i].x));
+                var yVal = $scope.realToCssPoseY(parseFloat(treeslocations[i].y));
+                $scope.trees[i].x = xVal;
+                $scope.trees[i].y = yVal;
+                //$scope.firesloc[i].x = $scope.realToCssPoseX(parseFloat(treeslocations[i].x));
+                //$scope.firesloc[i].y = $scope.realToCssPoseX(parseFloat(treeslocations[i].x));
+                $scope.firesloc.push({x: xVal, y: (parseFloat(yVal.slice(0, -1))-3.8).toString() + '%'});
+                $scope.opacityfire.push(0);
+            }
+        }
+    });
+      $scope.nbonfire = 0;
+      var updateFireStates = $interval(function(){
+          $http.get('/api/control/fires').then(response => {
+              if(response.status === 200) {
+                  //console.log(response.data);
+                  var sum = 0;
+                  for (var i=0;i<response.data.length;i++){
+                      if (response.data[i]){
+                          $scope.opacityfire[i] = 1;
+			  sum++;
+                      }
+                      else{
+                          $scope.opacityfire[i] = 0;
+                      }
+                  }
+		  $scope.nbonfire=sum;
+              }
+          });
+      }, 100);
+    
+    $scope.fireflip = false;
+    var ticfire = $interval(function(){
+	    $scope.fireflip = !$scope.fireflip;
+        }, 500);
 
-    for (var i = 0; i < $scope.trees.length; i++) {
-	var newX = $scope.trees[i].y;
-	var newY = -$scope.trees[i].x;
-	$scope.trees[i].x = newX;
-	$scope.trees[i].y = newY;
-        $scope.trees[i].x = $scope.realToCssPoseX($scope.trees[i].x);
-        $scope.trees[i].y = $scope.realToCssPoseY($scope.trees[i].y);
+    
+	
+// TODO FAIRE UN NOUVEAU GET QUI RECUP LETAT DES ARBRES (dans la boucle d'alea coté server)
+// ca permet de changer la valeur de $scope.opacityfire
+
+//{x: -2.44471*6, y: 0.75846*6}, {x: -2.45842*6, y: -0.12255*6}, {x: -2.62746*6, y: -2.51691*6}, {x: -1.12375*6, y: -0.43365*6}, {x: -1.17007*6, y: -0.22193*6}, {x:2.09745*6, y: 2.76382*6}, {x:2.66992*6, y:2.81181*6}, {x:2.70651*6, y: 0.1013*6}, {x: 2.70651*6, y:-2.77563*6} ];
+/*
+    for (var i = 0; i < treeslocations.length; i++) {
+        $scope.trees[i].x = $scope.realToCssPoseX(treeslocations[i].x);
+        $scope.trees[i].y = $scope.realToCssPoseY(treeslocations[i].y);
     }
-
+*/
     var waterZone = { top: -9, bottom: -11, right: 1, left: -1};
     $scope.waterZoneFromTop = $scope.realToCssPoseY(-10);
     $scope.waterZoneFromLeft = $scope.realToCssPoseX(0); 
@@ -57,19 +109,22 @@ export class MainController {
     //$scope.waterZoneFromLeft = '10%';
 
 
-    console.log($scope.trees);
     $scope.totheleft = function() {
-      console.log('totheleft');
+      if (debug)
+        console.log('totheleft');
       if(!pending) {
         pending = true;
         $http.post('/api/control', {key: 'left'}).then(response => {
           pending = false;
           if(response.status === 200) {
-              console.log('ok');
               $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
               $scope.propFromLeft = $scope.realToCssPoseX(response.data.posX[0]);
-              console.log(response.data.posX[0]);
-              console.log(response.data.posY[0]);
+              $scope.rotindeg = 180 - (response.data.orientation[0] + 3.14)*360/(2*3.14);
+              if (debug){
+                console.log(response.data.posX[0]);
+                console.log(response.data.posY[0]);
+                console.log(response.data.orientation[0]);
+              }
               if( (response.data.posY[0] < waterZone.top) && (response.data.posY[0] > waterZone.bottom) && (response.data.posX[0] < waterZone.right) && (response.data.posX[0] > waterZone.left) ){
                   fillingWater();
               }
@@ -77,24 +132,29 @@ export class MainController {
                   stopFillingWater();
               }
           } else {
-            console.log('nok');
+            if (debug)
+              console.log('nok');
           }
         });
       }
     };
 
     $scope.totheright = function() {
-      console.log('totheright');
+      if (debug)
+        console.log('totheright');
       if(!pending) {
         pending = true;
         $http.post('/api/control', {key: 'right'}).then(response => {
           pending = false;
           if(response.status === 200) {
-            console.log('ok');
             $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
             $scope.propFromLeft = $scope.realToCssPoseX(response.data.posX[0]);
-            console.log(response.data.posX[0]);
-            console.log(response.data.posY[0]);
+            $scope.rotindeg = 180 - (response.data.orientation[0] + 3.14)*360/(2*3.14);
+            if (debug){
+                console.log(response.data.posX[0]);
+                console.log(response.data.posY[0]);
+                console.log(response.data.orientation[0]);
+            }
             if( (response.data.posY[0] < waterZone.top) && (response.data.posY[0] > waterZone.bottom) && (response.data.posX[0] < waterZone.right) && (response.data.posX[0] > waterZone.left) ){
                 fillingWater();
             }
@@ -102,24 +162,29 @@ export class MainController {
                 stopFillingWater();
             }
           } else {
-            console.log('nok');
+            if (debug)
+              console.log('nok');
           }
         });
       }
     };
 
     $scope.backward = function() {
-      console.log('backward');
+      if (debug)
+        console.log('backward');
       if(!pending) {
         pending = true;
         $http.post('/api/control', {key: 'back'}).then(response => {
 		//response.data
           if(response.status === 200) {
-            console.log('ok');
             $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
             $scope.propFromLeft = $scope.realToCssPoseX(response.data.posX[0]);
-            console.log(response.data.posX[0]);
-            console.log(response.data.posY[0]);
+            $scope.rotindeg = 180 - (response.data.orientation[0] + 3.14)*360/(2*3.14);
+            if (debug){
+                console.log(response.data.posX[0]);
+                console.log(response.data.posY[0]);
+                console.log(response.data.orientation[0]);
+            }
             if( (response.data.posY[0] < waterZone.top) && (response.data.posY[0] > waterZone.bottom) && (response.data.posX[0] < waterZone.right) && (response.data.posX[0] > waterZone.left) ){
                 fillingWater();
             }
@@ -128,11 +193,50 @@ export class MainController {
             }
             pending = false;
           } else {
-            console.log('nok');
+            if (debug)
+              console.log('nok');
           }
         });
       }
     };
+
+   
+
+
+    //$scope.onOff = true;
+    $scope.forward = function() {
+      if (debug)
+        console.log('forward');
+      if(!pending) {
+        pending = true;
+        $http.post('/api/control', {key: 'front'}).then(response => {
+          pending = false;
+          if(response.status === 200) {
+              $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
+              $scope.propFromLeft = $scope.realToCssPoseX(response.data.posX[0]);
+              $scope.rotindeg = 180 - (response.data.orientation[0] + 3.14)*360/(2*3.14);
+              if (debug){
+                console.log(response.data.posX[0]);
+                console.log(response.data.posY[0]);
+                console.log(response.data.orientation[0]);
+              }
+              if( (response.data.posY[0] < waterZone.top) && (response.data.posY[0] > waterZone.bottom) && (response.data.posX[0] < waterZone.right) && (response.data.posX[0] > waterZone.left) ){
+                     fillingWater();
+                     robotTankEmpty = false;
+              }
+              else{
+                     stopFillingWater();
+              }
+                
+          } else {
+            if (debug)
+              console.log('nok');
+          }
+        });
+      }
+    };
+
+
 
     var myVar2;
     var fillingWater = function() {
@@ -189,7 +293,7 @@ export class MainController {
            var temp = (vlvop - 5)*10/5;
            $scope.valveopening = temp.toPrecision(3);
            $scope.widthwaterflow = 10 - Math.abs(temp);
-           console.log($scope.widthwaterflow);
+             //console.log($scope.widthwaterflow);
         }, 200);
 
     $scope.watlevelContainer = 10;
@@ -202,37 +306,13 @@ export class MainController {
      }, 200);
 
 
-    //$scope.onOff = true;
-    $scope.forward = function() {
-      console.log('forward');
-      if(!pending) {
-        pending = true;
-        $http.post('/api/control', {key: 'front'}).then(response => {
-          pending = false;
-          if(response.status === 200) {
-              console.log('ok');
-              $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
-              $scope.propFromLeft = $scope.realToCssPoseX(response.data.posX[0]);
-              console.log(response.data.posX[0]);
-              console.log(response.data.posY[0]);
-              if( (response.data.posY[0] < waterZone.top) && (response.data.posY[0] > waterZone.bottom) && (response.data.posX[0] < waterZone.right) && (response.data.posX[0] > waterZone.left) ){
-                     fillingWater();
-                     robotTankEmpty = false;
-              }
-              else{
-                     stopFillingWater();
-              }
-                
-          } else {
-            console.log('nok');
-          }
-        });
-      }
-    };
+
+
 //TODO
     var robotTankEmpty = false;
     $scope.water = function() {
-        console.log('WATER');
+        if (debug)
+          console.log('WATER');
         if (!robotTankEmpty){
             $scope.waterize = true;
 
@@ -243,11 +323,12 @@ export class MainController {
                 $http.post('/api/control', {key: 'space'}).then(response => {
                     pending = false;
                     if(response.status === 200) {
-                        console.log('ok');
                         $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
                         $scope.propFromLeft = $scope.realToCssPoseX(response.data.posX[0]);
-                        console.log(response.data.posX[0]);
-                        console.log(response.data.posY[0]);
+                        if (debug)
+                          console.log(response.data.posX[0]);
+                        if (debug)
+                          console.log(response.data.posY[0]);
                         if( (response.data.posY[0] < waterZone.top) && (response.data.posY[0] > waterZone.bottom) && (response.data.posX[0] < waterZone.right) && (response.data.posX[0] > waterZone.left) ){
                             fillingWater();
                             robotTankEmpty = false;
@@ -257,7 +338,8 @@ export class MainController {
                         }
                     } 
                     else {
-                        console.log('nok');
+                        if (debug)
+                          console.log('nok');
                     }
                 });
             }
@@ -313,7 +395,24 @@ export class MainController {
 	if ($scope.battlevel>0)
 		$scope.battlevel = $scope.battlevel-0.1;     
     }, 1000);
-	
+
+    var tictac = false;
+    $scope.remainingtime = 600;
+    $scope.hotscreen = 0;
+    var intervalTimer = $interval(function(){ 
+	if ($scope.remainingtime>0)
+		$scope.remainingtime = $scope.remainingtime-1; 
+        if (tictac){
+            $scope.mercurelevel = "50px";
+            tictac = false;
+            $scope.hotscreen = 0;
+        }
+        else{
+            $scope.mercurelevel = "300px";
+            tictac = true;
+            $scope.hotscreen = 1;
+        }    
+    }, 1000);
   }
 
    

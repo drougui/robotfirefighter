@@ -29,6 +29,25 @@
 
 <div class="screen" ng-keypress="myFunct($event)">
 	<div class="camerablock">
+		<div class="scores">
+<!--
+			<div class="score">
+				<div> {{score}} </div> 
+				<div class="unit"> points </div>
+                        </div> -->
+			<div class="nbfighted">
+				<div> {{nbfighted}} </div>
+				<div class="unit"> offs </div>
+			</div>
+			<div class="nbonfire">
+				<div> {{nbonfire}} </div>
+				<div class="unit"> fires </div>
+			</div>
+			<div class="remainingtime">
+				<div> {{remainingtime}} </div>
+				<div class="unit"> secs </div>
+			</div>
+		</div>
 		<div class="cameracontainer">
 <!-- <input ng-keypress="count = count + 1" ng-init="count=0"> key up count: {{count}} -->
 			<iframe class="streamcamera" src="http://localhost:8080/?action=stream"   scrolling="no" frameBorder="0">		 	
@@ -36,6 +55,20 @@
 			<div class="splatchContainer">
                         	<div class="splatch" ng-class="{visiblesplatch: waterize}" >
                         	</div>
+			</div>
+			<div class="redhotContainer">
+                        	<div class="redhot" ng-style="{opacity: hotscreen}">
+                        	</div>
+			</div>
+		</div>
+		<div class="temperature"> 
+			<div class="thermometer"> 	
+			</div>
+			<div class="cercle">
+			</div>
+			<div class="mercure" ng-style="{height: mercurelevel}"> 	
+			</div>
+			<div class="bluecercle">
 			</div>
 		</div>	
 	</div>
@@ -71,10 +104,12 @@
 			</div>		
 			<div class="mapblock"> 
 				<div class="map">
-					<div class="point" ng-style="{top: propFromTop, left: propFromLeft}">
+					<div class="point" ng-style="{top: propFromTop, left: propFromLeft, transform: 'rotate('+ rotindeg +'deg)'}">
 				
 					</div>
 					<div class="tree" ng-repeat="(key, value) in trees" ng-style="{top: value.y, left: value.x}">
+					</div>
+					<div class="fire" ng-repeat="(key, value) in firesloc" ng-style="{top: value.y, left: value.x, opacity: opacityfire[key]}" ng-class="{fireFlipped: fireflip}">
 					</div>
 
 					<div class="loadlocB" ng-style="{top: batteryZoneFromTop, left: batteryZoneFromLeft}">

@@ -18,6 +18,7 @@ serverGet.on('listening', function () {
 
 var robotx = 0.0;
 var roboty = 0.0;
+var roboto = 0.0;
 serverGet.on('message', function (message, remote) {
     var byteArray = new Int8Array(4);
     for (var i = 0; i < 4; i++) {
@@ -30,9 +31,16 @@ serverGet.on('message', function (message, remote) {
     }
     var posX = new Float32Array(byteArray2.buffer);
 
-    console.log(remote.address + ':' + remote.port +' - ' + posX + '  ' + posY);
+    var byteArray3 = new Int8Array(4);
+    for (var i = 0; i < 4; i++) {
+      byteArray3[i] = message[8+8*4 + i];
+    }
+    var orientation = new Float32Array(byteArray3.buffer);
+
+    //console.log(remote.address + ':' + remote.port +' - ' + posX + '  ' + posY + '  ' + orientation);
     robotx = posX;
     roboty = posY;
+    roboto = orientation;
 });
 serverGet.bind(PORTGET, HOST);
 
@@ -82,8 +90,22 @@ function speedToUdpMess(as, ls) {
 }
 
 
+var fs = require('fs');
+var chaine = fs.readFileSync("/home/drougard/driving-human-robots-interaction/treeslocs.json", "UTF-8");
+var treeslocations = JSON.parse(chaine);
+console.log("TREES LOCATIONS");
+console.log(treeslocations[0].x);
+router.get('/', function(req,res){
+    res.json(chaine);
+})
+
+
+
+
 function puts(error, stdout, stderr) { sys.puts(stdout) }
 var firesStatesOfTrees = [false, false, false, false, false, false];
+
+
 
 router.post('/', function(req, res/*, next*/) {
   console.log(req.body.key);
@@ -96,7 +118,7 @@ router.post('/', function(req, res/*, next*/) {
     var client = dgram.createSocket('udp4');
     client.send(buffer, 0, buffer.length, PORT, HOST, function(err, bytes) {
       if (err) throw err;
-        console.log('UDP message sent to ' + HOST +':'+ PORT);
+        //console.log('UDP message sent to ' + HOST +':'+ PORT);
         client.close();
     });
   } else if (req.body.key=='left') {
@@ -105,7 +127,7 @@ router.post('/', function(req, res/*, next*/) {
     var client = dgram.createSocket('udp4');
     client.send(buffer, 0, buffer.length, PORT, HOST, function(err, bytes) {
       if (err) throw err;
-        console.log('UDP message sent to ' + HOST +':'+ PORT);
+        //console.log('UDP message sent to ' + HOST +':'+ PORT);
         client.close();
     });
   } else if (req.body.key=='right') {
@@ -114,7 +136,7 @@ router.post('/', function(req, res/*, next*/) {
     var client = dgram.createSocket('udp4');
     client.send(buffer, 0, buffer.length, PORT, HOST, function(err, bytes) {
       if (err) throw err;
-        console.log('UDP message sent to ' + HOST +':'+ PORT);
+        //console.log('UDP message sent to ' + HOST +':'+ PORT);
         client.close();
     });
   } else if (req.body.key=='back') {
@@ -123,10 +145,46 @@ router.post('/', function(req, res/*, next*/) {
     var client = dgram.createSocket('udp4');
     client.send(buffer, 0, buffer.length, PORT, HOST, function(err, bytes) {
       if (err) throw err;
-        console.log('UDP message sent to ' + HOST +':'+ PORT);
+        //console.log('UDP message sent to ' + HOST +':'+ PORT);
         client.close();
     });
   } else if (req.body.key=='space') {
+      for (var i=0;i<treeslocations.length;i++){
+          // close enough + good orientation
+          var diffX = treeslocations[i].x - robotx[0];
+          var diffY = treeslocations[i].y - roboty[0];
+          var diffO = 0.0;
+          var normDiff = Math.sqrt(Math.pow(diffX,2) + Math.pow(diffY,2))
+          diffX = diffX/normDiff;
+          diffY = diffY/normDiff;
+          var robotoX = Math.cos(roboto);
+          var robotoY = Math.sin(roboto);
+          var scalprod = robotoX * diffX + robotoY * diffY;
+          /*if ( normDiff < 3){
+              console.log("robotoX");
+              console.log(robotoX);
+              console.log("robotoY");
+              console.log(robotoY);
+              console.log("diffX");
+              console.log(diffX);
+              console.log("diffY");
+              console.log(diffY); 
+              console.log("scalprod");
+              console.log(scalprod);
+          }*/
+          if ( (normDiff < 3) && (scalprod>0.9) ){
+              console.log("USEFULL")
+              var indexTree = i + 1;
+              var command1 = "echo '" + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + " -10' | yarp write /data/out /morse/treeonfire" + indexTree.toString() + "/teleporttf" + indexTree.toString() + "/in";
+              var command2 = "echo '" + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + " -0.1' | yarp write /data/out /morse/tree" + indexTree.toString() + "/teleport" + indexTree.toString() + "/in";
+              console.log(command1 + " && " + command2);
+              exec(command1 + " && " + command2, puts);
+              firesStatesOfTrees[i] = false;
+          } 
+      } 
+/*
+
+
     if ( (Math.pow(robotx[0] - 4.55076,2) + Math.pow(roboty[0] - 14.66826,2)) < 9 ){
         exec("echo '4.55076 14.66826 -10' | yarp write /data/out /morse/treeonfire/teleportf/in && echo '4.55076 14.66826 -0.1' | yarp write /data/out /morse/tree/teleport/in", puts);
         firesStatesOfTrees[0] = false;
@@ -145,73 +203,47 @@ router.post('/', function(req, res/*, next*/) {
     } else if ( (Math.pow(robotx[0] - 16.58292,2) + Math.pow(roboty[0] + 12.5847,2)) < 9 ){
         exec("echo '16.58292 -12.5847 -0.1' | yarp write /data/out /morse/tree6/teleport6/in && echo '16.58292 -12.5847 -10' | yarp write /data/out /morse/treeonfire6/teleportf6/in", puts);
         firesStatesOfTrees[5] = false;
-    }
-
-
-
-
- /*else if ( (Math.pow(robotx[0] - 16.58292,2) + Math.pow(roboty[0] + 12.5847,2)) < 9 ){
-        exec("echo '16.58292 -12.5847 -0.1' | yarp write /data/out /morse/tree6/teleport6/in && echo '16.58292 -12.5847 -10' | yarp write /data/out /morse/treeonfire6/teleportf6/in",
-        firesStatesOfTrees[5] = false;
     }*/
 
-/*
 
-exec("echo '-2.6019 6.7425 -10' | yarp write /data/out /morse/tree4/teleport4/in && echo '-2.6019 6.7425 -0.1' | yarp write /data/out /morse/treeonfire4/teleportf4/in", puts);
-                firesStatesOfTrees[3] = true;
-            } else if ((treenumber == 4) && !firesStatesOfTrees[4]){
-                exec("echo '-1.33158 7.02042 -10' | yarp write /data/out /morse/tree5/teleport5/in && echo '-1.33158 7.02042 -0.1' | yarp write /data/out /morse/treeonfire5/teleportf5/in", puts);
-                firesStatesOfTrees[4] = true;
-            } else if ((treenumber == 5) && !firesStatesOfTrees[5]){
-                exec("echo '16.58292 -12.5847 -10' | yarp write /data/out /morse/tree6/teleport6/in && echo '16.58292 -12.5847 -0.1' | yarp write /data/out /morse/treeonfire6/teleportf6/in", puts);
-                firesStatesOfTrees[5] = true;
-
-
-*/
-
-/*  1.1 0.2 1.8 */
-    /*var udpMess = speedToUdpMess(0.0,-0.6);
-    var buffer = new Buffer(udpMess);
-    var client = dgram.createSocket('udp4');
-    client.send(buffer, 0, buffer.length, PORT, HOST, function(err, bytes) {
-      if (err) throw err;
-        console.log('UDP message sent to ' + HOST +':'+ PORT);
-        client.close();
-    });*/
   } 
 
   res.json({
     posX: robotx,
-    posY: roboty
+    posY: roboty,
+    orientation: roboto
   });
 });
     
+
+    var timerStart = 0;
     setInterval(function(){
-        alea1 = Math.random();
-        alea2 = Math.random();
-        console.log("alea " + alea1 )
-        if ( (0<=alea1) && (alea1<0.1) ){
-            treenumber = 0;
-        } else if ((0.1<=alea1) && (alea1<0.2)){
-            treenumber = 1;
-        } else if ((0.2<=alea1) && (alea1<0.3)){
-            treenumber = 2;
-        } else if ((0.3<=alea1) && (alea1<0.4)){
-            treenumber = 3;
-        } else if ((0.4<=alea1) && (alea1<0.5)){
-            treenumber = 4;
-        } else if ((0.5<=alea1) && (alea1<0.6)){
-            treenumber = 5;
-        } else {
-            treenumber = -1;
+        if (timerStart<14){
+            timerStart += 3;
         }
+        else{
+            alea1 = Math.random();
+            alea2 = Math.random();
+            //console.log("alea " + alea1 )
+	    treenumber = Math.floor(alea1*treeslocations.length);
+	    onfire = false;
+            if (alea2<0.33333){
+                onfire = true;
+            }
 
-        if (alea2<0.33333){
-            onfire = true;
-        }
-
-        if (onfire && (treenumber!=-1) ){
-            if ( (treenumber == 0) && !firesStatesOfTrees[0]){
+            if (onfire && (treenumber!=-1) && !firesStatesOfTrees[treenumber]){
+                 firesStatesOfTrees[treenumber] = true;
+                 router.get('/fires', function(req,res){
+                     res.json(firesStatesOfTrees);
+                 })
+                 var indexTree = treenumber +1; 
+                 var command1 = "echo '" + treeslocations[treenumber].x.toString() + ' ' + treeslocations[treenumber].y.toString() + " -0.1' | yarp write /data/out /morse/treeonfire" + indexTree.toString() + "/teleporttf" + indexTree.toString() + "/in";
+                 var command2 = "echo '" + treeslocations[treenumber].x.toString() + ' ' + treeslocations[treenumber].y.toString() + " -10' | yarp write /data/out /morse/tree" + indexTree.toString() + "/teleport" + indexTree.toString() + "/in";
+                 var command = command2 + " && " + command1 
+                 console.log(command);
+                 exec(command, puts);
+             /*
+             if ( (treenumber == 0) && !firesStatesOfTrees[0]){
                 exec("echo '4.55076 14.66826 -10' | yarp write /data/out /morse/tree/teleport/in && echo '4.55076 14.66826 -0.1' | yarp write /data/out /morse/treeonfire/teleportf/in", puts);
 		firesStatesOfTrees[0] = true;
             } else if ( (treenumber == 1) && !firesStatesOfTrees[1]){
@@ -229,26 +261,10 @@ exec("echo '-2.6019 6.7425 -10' | yarp write /data/out /morse/tree4/teleport4/in
             } else if ((treenumber == 5) && !firesStatesOfTrees[5]){
                 exec("echo '16.58292 -12.5847 -10' | yarp write /data/out /morse/tree6/teleport6/in && echo '16.58292 -12.5847 -0.1' | yarp write /data/out /morse/treeonfire6/teleportf6/in", puts);
                 firesStatesOfTrees[5] = true;
+            }*/
             }
+            console.log("new fire ? " + treenumber + " " + onfire);
         }
-
-/*
-treeonfire2.translate(x=-0.7353,y=14.75052,z=-10)
-
-treeonfire3.translate(x=-15.10146,y=15.76476,z=-10)
-
-treeonfire4.translate(x=-2.6019,y=6.7425,z=-10)
-
-treeonfire5.translate(x=-1.33158,y=7.02042,z=-10)
-
-treeonfire6.translate(x=16.58292,y=-12.5847,z=-10)
-*/
-
-
-
-
-
-        console.log("Hello" + treenumber + " " + onfire);
     },3000);
 
 module.exports = router;
