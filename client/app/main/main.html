@@ -78,14 +78,20 @@
 				<!--<div class="matb">
 				</div>-->
                                 <div class="title"> WATER MANAGEMENT </div>
-                                <div class="robinetcontainer">
-					<div class="robinet" ng-style="{left: xrobinet+'%'}"> </div>
-					<div class="robinetwater" ng-style="{left: xrobinetwater+'%', width: widthwaterflow + 'px'}"> </div>
-					<div class="tankcontainer">
-						<div class="tankcontainerwater" ng-style="{height: watlevelContainer+'%'}"> 
-						</div>                                	
+				<div class="wMngmtViz">
+	                                <div class="robinetcontainer">
+						<div class="robinet" ng-style="{left: xrobinet+'%'}"> </div>
+						<div class="robinetwater" ng-style="{left: xrobinetwater+'%', width: widthwaterflow + 'px'}"> </div>
+						<div class="tankcontainer">
+							<div class="tankcontainerwater" ng-style="{height: watlevelContainer+'%'}"> 
+							</div>                                	
+						</div>
+						<div  class="controltitle"> <span> values close to 0 <i class="fa fa-arrow-right" aria-hidden="true"></i> filling! </span> </div>
 					</div>
-					<div  class="controltitle"> <span> values close to 0 <i class="fa fa-arrow-right" aria-hidden="true"></i> filling! </span> </div>
+					<div class="crosscontainer">
+						<div class="cross" ng-style="{transform: 'rotate('+ rotcross +'deg)'}">
+						</div>
+					</div>
 				</div>
 				<div class="controlband">
 					<div class="mainbutton" ng-click="faucetctrlfctminus()"> <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
@@ -116,8 +122,6 @@
 					</div>
 					<div class="loadlocW" ng-style="{top: zones[0].y, left: zones[0].x}">
 					</div>
-
-
 				</div>
 			</div>
 			<div class="warningsblock"> 
@@ -128,7 +132,7 @@
 				</div>
 				<div class="waterlevel">				
 				</div>
-				<div class="waterempty" ng-style="{top: watlevel+'px'}">
+				<div class="waterempty" ng-style="{height: watlevel+'px'}">
 				</div>
 			</div>
 		</div>

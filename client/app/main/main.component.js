@@ -71,8 +71,8 @@ export class MainController {
     // - number of fighted fires
     // - water level
     // - remaining time
-    // - TODO water management (+ remaining features)
-    // - TODO temperature, 
+    // - TODO temperature
+    // - TODO water management (remaining features)
     $scope.nbonfire = 0;
     $interval(function() {
       $http.get('/api/control/fires').then(response => {
@@ -121,6 +121,13 @@ export class MainController {
           var temp = (vlvop - 5) * 10 / 5;
           $scope.valveopening = temp.toPrecision(3);
           $scope.widthwaterflow = 10 - Math.abs(temp);
+          $scope.rotcross = temp.toPrecision(3)*30;
+        }
+      });
+      $http.get('/api/control/temperature').then(response => {
+        if(response.status === 200) {
+          $scope.mercurelevel = response.data[0];
+          $scope.hotscreen = response.data[1];
         }
       });
     }, 300);
@@ -258,83 +265,75 @@ export class MainController {
     };
 
 
-
-
-
-    // TODO HTTP.POST : $scope.faucetcontrol, $scope.openingcontrol;
     // water management
-
     $scope.xrobinet = 42;
     var decal = 4;
-//    $scope.xrobinetwater = $scope.xrobinet + decal;
-//    $scope.valveopening = 1;
     var vlvop = 1;
-/*    $scope.widthwaterflow = 10 - Math.abs(vlvop);
-    var pivalue = 3.1415;
-    var coeffspeed = 25;
-    var coeffspeedopening = 0.1;
-    $scope.faucetxaxis = 2 * 10 / 40;
-    $interval(function() {
-      if(($scope.xrobinet <= 80) && ($scope.xrobinet >= 0)) {
-        $scope.xrobinet = $scope.xrobinet + coeffspeed * (pivalue / 80) * Math.sin(pivalue * $scope.xrobinet / 40 - pivalue) + $scope.faucetcontrol;
-      } else if($scope.xrobinet > 80) {
-        $scope.xrobinet = 80;
-      } else if($scope.xrobinet < 0) {
-        $scope.xrobinet = 0;
-      }
-      var fxa = ($scope.xrobinet - 40) * 10 / 40;
-      $scope.faucetxaxis = fxa.toPrecision(3);
-      $scope.xrobinetwater = $scope.xrobinet + decal;
-      if((vlvop <= 10) && (vlvop >= 0)) {
-        vlvop = vlvop + coeffspeedopening * (pivalue / 10) * Math.sin(pivalue * vlvop / 5 - pivalue) + coeffspeedopening * $scope.openingcontrol;
-      } else if(vlvop > 10) {
-        vlvop = 10;
-      } else if(vlvop < 0) {
-        vlvop = 0;
-      }
-      var temp = (vlvop - 5) * 10 / 5;
-      $scope.valveopening = temp.toPrecision(3);
-      $scope.widthwaterflow = 10 - Math.abs(temp);
-      //console.log($scope.widthwaterflow);
-    }, 200);
-*/
     $scope.watlevelContainer = 10;
-/*
-    $interval(function() {
-      if($scope.watlevelContainer < 94) {
-        $scope.watlevelContainer = $scope.watlevelContainer + 1;
-      }
-      if(($scope.faucetxaxis < 2) && ($scope.faucetxaxis > -2) && $scope.watlevelContainer > 0) {
-        $scope.watlevelContainer = $scope.watlevelContainer - $scope.widthwaterflow / 3;
-      }
-    }, 200);
-*/
+
+    var pendingButtons = false;
     $scope.faucetcontrol = 0;
     $scope.faucetctrlfctplus = function() {
       if($scope.faucetcontrol < 3) {
-        $scope.faucetcontrol = $scope.faucetcontrol + 1;
+        if(!pendingButtons) {
+          pendingButtons = true;
+          $http.post('/api/control/watercontrol', {button: 'plusT'}).then(response => {
+            pendingButtons = false;
+            if(response.status === 200) {
+              $scope.faucetcontrol = response.data.tapControl;
+            } else if(debug) {
+              console.log('nok');
+            }
+          });
+        }
       }
     };
     $scope.faucetctrlfctminus = function() {
       if($scope.faucetcontrol > -3) {
-        $scope.faucetcontrol = $scope.faucetcontrol - 1;
+        if(!pendingButtons) {
+          pendingButtons = true;
+          $http.post('/api/control/watercontrol', {button: 'minusT'}).then(response => {
+            pendingButtons = false;
+            if(response.status === 200) {
+              $scope.faucetcontrol = response.data.tapControl;
+            } else if(debug) {
+              console.log('nok');
+            }
+          });
+        }
       }
     };
     $scope.openingcontrol = 0;
     $scope.openingctrlfctplus = function() {
       if($scope.openingcontrol < 3) {
-        $scope.openingcontrol = $scope.openingcontrol + 1;
+         if(!pendingButtons) {
+          pendingButtons = true;
+          $http.post('/api/control/watercontrol', {button: 'plusV'}).then(response => {
+            pendingButtons = false;
+            if(response.status === 200) {
+              $scope.openingcontrol = response.data.valveControl;
+            } else if(debug) {
+              console.log('nok');
+            }
+          });
+        }
       }
     };
     $scope.openingctrlfctminus = function() {
       if($scope.openingcontrol > -3) {
-        $scope.openingcontrol = $scope.openingcontrol - 1;
+         if(!pendingButtons) {
+          pendingButtons = true;
+          $http.post('/api/control/watercontrol', {button: 'minusV'}).then(response => {
+            pendingButtons = false;
+            if(response.status === 200) {
+              $scope.openingcontrol = response.data.valveControl;
+            } else if(debug) {
+              console.log('nok');
+            }
+          });
+        }
       }
     };
-    // END TODO
-
-
-
 
 
     hotkeys.add('left', 'totheleft', $scope.totheleft);
@@ -342,20 +341,6 @@ export class MainController {
     hotkeys.add('down', 'backward', $scope.backward);
     hotkeys.add('up', 'forward', $scope.forward);
     hotkeys.add('space', 'water', $scope.water);
-
-    var tictac = false;
-    $scope.hotscreen = 0;
-    $interval(function() {
-      if(tictac) {
-        $scope.mercurelevel = '50px';
-        tictac = false;
-        $scope.hotscreen = 0;
-      } else {
-        $scope.mercurelevel = '300px';
-        tictac = true;
-        $scope.hotscreen = 1;
-      }
-    }, 1000);
   }
 
 

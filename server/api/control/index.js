@@ -28,6 +28,7 @@ router.get('/zones', function(req, res) {
 //=====================================================
 // get position/orientation from orocos
 //=====================================================
+
 var PORT = 9000;
 var PORTGET = 9010;
 var HOST = 'localhost';
@@ -78,8 +79,42 @@ serverGet.on('message', function(message, remote) {
   } else {
     stopFillingBattery();
   }
+  // heat simulation
+  var equilibriumDist = 3.0;
+  var itNbBeforeChange = 120;
+  if(counter > itNbBeforeChange) {
+    var minDistance = 3.5;
+    for(var q = 0; q < treeslocations.length; q++) {
+      if(firesStatesOfTrees[q]) {
+        var distance = Math.sqrt(Math.pow(treeslocations[q].x - robotx[0], 2) + Math.pow(treeslocations[q].y - roboty[0], 2));
+        minDistance = Math.min(minDistance, distance);
+      }
+    }
+    var heatIncrement = (equilibriumDist - minDistance) / equilibriumDist;
+    mercurelevelfloat = mercurelevelfloat + heatIncrement;
+    if(mercurelevelfloat > 300) {
+      mercurelevelfloat = 300;
+    }
+    if(mercurelevelfloat < 10) {
+      mercurelevelfloat = 10;
+    }
+    mercurelevel = mercurelevelfloat.toString() + 'px';
+    hotscreen = mercurelevelfloat/300;
+    counter = 0;
+  }
+  counter++;
+/*  if(tictac) {
+    mercurelevel = '50px';
+    tictac = false;
+    hotscreen = 0;
+  } else {
+    mercurelevel = '300px';
+    tictac = true;
+    hotscreen = 1;
+  }*/
 });
 serverGet.bind(PORTGET, HOST);
+var counter = 0;
 
 //=====================================================
 // create udp message for orocos
@@ -175,7 +210,7 @@ router.post('/', function(req, res/*, next*/) {
       client.close();
     });
   } else if(req.body.key == 'space') {
-    if(watlevel < 215) {
+    if(watlevel < 70) {
       watlevel = watlevel + 3;
     } else {
       robotTankEmpty = true;
@@ -248,15 +283,15 @@ setInterval(function() {
 //=====================================================
 // define fill/stopfill water functions
 var fillWaterInterval;
-var watlevel = 160;
+var watlevel = 20;
 var robotTankEmpty = false;
 var isFillingWater = false;
 var fillingWater = function() {
   isFillingWater = true;
   clearInterval(fillWaterInterval);
   fillWaterInterval = setInterval(function() {
-    if(watlevel > 160) {
-      watlevel = watlevel - 2;
+    if(watlevel > 20) {
+      watlevel = watlevel - 3;
     }
   }, 500);
 };
@@ -272,8 +307,6 @@ router.get('/robotwater', function(req, res) {
 
 //=====================================================
 // water management part: 
-// TODO: we have to use http.post to get clicks on buttons
-// i.e. faucetcontrol and openingcontrol
 //=====================================================
 var openingcontrol = 0;
 var faucetcontrol = 0;
@@ -324,8 +357,7 @@ setInterval(function() {
   }
 }, 200);
 
-
-// TO BE USED IN THE ROUTER.POST RECEIVING USED BUTTON
+// functions in/de/creasing control states of water management
 var faucetctrlfctplus = function() {
   if(faucetcontrol < 3) {
     faucetcontrol = faucetcontrol + 1;
@@ -350,7 +382,32 @@ var openingctrlfctminus = function() {
   }
 };
 
-// END TODO
+// send new state of control of water management to client
+router.post('/watercontrol', function(req, res/*, next*/) {
+  console.log(req.body.key);
+  if(req.body.button == 'plusT') {
+    if(faucetcontrol < 3) {
+      faucetcontrol = faucetcontrol + 1;
+    }
+  } else if(req.body.button == 'minusT') {
+    if(faucetcontrol > -3) {
+      faucetcontrol = faucetcontrol - 1;
+    }
+  } else if(req.body.button == 'plusV') {
+    if(openingcontrol < 3) {
+      openingcontrol = openingcontrol + 1;
+    }
+  } else if(req.body.button == 'minusV') {
+    if(openingcontrol > -3) {
+      openingcontrol = openingcontrol - 1;
+    }
+  } 
+  res.json({
+    tapControl: faucetcontrol,
+    valveControl: openingcontrol
+  });
+});
+
 // give tap position, valve opening and water level of the container to client
 router.get('/watermanagement', function(req, res) {
   res.json([xrobinet,vlvop,watlevelContainer]);
@@ -373,7 +430,7 @@ router.get('/time', function(req, res) {
 
 //=====================================================
 // battery part 
-// TODO: un peu plus de décharge quand on bouge/lance de l'eau
+// TODO: discharging rate higher when moving/using water
 //=====================================================
 var batteryLevel = 24;
 setInterval(function() {
@@ -402,5 +459,33 @@ var stopFillingBattery = function() {
   clearInterval(fillBatteryInterval);
   isFillingBattery = false;
 };
+
+
+//=====================================================
+// heat simulation part 
+//=====================================================
+
+// TODO go server side
+var tictac = false;
+var hotscreen = 0;
+var mercurelevel = '10px';
+var mercurelevelfloat = 10;
+/*
+setInterval(function() {
+  if(tictac) {
+    mercurelevel = '50px';
+    tictac = false;
+    hotscreen = 0;
+  } else {
+    mercurelevel = '300px';
+    tictac = true;
+    hotscreen = 1;
+  }
+}, 1000);
+*/
+// give temp/screen effect to client
+router.get('/temperature', function(req, res) {
+  res.json([mercurelevel,hotscreen]);
+});
 
 module.exports = router;
