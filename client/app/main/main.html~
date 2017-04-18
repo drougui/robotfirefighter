@@ -57,7 +57,7 @@
                         	</div>
 			</div>
 			<div class="redhotContainer">
-                        	<div class="redhot" ng-style="{opacity: hotscreen}>
+                        	<div class="redhot" ng-style="{opacity: hotscreen}">
                         	</div>
 			</div>
 		</div>
@@ -92,7 +92,7 @@
  </div>
 	                                <span> {{faucetcontrol}} </span>
 					<div class="mainbutton" ng-click="faucetctrlfctplus()"> <i class="fa fa-chevron-circle-right" aria-hidden="true"></i> </div>
-					<div class="controlnames"> FAUCET POSITION <span>{{faucetxaxis}} </span> </div>
+					<div class="controlnames"> TAP POSITION <span>{{faucetxaxis}} </span> </div>
                                 </div>
 				<div class="controlband">
 					<div class="mainbutton" ng-click="openingctrlfctminus()"> <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
@@ -109,10 +109,10 @@
 					</div>
 					<div class="tree" ng-repeat="(key, value) in trees" ng-style="{top: value.y, left: value.x}">
 					</div>
-					<div class="fire" ng-repeat="(key, value) in firesloc" ng-style="{top: value.y, left: value.x, opacity: opacityfire[key]}" ng-class="{fireFlipped: fireflip}">
+					<div class="fire" ng-repeat="(key, value) in firesloc" ng-style="{top: value.y, left: value.x, opacity: opacityfire[key]}">
 					</div>
 
-					<div class="loadlocB" ng-style="{top: batteryZoneFromTop, left: batteryZoneFromLeft}">
+					<div class="loadlocB" ng-style="{top: zones[0].y, left: zones[0].x}">
 					</div>
 					<div class="loadlocW" ng-style="{top: waterZoneFromTop, left: waterZoneFromLeft}">
 					</div>

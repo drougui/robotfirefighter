@@ -10,7 +10,6 @@ export class MainController {
   socket;
   awesomeThings = [];
   newThing = '';
-//  var pending = false;
 
   /*@ngInject*/
   constructor($http, $scope, socket, hotkeys, $timeout, $interval) {
@@ -19,7 +18,7 @@ export class MainController {
     this.socket = socket;
     var debug = true;
 
-    // map management
+    // map management functions/params
     var translationX = 19;
     var normalizationX = 38;
     var translationY = 19;
@@ -30,7 +29,7 @@ export class MainController {
     $scope.realToCssPoseY = function(realPose) {
       return (95 - (realPose + translationY) * 100.0 / normalizationY).toString() + '%';
     };
-    // trees locations
+    // get trees locations from json file
     var treeslocations;
     $scope.trees = [];
     $scope.firesloc = [];
@@ -39,7 +38,6 @@ export class MainController {
       if(response.status === 200) {
         treeslocations = JSON.parse(response.data);
         $scope.trees = treeslocations;
-        //$scope.firesloc = treeslocations;
         for(var i = 0; i < treeslocations.length; i++) {
           var xVal = $scope.realToCssPoseX(parseFloat(treeslocations[i].x));
           var yVal = $scope.realToCssPoseY(parseFloat(treeslocations[i].y));
@@ -50,13 +48,31 @@ export class MainController {
         }
       }
     });
-    // blabla
-    var pending = false;
-    $scope.battlevel = 24;
-    $scope.watlevel = 160;
-    $scope.batteryZoneFromTop = $scope.realToCssPoseY(16.1);
-    $scope.batteryZoneFromLeft = $scope.realToCssPoseX(16.2);
-    // fire states and number of fighted fires update
+
+    // get zones locations from json file
+    var zoneslocations;
+    $scope.zones = [];
+    $http.get('/api/control/zones').then(response => {
+      if(response.status === 200) {
+        zoneslocations = JSON.parse(response.data);
+        $scope.zones = zoneslocations;
+        for(var i = 0; i < zoneslocations.length; i++) {
+          var xValz = $scope.realToCssPoseX(parseFloat(zoneslocations[i].x));
+          var yValz = $scope.realToCssPoseY(parseFloat(zoneslocations[i].y));
+          $scope.zones[i].x = xValz;
+          $scope.zones[i].y = yValz;
+        }
+      }
+    });
+
+
+    // update every 300ms:
+    // - fire states
+    // - number of fighted fires
+    // - water level
+    // - remaining time
+    // - TODO water management (+ remaining features)
+    // - temperature, 
     $scope.nbonfire = 0;
     $interval(function() {
       $http.get('/api/control/fires').then(response => {
@@ -78,18 +94,43 @@ export class MainController {
           $scope.nbfighted = response.data;
         }
       });
+      $http.get('/api/control/robotwater').then(response => {
+        if(response.status === 200) {
+          $scope.watlevel = response.data[0];
+          robotTankEmpty = response.data[1];
+        }
+      });
+      $http.get('/api/control/battery').then(response => {
+        if(response.status === 200) {
+          $scope.battlevel = response.data;
+        }
+      });
+      $http.get('/api/control/time').then(response => {
+        if(response.status === 200) {
+          $scope.remainingtime = response.data;
+        }
+      });
+      $http.get('/api/control/watermanagement').then(response => {
+        if(response.status === 200) {
+          $scope.xrobinet = response.data[0];
+          vlvop = response.data[1];
+          $scope.watlevelContainer = response.data[2];  
+          $scope.xrobinetwater = $scope.xrobinet + decal;
+          var fxa = ($scope.xrobinet - 40) * 10 / 40;
+          $scope.faucetxaxis = fxa.toPrecision(3);
+          var temp = (vlvop - 5) * 10 / 5;
+          $scope.valveopening = temp.toPrecision(3);
+          $scope.widthwaterflow = 10 - Math.abs(temp);
+        }
+      });
     }, 300);
 
-    // gives a nice effect on flames in the map
-    $scope.fireflip = false;
-    $interval(function() {
-      $scope.fireflip = !$scope.fireflip;
-    }, 500);
 
-    var waterZone = { top: -9, bottom: -11, right: 1, left: -1};
-    $scope.waterZoneFromTop = $scope.realToCssPoseY(-10);
-    $scope.waterZoneFromLeft = $scope.realToCssPoseX(0);
-
+    // -------------------------------------------------------------------------
+    // send control/water action -> get position/orientation
+    // -> use them to update corresponding variables of the map
+    // -------------------------------------------------------------------------
+    var pending = false;
     $scope.totheleft = function() {
       if(debug) {
         console.log('totheleft');
@@ -106,11 +147,6 @@ export class MainController {
               console.log(response.data.posX[0]);
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
-            }
-            if((response.data.posY[0] < waterZone.top) && (response.data.posY[0] > waterZone.bottom) && (response.data.posX[0] < waterZone.right) && (response.data.posX[0] > waterZone.left)) {
-              fillingWater();
-            } else {
-              stopFillingWater();
             }
           } else if(debug) {
             console.log('nok');
@@ -136,11 +172,6 @@ export class MainController {
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
-            if((response.data.posY[0] < waterZone.top) && (response.data.posY[0] > waterZone.bottom) && (response.data.posX[0] < waterZone.right) && (response.data.posX[0] > waterZone.left)) {
-              fillingWater();
-            } else {
-              stopFillingWater();
-            }
           } else if(debug) {
             console.log('nok');
           }
@@ -164,11 +195,6 @@ export class MainController {
               console.log(response.data.posX[0]);
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
-            }
-            if((response.data.posY[0] < waterZone.top) && (response.data.posY[0] > waterZone.bottom) && (response.data.posX[0] < waterZone.right) && (response.data.posX[0] > waterZone.left)) {
-              fillingWater();
-            } else {
-              stopFillingWater();
             }
             pending = false;
           } else if(debug) {
@@ -195,12 +221,6 @@ export class MainController {
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
-            if((response.data.posY[0] < waterZone.top) && (response.data.posY[0] > waterZone.bottom) && (response.data.posX[0] < waterZone.right) && (response.data.posX[0] > waterZone.left)) {
-              fillingWater();
-              robotTankEmpty = false;
-            } else {
-              stopFillingWater();
-            }
           } else if(debug) {
             console.log('nok');
           }
@@ -208,26 +228,53 @@ export class MainController {
       }
     };
 
-    var myVar2;
-    var fillingWater = function() {
-      $interval.cancel(myVar2);
-      myVar2 = $interval(function() {
-        if($scope.watlevel > 160) {
-          $scope.watlevel = $scope.watlevel - 2;
+    var robotTankEmpty;
+    $scope.water = function() {
+      if(debug) {
+        console.log('WATER');
+      }
+      if(!robotTankEmpty) {
+        $scope.waterize = true;
+        if(!pending) {
+          pending = true;
+          $http.post('/api/control', {key: 'space'}).then(response => {
+            pending = false;
+            if(response.status === 200) {
+              $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
+              $scope.propFromLeft = $scope.realToCssPoseX(response.data.posX[0]);
+              if(debug) {
+                console.log(response.data.posX[0]);
+                console.log(response.data.posY[0]);
+              }
+            } else if(debug) {
+              console.log('nok');
+            }
+          });
         }
-      }, 1000);
-    };
-    var stopFillingWater = function() {
-      $interval.cancel(myVar2);
+        $timeout(function() {
+          $scope.waterize = false;
+        }, 100);
+      }
     };
 
+
+
+
+
+    // TODO get values:
+    // - $scope.xrobinet (--> compute --> $scope.xrobinetwater / $scope.faucetxaxis)
+    // - vlop (--> compute --> $scope.valveopening / $scope.widthwaterflow)
+    // - $scope.watlevelContainer
+    // HTTP.POST : $scope.faucetcontrol, $scope.openingcontrol;
+    // TODO PUT IT ON SERVER SIDE
+    // water management
 
     $scope.xrobinet = 42;
     var decal = 4;
-    $scope.xrobinetwater = $scope.xrobinet + decal;
-    $scope.valveopening = 1;
+//    $scope.xrobinetwater = $scope.xrobinet + decal;
+//    $scope.valveopening = 1;
     var vlvop = 1;
-    $scope.widthwaterflow = 10 - Math.abs(vlvop);
+/*    $scope.widthwaterflow = 10 - Math.abs(vlvop);
     var pivalue = 3.1415;
     var coeffspeed = 25;
     var coeffspeedopening = 0.1;
@@ -255,8 +302,9 @@ export class MainController {
       $scope.widthwaterflow = 10 - Math.abs(temp);
       //console.log($scope.widthwaterflow);
     }, 200);
-
+*/
     $scope.watlevelContainer = 10;
+/*
     $interval(function() {
       if($scope.watlevelContainer < 94) {
         $scope.watlevelContainer = $scope.watlevelContainer + 1;
@@ -265,72 +313,34 @@ export class MainController {
         $scope.watlevelContainer = $scope.watlevelContainer - $scope.widthwaterflow / 3;
       }
     }, 200);
-
-//TODO
-    var robotTankEmpty = false;
-    $scope.water = function() {
-      if(debug) {
-        console.log('WATER');
-      }
-      if (!robotTankEmpty){
-        $scope.waterize = true;
-        // SERVER SIDE 
-        if(!pending) {
-          pending = true; // TODO
-          $http.post('/api/control', {key: 'space'}).then(response => {
-            pending = false;
-            if(response.status === 200) {
-              $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
-              $scope.propFromLeft = $scope.realToCssPoseX(response.data.posX[0]);
-              if(debug) {
-                console.log(response.data.posX[0]);
-                console.log(response.data.posY[0]);
-              }
-              if((response.data.posY[0] < waterZone.top) && (response.data.posY[0] > waterZone.bottom) && (response.data.posX[0] < waterZone.right) && (response.data.posX[0] > waterZone.left)) {
-                fillingWater();
-                robotTankEmpty = false;
-              } else {
-                stopFillingWater();
-              }
-            } else if(debug) {
-              console.log('nok');
-            }
-          });
-        }
-      // END SERVER SIDE
-        $timeout(function(){ 
-          $scope.waterize = false;
-        }, 100);
-      }
-      if($scope.watlevel < 215) {
-        $scope.watlevel = $scope.watlevel+3;
-      } else {
-        robotTankEmpty = true;
-      } 
-    };
-
+*/
     $scope.faucetcontrol = 0;
     $scope.faucetctrlfctplus = function() {
       if($scope.faucetcontrol < 3) {
         $scope.faucetcontrol = $scope.faucetcontrol + 1;
       }
-    }
+    };
     $scope.faucetctrlfctminus = function() {
-      if($scope.faucetcontrol > -3) { 
-              $scope.faucetcontrol = $scope.faucetcontrol - 1;
+      if($scope.faucetcontrol > -3) {
+        $scope.faucetcontrol = $scope.faucetcontrol - 1;
       }
-    }
+    };
     $scope.openingcontrol = 0;
     $scope.openingctrlfctplus = function() {
       if($scope.openingcontrol < 3) {
         $scope.openingcontrol = $scope.openingcontrol + 1;
       }
-    }
+    };
     $scope.openingctrlfctminus = function() {
       if($scope.openingcontrol > -3) {
         $scope.openingcontrol = $scope.openingcontrol - 1;
       }
-    }
+    };
+    // END TODO
+
+
+
+
 
     hotkeys.add('left', 'totheleft', $scope.totheleft);
     hotkeys.add('right', 'totheright', $scope.totheright);
@@ -338,34 +348,18 @@ export class MainController {
     hotkeys.add('up', 'forward', $scope.forward);
     hotkeys.add('space', 'water', $scope.water);
 
-   /* window.setInterval(function(){
-	console.log(pending)
-  	 $scope.waterize = false;
-    }, 100);
-    */
-
-    var myVar = $interval(function() {
-      if($scope.battlevel>0) {
-        $scope.battlevel = $scope.battlevel - 0.1;     
-      }
-    }, 1000);
-
     var tictac = false;
-    $scope.remainingtime = 600;
     $scope.hotscreen = 0;
-    var intervalTimer = $interval(function() { 
-      if($scope.remainingtime>0) {
-        $scope.remainingtime = $scope.remainingtime-1;
-      }
-      if (tictac){
-        $scope.mercurelevel = "50px";
+    $interval(function() {
+      if(tictac) {
+        $scope.mercurelevel = '50px';
         tictac = false;
         $scope.hotscreen = 0;
       } else {
-        $scope.mercurelevel = "300px";
+        $scope.mercurelevel = '300px';
         tictac = true;
         $scope.hotscreen = 1;
-      }    
+      }
     }, 1000);
   }
 
