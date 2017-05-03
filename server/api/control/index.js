@@ -333,27 +333,28 @@ setInterval(function() {
     xrobinet = 0;
   }
   var fxa = (xrobinet - 40) * 10 / 40;
-  faucetxaxis = fxa.toPrecision(3);
+  faucetxaxis = fxa.toPrecision(1);
   if((vlvop <= 10) && (vlvop >= 0)) {
     vlvop = vlvop + coeffspeedopening * (pivalue / 10) * Math.sin(pivalue * vlvop / 5 - pivalue) + coeffspeedopening * openingcontrol;
+    var tempvar = vlvop.toPrecision(1);
   } else if(vlvop > 10) {
     vlvop = 10;
   } else if(vlvop < 0) {
     vlvop = 0;
   }
   var temp = (vlvop - 5) * 10 / 5;
-    valveopening = temp.toPrecision(3);
+    valveopening = temp.toPrecision(1);
     widthwaterflow = 10 - Math.abs(temp);
       //console.log($scope.widthwaterflow);
 }, 200);
 
-var watlevelContainer = 10;
+var watlevelContainer = 94;
 setInterval(function() {
-  if(watlevelContainer < 94) {
+/*  if(watlevelContainer < 94) {
     watlevelContainer = watlevelContainer + 1;
-  }
+  }*/
   if((faucetxaxis < 2) && (faucetxaxis > -2) && watlevelContainer > 0) {
-    watlevelContainer = watlevelContainer - widthwaterflow / 3;
+    watlevelContainer = watlevelContainer - 1;//- widthwaterflow / 3;
   }
 }, 200);
 

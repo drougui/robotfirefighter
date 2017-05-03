@@ -77,36 +77,121 @@
 			<div class="matbblock">
 				<!--<div class="matb">
 				</div>-->
-                                <div class="title"> WATER MANAGEMENT </div>
+                                <div class="title"> WATER MANAGEMENT: 
+					<!--<span> values close to 0 <i class="fa fa-arrow-right" aria-hidden="true"></i> filling! </span> -->
+				</div>
 				<div class="wMngmtViz">
+					<div class="crosscontainer">
+						<div class="filter">
+							<div class="apump" ng-repeat="(key,value) in pumps">
+								<div class="pumpinput" ng-click="clickPump(key+1)" ng-class="{pumpborder: pumpSelected==key+1}">
+									{{pumpsFlows[key]}}
+								</div>
+								<div class="plusminusbuttons">
+									<div class="plusbutton fa fa-plus-square" ng-click="pumpPlus(key)">
+									</div>
+									<div class="minusbutton fa fa-minus-square" ng-click="pumpMinus(key)">
+									</div>								
+								</div>
+							</div>
+						</div>
+						<div class="trashpipe">
+						</div>
+						<div class="inpipe">
+						</div>
+						<div class="outpipe">
+						</div>
+						<div class="backpipe">
+						</div>
+						<div class="initpipe">
+						</div>
+						<div class="trashtap">
+						</div>
+						<div class="bendedpipe">
+						</div>
+						<div class="bendedpipe2">
+						</div>
+						<div class="bendedpipe3">
+						</div>
+						<div class="bendedpipe4">
+						</div>
+						<div class="bendedpipe5">
+						</div>
+					</div>
 	                                <div class="robinetcontainer">
-						<div class="robinet" ng-style="{left: xrobinet+'%'}"> </div>
-						<div class="robinetwater" ng-style="{left: xrobinetwater+'%', width: widthwaterflow + 'px'}"> </div>
+						<div class="robinet" ng-style="{left: xrobinet+'%', bottom: yrobinet - 15 +'%'}"> 
+						</div>
+						<div class="wheel" ng-style="{left: xrobinet+7.5+'%', bottom: yrobinet+12.5+'%'}"> 
+						</div>
+						<div class="right" ng-style="{left: xrobinet+9.6+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol < 3)}">
+						</div>
+						<div class="right" ng-style="{left: xrobinet+11.6+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol < 1)}">
+						</div>
+						<div class="right" ng-style="{left: xrobinet+13.6+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol < 2)}">
+						</div>
+						<div class="left" ng-style="{left: xrobinet+9.5+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol > -3)}">
+						</div>
+						<div class="left" ng-style="{left: xrobinet+7.5+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol > -1)}">
+						</div>
+						<div class="left" ng-style="{left: xrobinet+5.5+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol > -2)}">
+						</div>
+						<div class="string" ng-style="{left: xrobinet+12.5+'%', bottom: yrobinet+3+'%'}"> 
+						</div>
+<!--						<div class="curvepoint" ng-repeat="(key,value) in robcurve" ng-style="{left: value.x + 13 +'%', bottom: value.y -15 +'%'}">
+						</div>
+						<div class="axispoint" ng-repeat="(key,value) in robaxis" ng-style="{left: value + 13 +'%'}">
+						</div>
+						<div class="headArrow">
+						</div>
+						<div class="ticknumber" ng-repeat="(key,value) in robticknumber" ng-style="{left: value.x + 13 +'%'}">
+							<span> {{value.val}} </span>						
+						</div>
+						<div class="ticks" ng-repeat="value in robticknumber" ng-style="{left: value.x + 14 +'%'}">
+						</div>
+-->
+						<div class="robinetwater" ng-style="{left: xrobinetwater-2+'%', bottom: yrobinet - 20 +'%'}"> 
+						</div>
+						<div class="montainAxis"> 
+						</div>
+						<div class="neckcontainer">
+						</div>
 						<div class="tankcontainer">
-							<div class="tankcontainerwater" ng-style="{height: watlevelContainer+'%'}"> 
+							<div class="tankcontainerwater" ng-style="{height: watlevelContainer-4+'%'}"> 
 							</div>                                	
 						</div>
-						<div  class="controltitle"> <span> values close to 0 <i class="fa fa-arrow-right" aria-hidden="true"></i> filling! </span> </div>
+						<div class="faucetaxis"> 
+							<span> TAP POSITION: </span> 
+							<span> {{faucetxaxis}} </span> 
+						</div>
+						<div class="force"> 
+							<span> FORCE: {{faucetcontrol}} </span> 
+						</div>
+						<div class="mainbuttonL" ng-click="faucetctrlfctminus()"> <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
+ 						</div>
+						<div class="mainbuttonR" ng-click="faucetctrlfctplus()"> <i class="fa fa-chevron-circle-right" aria-hidden="true"></i> 
+						</div>
+						<div class="bottomPipe"> 
+						</div>
+						<div class="topPipe"> 
+						</div>						
 					</div>
+<!--
 					<div class="crosscontainer">
+						<div class="topArrow" ng-click="openingctrlfctplus()">	
+						</div>						
 						<div class="cross" ng-style="{transform: 'rotate('+ rotcross +'deg)'}">
 						</div>
-					</div>
-				</div>
-				<div class="controlband">
-					<div class="mainbutton" ng-click="faucetctrlfctminus()"> <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
- </div>
-	                                <span> {{faucetcontrol}} </span>
-					<div class="mainbutton" ng-click="faucetctrlfctplus()"> <i class="fa fa-chevron-circle-right" aria-hidden="true"></i> </div>
-					<div class="controlnames"> TAP POSITION <span>{{faucetxaxis}} </span> </div>
-                                </div>
-				<div class="controlband">
-					<div class="mainbutton" ng-click="openingctrlfctminus()"> <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
- </div>
-	                                <span> {{openingcontrol}} </span>
-					<div class="mainbutton" ng-click="openingctrlfctplus()"> <i class="fa fa-chevron-circle-right" aria-hidden="true"></i> </div>
-					<div class="controlnames"> VALVE OPENING <span> {{valveopening}} </span> </div>
-                                </div>                               
+						<div class="botArrow" ng-click="openingctrlfctminus()">	
+						</div>
+						<div class="controlnames"> 
+							<span> VALVE OPENING: </span> <span> {{valveopening}} </span> 
+						</div>
+						<div class="crossvalues">
+			                                <span>COUPLE: {{openingcontrol}} </span>
+                		                </div> 
+					</div> 	
+-->				
+				</div>                             
 			</div>		
 			<div class="mapblock"> 
 				<div class="map">

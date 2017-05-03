@@ -73,7 +73,10 @@ export class MainController {
     // - remaining time
     // - TODO temperature
     // - TODO water management (remaining features)
+    $scope.firstPump = 2;
     $scope.nbonfire = 0;
+    var coeffXrob = 10;
+    var constXrob = 50;
     $interval(function() {
       $http.get('/api/control/fires').then(response => {
         if(response.status === 200) {
@@ -122,6 +125,7 @@ export class MainController {
           $scope.valveopening = temp.toPrecision(3);
           $scope.widthwaterflow = 10 - Math.abs(temp);
           $scope.rotcross = temp.toPrecision(3)*30;
+          $scope.yrobinet = coeffXrob * Math.cos($scope.faucetxaxis*3.1415*2 / 20) + constXrob;
         }
       });
       $http.get('/api/control/temperature').then(response => {
@@ -130,7 +134,66 @@ export class MainController {
           $scope.hotscreen = response.data[1];
         }
       });
-    }, 300);
+      console.log($scope.firstPump)
+    }, 500);
+
+
+
+    // pump flow management
+    $scope.$watch('firstPump', function() {
+      if ($scope.firstPump && ($scope.firstPump!='') && ($scope.firstPump!='1') && ($scope.firstPump!='2') && ($scope.firstPump!='3')) {
+        $scope.firstPump = 0;
+        // else if not a correct number, pump off!
+      }
+    })
+
+
+
+    $scope.pumpSelected = 0;
+    $scope.pumps = [1,2,3,4,5];
+    $scope.pumpsFlows = [0,0,0,0,0];
+    $scope.clickPump = function(number) {
+      if($scope.pumpSelected==number) {
+        $scope.pumpSelected = 0;
+      } else{
+        $scope.pumpSelected = number;
+      }
+    }
+  
+    $scope.pumpPlus = function(number) {
+      $scope.pumpsFlows[number]++;
+    }
+
+    $scope.pumpMinus = function(number) {
+      $scope.pumpsFlows[number]--;
+    }
+
+    $scope.tozero = function() {
+      if($scope.pumpSelected!=0) {
+        $scope.pumpsFlows[$scope.pumpSelected-1] = 0;
+      }
+    }
+
+    $scope.toone = function() {
+      if($scope.pumpSelected!=0) {
+        $scope.pumpsFlows[$scope.pumpSelected-1] = 1;
+      }
+    }
+
+    $scope.totwo = function() {
+      if($scope.pumpSelected!=0) {
+        $scope.pumpsFlows[$scope.pumpSelected-1] = 2;
+      }
+    }
+
+    $scope.tothree = function() {
+      if($scope.pumpSelected!=0) {
+        $scope.pumpsFlows[$scope.pumpSelected-1] = 3;
+      }
+    }
+
+
+
 
 
     // -------------------------------------------------------------------------
@@ -281,6 +344,9 @@ export class MainController {
             pendingButtons = false;
             if(response.status === 200) {
               $scope.faucetcontrol = response.data.tapControl;
+              if($scope.faucetcontrol>0) {
+                $scope.faucetcontrol = '+' + $scope.faucetcontrol;
+              }
             } else if(debug) {
               console.log('nok');
             }
@@ -335,12 +401,28 @@ export class MainController {
       }
     };
 
-
+    $scope.robcurve = [];
+    $scope.robaxis = [];
+    $scope.robticknumber = [];
+    for(var i = 0; i < 80; i=i+0.2) {
+      $scope.robcurve.push({x: i, y: coeffXrob * Math.cos( (i - 40 )*3.1415*2 / 80) + constXrob + 25});
+    }
+    for(var i = 0; i < 85; i=i+0.2) {
+      $scope.robaxis.push(i); 
+    }
+    for (var i = 0; i < 81; i = i + 8) {
+      var valeur = (i - 40)*10 / 40;
+      $scope.robticknumber.push({x: i, val: valeur});
+    }
     hotkeys.add('left', 'totheleft', $scope.totheleft);
     hotkeys.add('right', 'totheright', $scope.totheright);
     hotkeys.add('down', 'backward', $scope.backward);
     hotkeys.add('up', 'forward', $scope.forward);
     hotkeys.add('space', 'water', $scope.water);
+    hotkeys.add('0', 'tozero', $scope.tozero);
+    hotkeys.add('1', 'toone', $scope.toone);
+    hotkeys.add('2', 'totwo', $scope.totwo);
+    hotkeys.add('3', 'tothree', $scope.tothree);
   }
 
 
