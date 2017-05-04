@@ -147,11 +147,33 @@ export class MainController {
       }
     })
 
+    $interval(function() {
+    
+      var inouts = [];
+      var allFalse = true;
+      for(var i = 0; i < $scope.inoutpipes.length; i++) {
+        var myBool = Math.random()>0.5;
+        inouts.push(myBool);
+        allFalse = allFalse && !myBool; 
+      }
+      if (allFalse){
+        inouts[0] = true;
+      }
 
-
+      $scope.inoutpipes = inouts;
+    }, 30000);
     $scope.pumpSelected = 0;
-    $scope.pumps = [1,2,3,4,5];
-    $scope.pumpsFlows = [0,0,0,0,0];
+    $scope.pumps = [9,27,45,63,80];
+    $scope.pumpsFlows = [5,0,0,0,0];
+    $scope.bendedpipes = [15,29,43,57,71];
+
+
+
+    $scope.inoutpipes = [true,true,false,false,true];
+
+
+
+
     $scope.clickPump = function(number) {
       if($scope.pumpSelected==number) {
         $scope.pumpSelected = 0;
@@ -161,11 +183,26 @@ export class MainController {
     }
   
     $scope.pumpPlus = function(number) {
-      $scope.pumpsFlows[number]++;
+      if($scope.pumpsFlows[number]<5) { 
+        $scope.pumpsFlows[number]++;
+      }
     }
 
     $scope.pumpMinus = function(number) {
-      $scope.pumpsFlows[number]--;
+      if($scope.pumpsFlows[number]>0) {
+        $scope.pumpsFlows[number]--;
+      }
+      var sumFlows = 0;
+      var partialSumFlows = 0;
+      for(var i=0; i<$scope.pumpsFlows.length; i++) {
+        sumFlows = sumFlows + $scope.pumpsFlows[i];
+        if(i>0) {
+          partialSumFlows = partialSumFlows + $scope.pumpsFlows[i];
+        }
+      }
+      if(sumFlows<5) {
+        $scope.pumpsFlows[0] = 5-partialSumFlows;
+      }
     }
 
     $scope.tozero = function() {
@@ -192,7 +229,19 @@ export class MainController {
       }
     }
 
+    
+    $scope.tofour = function() {
+      if($scope.pumpSelected!=0) {
+        $scope.pumpsFlows[$scope.pumpSelected-1] = 4;
+      }
+    }
 
+    
+    $scope.tofive = function() {
+      if($scope.pumpSelected!=0) {
+        $scope.pumpsFlows[$scope.pumpSelected-1] = 5;
+      }
+    }
 
 
 
@@ -423,6 +472,8 @@ export class MainController {
     hotkeys.add('1', 'toone', $scope.toone);
     hotkeys.add('2', 'totwo', $scope.totwo);
     hotkeys.add('3', 'tothree', $scope.tothree);
+    hotkeys.add('4', 'tofour', $scope.tofour);
+    hotkeys.add('5', 'tofive', $scope.tofive);
   }
 
 

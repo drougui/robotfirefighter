@@ -83,7 +83,9 @@
 				<div class="wMngmtViz">
 					<div class="crosscontainer">
 						<div class="filter">
-							<div class="apump" ng-repeat="(key,value) in pumps">
+							<div class="bottompumps">
+							</div>
+							<div class="apump" ng-repeat="(key,value) in pumps" ng-style="{bottom: value + '%'}">
 								<div class="pumpinput" ng-click="clickPump(key+1)" ng-class="{pumpborder: pumpSelected==key+1}">
 									{{pumpsFlows[key]}}
 								</div>
@@ -107,9 +109,13 @@
 						</div>
 						<div class="trashtap">
 						</div>
-						<div class="bendedpipe">
+						<div class="bendedpipe" ng-repeat="(key, value) in bendedpipes" ng-style="{bottom: value + '%'}" ng-class="{nonvisible: inoutpipes[key]}">
 						</div>
-						<div class="bendedpipe2">
+						<div class="normalpipe" ng-repeat="(key, value) in bendedpipes" ng-style="{bottom: value + '%'}" ng-class="{nonvisible: !inoutpipes[key]}">
+						</div>
+						<div class="initpipes" ng-repeat="(key, value) in bendedpipes" ng-style="{bottom: value + '%'}"> 
+						</div>
+<!--						<div class="bendedpipe2">
 						</div>
 						<div class="bendedpipe3">
 						</div>
@@ -117,6 +123,7 @@
 						</div>
 						<div class="bendedpipe5">
 						</div>
+-->
 					</div>
 	                                <div class="robinetcontainer">
 						<div class="robinet" ng-style="{left: xrobinet+'%', bottom: yrobinet - 15 +'%'}"> 
@@ -173,6 +180,10 @@
 						<div class="bottomPipe"> 
 						</div>
 						<div class="topPipe"> 
+						</div>	
+						<div class="toppipeArrow">
+						</div>	
+						<div class="bottompipeArrow">
 						</div>						
 					</div>
 <!--
@@ -210,7 +221,7 @@
 				</div>
 			</div>
 			<div class="warningsblock"> 
-				<div class="title"> ROBOT </div>
+				<div class="title"> ROBOT: </div>
 				<div class="battery full" ng-style="{width: battlevel+'%'}"></div>
 				<div class="gps">
 					<span>GPS</span>				
