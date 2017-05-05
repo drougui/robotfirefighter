@@ -117,7 +117,8 @@ export class MainController {
         if(response.status === 200) {
           $scope.xrobinet = response.data[0];
           vlvop = response.data[1];
-          $scope.watlevelContainer = response.data[2];  
+          $scope.watlevelContainer = response.data[2]; 
+          $scope.watlevelContainerMap = (94 - $scope.watlevelContainer)/4; 
           $scope.xrobinetwater = $scope.xrobinet + decal;
           var fxa = ($scope.xrobinet - 40) * 10 / 40;
           $scope.faucetxaxis = fxa.toPrecision(3);
@@ -135,18 +136,25 @@ export class MainController {
         }
       });
       console.log($scope.firstPump)
+      
+      tictac = !tictac;
+      if(tictac){
+        $scope.widthTrashTapWater = 5;
+      } else {
+	$scope.widthTrashTapWater = 10;
+      }
+      if($scope.iconBatt<4){
+        $scope.iconBatt++;
+      } else {
+        $scope.iconBatt = 0;
+      }
     }, 500);
+    var tictac = true; 
+    $scope.iconBatt = 0; 
 
 
 
     // pump flow management
-    $scope.$watch('firstPump', function() {
-      if ($scope.firstPump && ($scope.firstPump!='') && ($scope.firstPump!='1') && ($scope.firstPump!='2') && ($scope.firstPump!='3')) {
-        $scope.firstPump = 0;
-        // else if not a correct number, pump off!
-      }
-    })
-
     $interval(function() {
     
       var inouts = [];
@@ -161,18 +169,13 @@ export class MainController {
       }
 
       $scope.inoutpipes = inouts;
-    }, 30000);
+    }, 10000);
     $scope.pumpSelected = 0;
-    $scope.pumps = [9,27,45,63,80];
-    $scope.pumpsFlows = [5,0,0,0,0];
-    $scope.bendedpipes = [15,29,43,57,71];
+    $scope.pumps = [9,27,45,63];/*,80];*/
+    $scope.pumpsFlows = [5,0,0,0];/*,0];*/
+    $scope.bendedpipes = [15,29,43,57]/*,71];*/
 
-
-
-    $scope.inoutpipes = [true,true,false,false,true];
-
-
-
+    $scope.inoutpipes = [true,true,false,false];/*,true];*/
 
     $scope.clickPump = function(number) {
       if($scope.pumpSelected==number) {
@@ -201,7 +204,7 @@ export class MainController {
         }
       }
       if(sumFlows<5) {
-        $scope.pumpsFlows[0] = 5-sumFlows;
+        $scope.pumpsFlows[0] = 5-partialSumFlows;
       }
     }
 
@@ -209,11 +212,33 @@ export class MainController {
       if($scope.pumpSelected!=0) {
         $scope.pumpsFlows[$scope.pumpSelected-1] = 0;
       }
+      var sumFlows = 0;
+      var partialSumFlows = 0;
+      for(var i=0; i<$scope.pumpsFlows.length; i++) {
+        sumFlows = sumFlows + $scope.pumpsFlows[i];
+        if(i>0) {
+          partialSumFlows = partialSumFlows + $scope.pumpsFlows[i];
+        }
+      }
+      if(sumFlows<5) {
+        $scope.pumpsFlows[0] = 5-partialSumFlows;
+      }
     }
 
     $scope.toone = function() {
       if($scope.pumpSelected!=0) {
         $scope.pumpsFlows[$scope.pumpSelected-1] = 1;
+      }
+      var sumFlows = 0;
+      var partialSumFlows = 0;
+      for(var i=0; i<$scope.pumpsFlows.length; i++) {
+        sumFlows = sumFlows + $scope.pumpsFlows[i];
+        if(i>0) {
+          partialSumFlows = partialSumFlows + $scope.pumpsFlows[i];
+        }
+      }
+      if(sumFlows<5) {
+        $scope.pumpsFlows[0] = 5-partialSumFlows;
       }
     }
 
@@ -221,11 +246,33 @@ export class MainController {
       if($scope.pumpSelected!=0) {
         $scope.pumpsFlows[$scope.pumpSelected-1] = 2;
       }
+      var sumFlows = 0;
+      var partialSumFlows = 0;
+      for(var i=0; i<$scope.pumpsFlows.length; i++) {
+        sumFlows = sumFlows + $scope.pumpsFlows[i];
+        if(i>0) {
+          partialSumFlows = partialSumFlows + $scope.pumpsFlows[i];
+        }
+      }
+      if(sumFlows<5) {
+        $scope.pumpsFlows[0] = 5-partialSumFlows;
+      }
     }
 
     $scope.tothree = function() {
       if($scope.pumpSelected!=0) {
         $scope.pumpsFlows[$scope.pumpSelected-1] = 3;
+      }
+      var sumFlows = 0;
+      var partialSumFlows = 0;
+      for(var i=0; i<$scope.pumpsFlows.length; i++) {
+        sumFlows = sumFlows + $scope.pumpsFlows[i];
+        if(i>0) {
+          partialSumFlows = partialSumFlows + $scope.pumpsFlows[i];
+        }
+      }
+      if(sumFlows<5) {
+        $scope.pumpsFlows[0] = 5-partialSumFlows;
       }
     }
 
@@ -233,6 +280,17 @@ export class MainController {
     $scope.tofour = function() {
       if($scope.pumpSelected!=0) {
         $scope.pumpsFlows[$scope.pumpSelected-1] = 4;
+      }
+      var sumFlows = 0;
+      var partialSumFlows = 0;
+      for(var i=0; i<$scope.pumpsFlows.length; i++) {
+        sumFlows = sumFlows + $scope.pumpsFlows[i];
+        if(i>0) {
+          partialSumFlows = partialSumFlows + $scope.pumpsFlows[i];
+        }
+      }
+      if(sumFlows<5) {
+        $scope.pumpsFlows[0] = 5-partialSumFlows;
       }
     }
 
@@ -243,6 +301,17 @@ export class MainController {
       }
     }
 
+
+
+
+
+    $scope.$watch('pumpsFlows', function() {
+      /*var sumWeight = 0;
+      var counter = 0;
+      while(sumWeight<5) {
+        $scope.widthTrashTapWater =  $scope.widthTrashTapWater + 10;
+      }*/
+    })
 
 
     // -------------------------------------------------------------------------

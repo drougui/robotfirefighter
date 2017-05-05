@@ -348,7 +348,7 @@ setInterval(function() {
       //console.log($scope.widthwaterflow);
 }, 200);
 
-var watlevelContainer = 1;
+var watlevelContainer = 94;
 setInterval(function() {
 /*  if(watlevelContainer < 94) {
     watlevelContainer = watlevelContainer + 1;

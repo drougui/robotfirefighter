@@ -258,6 +258,9 @@
 	width: 30px;
 	height: 30px;
 	background-color: #CE3D3D;
+	padding-left: 5px;
+	padding-top: 4px;
+	font-size: 15px;
 }
 
 .loadlocW{
@@ -265,8 +268,18 @@
 	width: 30px;
 	height: 30px;
         background-color: #0066FF;
+	font-size: 20px;
 	/*top: 90%;
 	left: 90%;*/
+	display: flex;
+	justify-content: flex-end;
+	align-items: flex-end;
+}
+
+.waterlevelmap{
+	width: 5px;
+	background-color: black;
+	margin: 5px;
 }
 
 
@@ -532,6 +545,14 @@
 	top: 70%;
 }
 
+.trashtapwater{
+	background-color: white;
+	left: 4%;
+	position: absolute;
+	bottom: 9%;
+	height: 30px;
+}
+
 .pumpInput{
 	width: 100px;
 }
@@ -580,6 +601,7 @@
 /*	background-color: white;*/
 	font-size: 20px;
 	color: white;
+	cursor: pointer;
 }
 
 .minusbutton{
@@ -588,6 +610,7 @@
 /*	background-color: white;*/
 	font-size: 20px;
 	color: white;
+	cursor: pointer;
 }
 
 
@@ -649,7 +672,7 @@
 	height: 10px;
 	width: 47px;
 	position: absolute;
-	right: 40%;
+	right: 42%;
 }
 
 .bendedpipe{
