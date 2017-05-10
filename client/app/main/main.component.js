@@ -13,6 +13,9 @@ export class MainController {
 
   /*@ngInject*/
   constructor($http, $scope, socket, hotkeys, $timeout, $interval) {
+
+/*    $('iframe').contents().find('img').css({with: '100%', 'height': '100%'});*/
+
     $scope.nbfighted = 0;
     this.$http = $http;
     this.socket = socket;

@@ -28,13 +28,60 @@
 </div> -->
 
 <div class="screen" ng-keypress="myFunct($event)">
+	<div class="leftPart">  
+		<div class="missionBlock">
+			<div class="maincontainer2">
+				<div class="iconCircle">
+					<i class="fa fa-trophy" aria-hidden="true"></i>
+				</div>
+			</div>
+		</div>
+		<div class="waterBlock"> 
+			<div class="maincontainer">
+				<div class="iconCircle">
+					<i class="fa fa-tint" aria-hidden="true"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="rightPart"> 
+		<div class="videoBlock"> 
+			<div class="maincontainer">
+				<div class="iconCircle">
+					<i class="fa fa-video-camera" aria-hidden="true"></i>
+				</div>
+				<!-- <iframe class="streamcamera" src="http://localhost:8080/?action=stream"   scrolling="no" frameBorder="0" style="height: 30%; width: 20%">		 	
+				</iframe> -->
+				<div class="robotControl">
+					<i class="fa fa-keyboard-o" aria-hidden="true"></i>
+					<div class="spaceKey">
+						SPACE					
+					</div>
+				</div>
+				<img class="streamcamera" src="http://localhost:8080/?action=stream"   scrolling="no" frameBorder="0">
+				<div class="splatchContainer">
+		                	<div class="splatch" ng-class="{visiblesplatch: waterize}" >
+		                	</div>
+				</div>
+				<div class="redhotContainer">
+		                	<div class="redhot" ng-style="{opacity: hotscreen}">
+		                	</div>
+				</div>
+			</div>		
+		</div>
+		<div class="infoBlock"> 
+			<div class="maincontainer">
+				<div class="iconCircle">
+					<i class="fa fa-info" aria-hidden="true"></i>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+<!--
 	<div class="camerablock">
 		<div class="scores">
-<!--
-			<div class="score">
-				<div> {{score}} </div> 
-				<div class="unit"> points </div>
-                        </div> -->
 			<div class="nbfighted">
 				<div> {{nbfighted}} </div>
 				<div class="unit"> offs </div>
@@ -49,7 +96,6 @@
 			</div>
 		</div>
 		<div class="cameracontainer">
-<!-- <input ng-keypress="count = count + 1" ng-init="count=0"> key up count: {{count}} -->
 			<iframe class="streamcamera" src="http://localhost:8080/?action=stream"   scrolling="no" frameBorder="0">		 	
 			</iframe>
 			<div class="splatchContainer">
@@ -75,10 +121,7 @@
 	<div class="dashboardblock">
 		<div class="dashboard">
 			<div class="matbblock">
-				<!--<div class="matb">
-				</div>-->
                                 <div class="title"> WATER MANAGEMENT: 
-					<!--<span> values close to 0 <i class="fa fa-arrow-right" aria-hidden="true"></i> filling! </span> -->
 				</div>
 				<div class="wMngmtViz">
 					<div class="crosscontainer">
@@ -117,15 +160,6 @@
 						</div>
 						<div class="initpipes" ng-repeat="(key, value) in bendedpipes" ng-style="{bottom: value + '%'}"> 
 						</div>
-<!--						<div class="bendedpipe2">
-						</div>
-						<div class="bendedpipe3">
-						</div>
-						<div class="bendedpipe4">
-						</div>
-						<div class="bendedpipe5">
-						</div>
--->
 					</div>
 	                                <div class="robinetcontainer">
 						<div class="robinet" ng-style="{left: xrobinet+'%', bottom: yrobinet - 15 +'%'}"> 
@@ -146,18 +180,6 @@
 						</div>
 						<div class="string" ng-style="{left: xrobinet+12.5+'%', bottom: yrobinet+3+'%'}"> 
 						</div>
-<!--						<div class="curvepoint" ng-repeat="(key,value) in robcurve" ng-style="{left: value.x + 13 +'%', bottom: value.y -15 +'%'}">
-						</div>
-						<div class="axispoint" ng-repeat="(key,value) in robaxis" ng-style="{left: value + 13 +'%'}">
-						</div>
-						<div class="headArrow">
-						</div>
-						<div class="ticknumber" ng-repeat="(key,value) in robticknumber" ng-style="{left: value.x + 13 +'%'}">
-							<span> {{value.val}} </span>						
-						</div>
-						<div class="ticks" ng-repeat="value in robticknumber" ng-style="{left: value.x + 14 +'%'}">
-						</div>
--->
 						<div class="robinetwater" ng-style="{left: xrobinetwater-2+'%', bottom: yrobinet - 20 +'%'}"> 
 						</div>
 						<div class="montainAxis"> 
@@ -187,23 +209,7 @@
 						</div>	
 						<div class="bottompipeArrow">
 						</div>						
-					</div>
-<!--
-					<div class="crosscontainer">
-						<div class="topArrow" ng-click="openingctrlfctplus()">	
-						</div>						
-						<div class="cross" ng-style="{transform: 'rotate('+ rotcross +'deg)'}">
-						</div>
-						<div class="botArrow" ng-click="openingctrlfctminus()">	
-						</div>
-						<div class="controlnames"> 
-							<span> VALVE OPENING: </span> <span> {{valveopening}} </span> 
-						</div>
-						<div class="crossvalues">
-			                                <span>COUPLE: {{openingcontrol}} </span>
-                		                </div> 
-					</div> 	
--->				
+					</div>				
 				</div>                             
 			</div>		
 			<div class="mapblock"> 
@@ -245,6 +251,4 @@
 			</div>
 		</div>
 	</div>
-</div>
-<!-- TODO -->
-<!-- http://stackoverflow.com/questions/6633248/how-to-grab-keyboard-events-on-an-element-which-doesnt-accept-focus -->
+-->

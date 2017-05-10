@@ -13,6 +13,9 @@ export class MainController {
 
   /*@ngInject*/
   constructor($http, $scope, socket, hotkeys, $timeout, $interval) {
+
+    $('iframe').contents().find('img').css({with: '100%', 'height': '100%'});
+
     $scope.nbfighted = 0;
     this.$http = $http;
     this.socket = socket;
@@ -118,7 +121,7 @@ export class MainController {
           $scope.xrobinet = response.data[0];
           vlvop = response.data[1];
           $scope.watlevelContainer = response.data[2]; 
-          $scope.watlevelContainerMap = (94 - $scope.watlevelContainer)/4; 
+          $scope.watlevelContainerMap = (94 - $scope.watlevelContainer)/5; 
           $scope.xrobinetwater = $scope.xrobinet + decal;
           var fxa = ($scope.xrobinet - 40) * 10 / 40;
           $scope.faucetxaxis = fxa.toPrecision(3);
