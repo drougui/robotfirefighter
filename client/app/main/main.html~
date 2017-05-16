@@ -30,9 +30,20 @@
 <div class="screen" ng-keypress="myFunct($event)">
 	<div class="leftPart">  
 		<div class="missionBlock">
-			<div class="maincontainer2">
+			<div class="maincontainermission">
 				<div class="iconCircle">
 					<i class="fa fa-trophy" aria-hidden="true"></i>
+				</div>
+				<div class="gametitle">
+					Firefighter Human-Robot Team <div class="fireicon"> </div>
+				</div>
+				<div class="missioninfo">
+					<div class="numbersinfo"> 
+						<!-- <i class="fa fa-star-o" aria-hidden="true"></i> -->
+						<i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+						{{nbfighted}} 
+					</div> 
+					<div  class="numbersinfo"> <i class="fa fa-clock-o" aria-hidden="true"></i>   {{remainingtime}} </div>
 				</div>
 			</div>
 		</div>
@@ -53,19 +64,55 @@
 				<!-- <iframe class="streamcamera" src="http://localhost:8080/?action=stream"   scrolling="no" frameBorder="0" style="height: 30%; width: 20%">		 	
 				</iframe> -->
 				<div class="robotControl">
-					<i class="fa fa-keyboard-o" aria-hidden="true"></i>
-					<div class="spaceKey">
-						SPACE					
+					<div class="headerrobotcontrol">
+						<i class="fa fa-gamepad" aria-hidden="true"></i>
+					</div>
+					<div class="explainkeys">
+						<div class="littlesplatch">
+						</div>
+						<div class="spaceKey">
+							<div> SPACE </div>					
+						</div>
+					</div>
+					<div class="explainkeys">
+						<div class="arrowFor">
+						</div>
+						<div class="anykey">
+							<div> <i class="fa fa-arrow-up" aria-hidden="true"></i> </div>					
+						</div>
+					</div>
+					<div class="explainkeys">
+						<div class="arrowBack">
+						</div>
+						<div class="anykey">
+							<div> <i class="fa fa-arrow-down" aria-hidden="true"></i> </div>					
+						</div>
+					</div>
+					<div class="explainkeys">
+						<div class="arrowLeft">
+						</div>
+						<div class="anykey">
+							<div> <i class="fa fa-arrow-left" aria-hidden="true"></i> </div>					
+						</div>
+					</div>
+					<div class="explainkeys">
+						<div class="arrowRight">
+						</div>
+						<div class="anykey">
+							<div> <i class="fa fa-arrow-right" aria-hidden="true"></i> </div>					
+						</div>
 					</div>
 				</div>
-				<img class="streamcamera" src="http://localhost:8080/?action=stream"   scrolling="no" frameBorder="0">
-				<div class="splatchContainer">
-		                	<div class="splatch" ng-class="{visiblesplatch: waterize}" >
-		                	</div>
-				</div>
-				<div class="redhotContainer">
-		                	<div class="redhot" ng-style="{opacity: hotscreen}">
-		                	</div>
+				<div class="streamcamera">
+					<img class="imagecam" src="http://localhost:8080/?action=stream"   scrolling="no" frameBorder="0">
+					<div class="splatchContainer">
+				        	<div class="splatch" ng-class="{visiblesplatch: waterize}">
+				        	</div>
+					</div>
+					<div class="redhotContainer">
+				        	<div class="redhot" ng-style="{opacity: hotscreen}">
+				        	</div>
+					</div>
 				</div>
 			</div>		
 		</div>
@@ -73,6 +120,49 @@
 			<div class="maincontainer">
 				<div class="iconCircle">
 					<i class="fa fa-info" aria-hidden="true"></i>
+				</div>
+				<i class="fa fa-globe" aria-hidden="true"></i>
+				<div class="mapblock"> 
+					<div class="map">
+						<div class="point" ng-style="{top: propFromTop, left: propFromLeft, transform: 'rotate('+ rotindeg +'deg)'}">
+				
+						</div>
+						<div class="tree" ng-repeat="(key, value) in trees" ng-style="{top: value.y, left: value.x}">
+						</div>
+						<div class="fire" ng-repeat="(key, value) in firesloc" ng-style="{top: value.y, left: value.x, opacity: opacityfire[key]}">
+						</div>
+
+						<div class="loadlocB" ng-style="{top: zones[1].y, left: zones[1].x}">
+<!--
+							<i class="fa fa-battery-empty" ng-show="iconBatt==0"></i>
+							<i class="fa fa-battery-quarter" ng-show="iconBatt==1"></i>
+							<i class="fa fa-battery-half" ng-show="iconBatt==2"></i>
+							<i class="fa fa-battery-three-quarters" ng-show="iconBatt==3"></i>
+							<i class="fa fa-battery-full" ng-show="iconBatt==4"></i>	
+-->
+							<i class="fa fa-bolt" aria-hidden="true"></i>					
+						</div>
+						<div class="loadlocW" ng-style="{top: zones[0].y, left: zones[0].x}">
+							<div>
+								<i class="fa fa-tint" aria-hidden="true"></i>
+							</div>						
+							<div class="waterlevelmap" ng-style="{height: watlevelContainerMap + 'px'}">
+							</div>				
+						</div>
+					</div>
+				</div>
+				<div class="robothead">
+				</div>
+				<div class="warningsblock"> 
+					<div class="title"> ROBOT: </div>
+					<div class="battery full" ng-style="{width: battlevel+'%'}"></div>
+					<div class="gps">
+						<span>GPS</span>				
+					</div>
+					<div class="waterlevel">				
+					</div>
+					<div class="waterempty" ng-style="{height: watlevel+'px'}">
+					</div>
 				</div>
 			</div>
 		</div>
