@@ -339,6 +339,9 @@ export class MainController {
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
+		if (pressedKeys[38] && !pressedKeys[37]) {
+    			$scope.forward();
+  		}
           } else if(debug) {
             console.log('nok');
           }
@@ -363,6 +366,9 @@ export class MainController {
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
+		if (pressedKeys[38] && !pressedKeys[39]) {
+    			$scope.forward();
+  		}
           } else if(debug) {
             console.log('nok');
           }
@@ -394,7 +400,9 @@ export class MainController {
         });
       }
     };
-
+	var pressedKeys = [];
+window.onkeyup = function(e) {pressedKeys[e.keyCode]=false;}
+window.onkeydown = function(e) {pressedKeys[e.keyCode]=true;}
     $scope.forward = function() {
       if(debug) {
         console.log('forward');

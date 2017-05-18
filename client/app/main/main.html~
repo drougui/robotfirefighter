@@ -52,6 +52,47 @@
 				<div class="iconCircle">
 					<i class="fa fa-tint" aria-hidden="true"></i>
 				</div>
+	                        <div class="robinetcontainer">
+					<div class="robinet" ng-style="{left: xrobinet+2+'%', bottom: yrobinet/1.8 + 42 +'%'}"> 
+					</div>
+					<div class="wheel" ng-style="{left: xrobinet+7.5+'%', bottom: yrobinet/1.8+58+'%'}"> 
+					</div>
+					<!-- replace by a rolling wheel -->
+					<div class="right" ng-style="{left: xrobinet+9.6+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol < 3)}">
+					</div>
+					<div class="right" ng-style="{left: xrobinet+11.6+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol < 1)}">
+					</div>
+					<div class="right" ng-style="{left: xrobinet+13.6+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol < 2)}">
+					</div>
+					<div class="left" ng-style="{left: xrobinet+9.5+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol > -3)}">
+					</div>
+					<div class="left" ng-style="{left: xrobinet+7.5+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol > -1)}">
+					</div>
+					<div class="left" ng-style="{left: xrobinet+5.5+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol > -2)}">
+					</div>
+					<div class="string" ng-style="{left: xrobinet+11.5+'%', bottom: yrobinet/1.8+52+'%'}"> 
+					</div>
+					<div class="robinetwater" ng-style="{left: xrobinetwater+'%', bottom: yrobinet/1.8 + 37 +'%'}"> 
+					</div>
+					<div class="montainAxis"> 
+					</div>
+					<div class="neckcontainer">
+					</div>
+					<div class="tankcontainer">
+						<div class="tankcontainerwater" ng-style="{height: watlevelContainer-4+'%'}"> 
+						</div>                                	
+					</div>
+					<div class="faucetaxis"> 
+						<span> TAP POSITION: {{faucetxaxis}} </span> 
+					</div>
+					<div class="force"> 
+						<span> ROTATION: {{faucetcontrol}} </span> 
+					</div>
+					<div class="mainbuttonL" ng-click="faucetctrlfctminus()"> <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
+					</div>
+					<div class="mainbuttonR" ng-click="faucetctrlfctplus()"> <i class="fa fa-chevron-circle-right" aria-hidden="true"></i> 
+					</div>
+				</div>				
 			</div>
 		</div>
 	</div>
@@ -121,47 +162,82 @@
 				<div class="iconCircle">
 					<i class="fa fa-info" aria-hidden="true"></i>
 				</div>
-				<i class="fa fa-globe" aria-hidden="true"></i>
-				<div class="mapblock"> 
-					<div class="map">
-						<div class="point" ng-style="{top: propFromTop, left: propFromLeft, transform: 'rotate('+ rotindeg +'deg)'}">
-				
-						</div>
-						<div class="tree" ng-repeat="(key, value) in trees" ng-style="{top: value.y, left: value.x}">
-						</div>
-						<div class="fire" ng-repeat="(key, value) in firesloc" ng-style="{top: value.y, left: value.x, opacity: opacityfire[key]}">
-						</div>
-
-						<div class="loadlocB" ng-style="{top: zones[1].y, left: zones[1].x}">
-<!--
-							<i class="fa fa-battery-empty" ng-show="iconBatt==0"></i>
-							<i class="fa fa-battery-quarter" ng-show="iconBatt==1"></i>
-							<i class="fa fa-battery-half" ng-show="iconBatt==2"></i>
-							<i class="fa fa-battery-three-quarters" ng-show="iconBatt==3"></i>
-							<i class="fa fa-battery-full" ng-show="iconBatt==4"></i>	
--->
-							<i class="fa fa-bolt" aria-hidden="true"></i>					
-						</div>
-						<div class="loadlocW" ng-style="{top: zones[0].y, left: zones[0].x}">
-							<div>
-								<i class="fa fa-tint" aria-hidden="true"></i>
-							</div>						
-							<div class="waterlevelmap" ng-style="{height: watlevelContainerMap + 'px'}">
-							</div>				
+				<div class="iconscontents">
+					<div class="linktoicon">
+						<i class="fa fa-globe" aria-hidden="true"></i>
+					</div>
+					<div class="maincontainersec">
+						<div class="mapblock">
+							<div class="map">
+								<div class="point" ng-style="{top: propFromTop, left: propFromLeft, transform: 'rotate('+ rotindeg +'deg)'}">
+								</div>
+								<div class="tree" ng-repeat="(key, value) in trees" ng-style="{top: value.y, left: value.x}">
+								</div>
+								<div class="fire" ng-repeat="(key, value) in firesloc" ng-style="{top: value.y, left: value.x, opacity: opacityfire[key]}">
+								</div>
+								<div class="loadlocB" ng-style="{top: zones[1].y, left: zones[1].x}">
+								<!--<i class="fa fa-battery-empty" ng-show="iconBatt==0"></i>
+								<i class="fa fa-battery-quarter" ng-show="iconBatt==1"></i>
+								<i class="fa fa-battery-half" ng-show="iconBatt==2"></i>
+								<i class="fa fa-battery-three-quarters" ng-show="iconBatt==3"></i>
+								<i class="fa fa-battery-full" ng-show="iconBatt==4"></i>-->
+									<i class="fa fa-bolt" aria-hidden="true"></i>					
+								</div>
+								<div class="loadlocW" ng-style="{top: zones[0].y, left: zones[0].x}">
+									<div>
+										<i class="fa fa-tint" aria-hidden="true"></i>
+									</div>						
+									<div class="waterlevelmap" ng-style="{height: watlevelContainerMap + 'px'}">
+									</div>				
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
-				<div class="robothead">
-				</div>
-				<div class="warningsblock"> 
-					<div class="title"> ROBOT: </div>
-					<div class="battery full" ng-style="{width: battlevel+'%'}"></div>
-					<div class="gps">
-						<span>GPS</span>				
+				<div class="iconscontents2">
+					<div class="linktoicon">
+						<div class="robothead">
+						</div>
 					</div>
-					<div class="waterlevel">				
-					</div>
-					<div class="waterempty" ng-style="{height: watlevel+'px'}">
+					<div class="maincontainersec2">
+						<div class="warningsblock">
+							<div class="robtoppart">
+								<div class="batgps">
+									<div class="connectbat">
+										<div class="battery">
+											<div class="batlev"  ng-style="{width: battlevel+'%'}">
+											</div>
+										</div>
+										<div class="batconnect">
+										</div>
+									</div>
+									<div class="gps">
+										<div> <i class="fa fa-signal" aria-hidden="true"></i> </div>
+										<div> GPS </div>	 			
+									</div>
+								</div>
+								<div class="therm">
+									<div class="temperature">
+										<div class="cercle">
+											<div class="bluecercle">
+											</div>								
+										</div>
+										<div class="thermometer">
+											<div class="mercure" ng-style="{height: mercurelevel}"> 	
+											</div>	
+										</div>								
+									</div>	
+								</div>
+							</div>
+							<div class="robotwaterres">
+								<div class="littlesplatchwhite">
+								</div>
+								<div class="waterlevel">				
+									<div class="waterempty" ng-style="{width: (72-watlevel)/5 +'vw'}">
+									</div>								
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

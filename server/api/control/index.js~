@@ -98,7 +98,7 @@ serverGet.on('message', function(message, remote) {
     if(mercurelevelfloat < 10) {
       mercurelevelfloat = 10;
     }
-    mercurelevel = mercurelevelfloat.toString() + 'px';
+    mercurelevel = mercurelevelfloat.toString()/70 + 'vw';
     hotscreen = mercurelevelfloat/300;
     counter = 0;
   }
@@ -115,6 +115,7 @@ serverGet.on('message', function(message, remote) {
 });
 serverGet.bind(PORTGET, HOST);
 var counter = 0;
+
 
 //=====================================================
 // create udp message for orocos
@@ -323,7 +324,6 @@ var coeffspeed = 25;
 var coeffspeedopening = 0.1;
 
 var faucetxaxis = 2 * 10 / 40;
-
 setInterval(function() {
   if((xrobinet <= 80) && (xrobinet >= 0)) {
     xrobinet = xrobinet + coeffspeed * (pivalue / 80) * Math.sin(pivalue * xrobinet / 40 - pivalue) + faucetcontrol;
@@ -347,6 +347,7 @@ setInterval(function() {
     widthwaterflow = 10 - Math.abs(temp);
       //console.log($scope.widthwaterflow);
 }, 200);
+
 
 var watlevelContainer = 94;
 setInterval(function() {
@@ -469,7 +470,7 @@ var stopFillingBattery = function() {
 // TODO go server side
 var tictac = false;
 var hotscreen = 0;
-var mercurelevel = '10px';
+var mercurelevel = '0.1vw';
 var mercurelevelfloat = 10;
 /*
 setInterval(function() {

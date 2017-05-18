@@ -14,7 +14,7 @@ export class MainController {
   /*@ngInject*/
   constructor($http, $scope, socket, hotkeys, $timeout, $interval) {
 
-    $('iframe').contents().find('img').css({with: '100%', 'height': '100%'});
+/*    $('iframe').contents().find('img').css({with: '100%', 'height': '100%'});*/
 
     $scope.nbfighted = 0;
     this.$http = $http;
@@ -339,6 +339,9 @@ export class MainController {
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
+		if (pressedKeys[38]) {
+    			$scope.forward();
+  		}
           } else if(debug) {
             console.log('nok');
           }
@@ -363,6 +366,9 @@ export class MainController {
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
+		if (pressedKeys[38]) {
+    			$scope.forward();
+  		}
           } else if(debug) {
             console.log('nok');
           }
@@ -394,7 +400,9 @@ export class MainController {
         });
       }
     };
-
+	var pressedKeys = [];
+window.onkeyup = function(e) {pressedKeys[e.keyCode]=false;}
+window.onkeydown = function(e) {pressedKeys[e.keyCode]=true;}
     $scope.forward = function() {
       if(debug) {
         console.log('forward');
