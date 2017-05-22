@@ -803,6 +803,80 @@
 	z-index: 3;
 }
 
+.wmbuttons{
+	width: 9vw;
+	height: 45vh;
+	position: absolute;
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.wmbuttons i{
+	font-size: 3vw;
+}
+
+.mainbuttonL{
+	cursor: pointer;
+	color: white;
+	font-size: 5vw;
+}
+
+.mainbuttonR{
+	font-size: 5vw;
+	cursor: pointer;
+	color: white;
+}
+
+.tankcontainerwaterpart{
+	height: 50%;
+}
+
+.tankcontainerleakspart{
+	height: 50%;
+	width: 100%;
+	background-color: yellow; 
+}
+
+.topleaks{
+	width: 100%;
+	height: 66%;
+	background: blue;
+	display: flex;
+	justify-content: space-between;
+}
+
+.botleaks{
+	width: 100%;
+	height: 33%;
+	background: red;
+	display: flex;
+	justify-content: space-between;
+}
+
+.leak{
+	height: 100%;
+	width: 5vw;
+	background-size: 5vw 100%;
+	background-image: url("/assets/images/leak.png");
+}
+
+.leaktop{
+	height: 50%;
+	width: 5vw;
+	background-size: 5vw 100%;
+	background-image: url("/assets/images/leak.png");
+}
+
+.containertap{
+	height: 100%;
+	width: 7vw;
+	background-size: 7vw 100%;
+	background-image: url("/assets/images/tapcontainer.png");
+	margin-left: 2vw;
+}
+
 /*.insideWheel{
 	border-radius: 50%;
 	background-color: #4F849E;
@@ -1203,26 +1277,6 @@
         margin-left: 30px;
 }
 
-
-.mainbuttonL{
-	cursor: pointer;
-	color: white;
-	font-size: 5vw;
-	position: absolute;
-	top: 45%;
-	left: 2%;
-}
-
-.mainbuttonR{
-	font-size: 5vw;
-	cursor: pointer;
-	color: white;
-	position: absolute;
-	top: 45%;
-	left: 17%;
-}
-
-
 .neckcontainer{
 	width: 5vw;
 	height: 4.5vh;
@@ -1242,6 +1296,7 @@
 	position: absolute;
 	left: 30%;
 	top: 35%;
+	cursor: url("/assets/images/wrench.png"), pointer;
 }
 
 .tankcontainerwater{

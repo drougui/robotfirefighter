@@ -79,16 +79,55 @@
 					<div class="neckcontainer">
 					</div>
 					<div class="tankcontainer">
-						<div class="tankcontainerwater" ng-style="{height: watlevelContainer-4+'%'}"> 
-						</div>                                	
+						<div class="tankcontainerwaterpart">
+							<div class="tankcontainerwater" ng-style="{height: watlevelContainer-4+'%'}"> 
+							</div>
+						</div>    
+						<div class="tankcontainerleakspart">
+							<div class="topleaks">
+								<div class="leaks">
+									<div class="leaktop">
+									</div>
+									<div class="leaktop">
+									</div>
+								</div>	
+								<div class="containertap">
+								</div>
+								<div class="leaks">
+									<div class="leaktop">
+									</div>
+									<div class="leaktop">
+									</div>
+								</div>								
+							</div>
+							<div class="midleaks">
+								<div class="leak">
+								</div>
+								<div class="leak">
+								</div>
+							</div>
+							<div class="botleaks">
+								<div class="leak">
+								</div>
+								<div class="leak">
+								</div>
+								<div class="leak">
+								</div>
+								<div class="leak">
+								</div>
+							</div>
+						</div>                             	
 					</div>
 					<div> 
 						<span> TAP POSITION: {{faucetxaxis}} </span> 
 						<span> ROTATION: {{faucetcontrol}} </span> 
 					</div>
-					<div class="mainbuttonL" ng-click="faucetctrlfctminus()"> <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
-					</div>
-					<div class="mainbuttonR" ng-click="faucetctrlfctplus()"> <i class="fa fa-chevron-circle-right" aria-hidden="true"></i> 
+					<div class="wmbuttons">
+						<i class="fa fa-mouse-pointer" aria-hidden="true"></i>						
+						<div class="mainbuttonL" ng-click="faucetctrlfctminus()"> <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
+						</div>
+						<div class="mainbuttonR" ng-click="faucetctrlfctplus()"> <i class="fa fa-chevron-circle-right" aria-hidden="true"></i> 
+						</div>
 					</div>
 				</div>				
 			</div>
