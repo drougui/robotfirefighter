@@ -27,7 +27,7 @@
   </form>
 </div> -->
 
-<div class="screen" ng-keypress="myFunct($event)">
+<div class="screen" ng-class="{screenWrench: wrenchMode}" ng-keypress="myFunct($event)">
 	<div class="leftPart">  
 		<div class="missionBlock">
 			<div class="maincontainermission">
@@ -55,79 +55,106 @@
 	                        <div class="robinetcontainer">
 					<div class="robinet" ng-style="{left: xrobinet+2+'%', bottom: yrobinet/1.8 + 42 +'%'}"> 
 					</div>
-					<div class="wheel" ng-style="{left: xrobinet+7.5+'%', bottom: yrobinet/1.8+58+'%'}"> 
+					<div class="wheel" ng-if="direction!=0" ng-class="{wheelinverse: direction<0}"  ng-style="{left: xrobinet+7.9+'%', bottom: yrobinet/1.8+58+'%', 'animation-duration': animtime + 's'}"> 
 					</div>
-					<!-- replace by a rolling wheel -->
-					<div class="right" ng-style="{left: xrobinet+9.6+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol < 3)}">
-					</div>
-					<div class="right" ng-style="{left: xrobinet+11.6+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol < 1)}">
-					</div>
-					<div class="right" ng-style="{left: xrobinet+13.6+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol < 2)}">
-					</div>
-					<div class="left" ng-style="{left: xrobinet+9.5+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol > -3)}">
-					</div>
-					<div class="left" ng-style="{left: xrobinet+7.5+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol > -1)}">
-					</div>
-					<div class="left" ng-style="{left: xrobinet+5.5+'%', bottom: yrobinet+15+'%'}" ng-class="{nonvisible: (faucetcontrol > -2)}">
+					<div class="wheel" ng-if="direction==0" ng-style="{left: xrobinet+7.9+'%', bottom: yrobinet/1.8+58+'%'}"> 
 					</div>
 					<div class="string" ng-style="{left: xrobinet+11.5+'%', bottom: yrobinet/1.8+52+'%'}"> 
 					</div>
-					<div class="robinetwater" ng-style="{left: xrobinetwater+'%', bottom: yrobinet/1.8 + 37 +'%'}"> 
+					<div class="robinetwaterContainer" ng-style="{left: xrobinetwater-0.6+'%', bottom: yrobinet/1.8 + 37 +'%'}">
+						<div class="robinetwater" ng-style="{width: waterwidth + 'vw', 'background-size': waterwidth + 'vw 1vw'}">
+						
+						</div>
 					</div>
 					<div class="montainAxis"> 
 					</div>
 					<div class="neckcontainer">
 					</div>
-					<div class="tankcontainer">
+					<div class="tankcontainer">	
 						<div class="tankcontainerwaterpart">
-							<div class="tankcontainerwater" ng-style="{height: watlevelContainer-4+'%'}"> 
+							<div class="tankcontainerwater" ng-style="{height: 100 - watlevelContainer + '%'}"> 
 							</div>
+<!-- TODO manage water level w.r.t leaks and pushbutton and tap position
+leaks/wrench/etc in server files-->
 						</div>    
 						<div class="tankcontainerleakspart">
-							<div class="topleaks">
+							<div class="bigCross" ng-class="{nonvisible: !brokenContainer}">
+								<i class="fa fa-times" aria-hidden="true" ng-style="{'font-size': crossSize + 'vw'}"></i>
+							</div>
+							<div class="wrapLeaks">
+								<div class="leak" ng-repeat="(key, value) in leakPlaces" ng-class="{nonvisible: noleakat[key]}" ng-click="clickLeak(key)">
+								</div>
+							</div>
+<!--							<div class="topleaks">
 								<div class="leaks">
-									<div class="leaktop">
+									<div class="leaktop" ng-class="{nonvisible: noleakat[0]}" ng-click="clickLeak(0)">
 									</div>
-									<div class="leakttop">
+									<div class="leaktop" ng-class="{nonvisible: noleakat[1]}" ng-click="clickLeak(1)">
 									</div>
 								</div>	
 								<div class="containertap">
 								</div>
 								<div class="leaks">
-									<div class="leaktop">
+									<div class="leaktop" ng-class="{nonvisible: noleakat[2]}" ng-click="clickLeak(2)">
 									</div>
-									<div class="leaktop">
+									<div class="leaktop" ng-class="{nonvisible: noleakat[3]}" ng-click="clickLeak(3)">
 									</div>
 								</div>								
 							</div>
-							<div class="midleaks">
-								<div class="leak">
-								</div>
-								<div class="leak">
-								</div>
-							</div>
 							<div class="botleaks">
-								<div class="leak">
+								<div class="leak" ng-class="{nonvisible: noleakat[4]}" ng-click="clickLeak(4)">
 								</div>
-								<div class="leak">
+								<div class="leak" ng-class="{nonvisible: noleakat[5]}" ng-click="clickLeak(5)">
 								</div>
-								<div class="leak">
+								<div class="leak" ng-class="{nonvisible: noleakat[6]}" ng-click="clickLeak(6)">
 								</div>
-								<div class="leak">
+								<div class="leak" ng-class="{nonvisible: noleakat[7]}" ng-click="clickLeak(7)">
 								</div>
 							</div>
-						</div>                             	
+-->
+						</div>
+						<div class="legsContainer">
+							<div class="legs">
+							</div>                           	
+						</div>
 					</div>
+<!--
 					<div> 
 						<span> TAP POSITION: {{faucetxaxis}} </span> 
-						<span> ROTATION: {{faucetcontrol}} </span> 
+						 
 					</div>
+-->
 					<div class="wmbuttons">
-						<i class="fa fa-mouse-pointer" aria-hidden="true"></i>						
-						<div class="mainbuttonL" ng-click="faucetctrlfctminus()"> <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
+						<i class="fa fa-mouse-pointer" aria-hidden="true"></i>
+						<div class="speed">  
+							<div class="wheelsmall2"> </div> 
+							<div> speed: {{faucetcontrol}} </div>
 						</div>
-						<div class="mainbuttonR" ng-click="faucetctrlfctplus()"> <i class="fa fa-chevron-circle-right" aria-hidden="true"></i> 
+						<div class="buttonWheel">
+							<div class="mainbuttonL" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctminus()"> 
+								<i class="fa fa-undo" aria-hidden="true"></i>
+								<div class="wheelsmall"> </div>
+							</div>
+							<div class="mainbuttonR" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctplus()"> 
+								<i class="fa fa-undo" aria-hidden="true"></i>
+								<div class="wheelsmall"> </div>
+							</div>
 						</div>
+						<div class="pushButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="waterPushButton()">
+							<!--<div class="pbcircle">
+								<div class="pbcirclesmall">
+								</div>
+							</div>-->
+							<div class="buttonTap">
+							</div>
+						</div>
+						<div class="wrenchButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="wrenchOnOff()">
+							<i class="fa fa-wrench" aria-hidden="true"></i>
+						</div>
+						<div class="newContainerButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="newContainer()">
+							<div class="containerIcon">
+							</div>
+						</div>					
 					</div>
 				</div>				
 			</div>
@@ -180,6 +207,10 @@
 							<div> <i class="fa fa-arrow-right" aria-hidden="true"></i> </div>					
 						</div>
 					</div>
+					<div ng-if="emptySlot">
+						Slot libre
+						<button ng-click="play()">Jouer</button>
+					</div>
 				</div>
 				<div class="streamcamera">
 					<img class="imagecam" src="http://localhost:8080/?action=stream"   scrolling="no" frameBorder="0">
@@ -230,6 +261,7 @@
 							</div>
 						</div>
 					</div>
+					<span> {{nbonfire}} </span>
 				</div>
 				<div class="iconscontents2">
 					<div class="linktoicon">
@@ -270,7 +302,7 @@
 								<div class="littlesplatchwhite">
 								</div>
 								<div class="waterlevel">				
-									<div class="waterempty" ng-style="{width: (72-watlevel)/5 +'vw'}">
+									<div class="waterempty">
 									</div>								
 								</div>
 							</div>

@@ -116,7 +116,6 @@ serverGet.on('message', function(message, remote) {
 serverGet.bind(PORTGET, HOST);
 var counter = 0;
 
-
 //=====================================================
 // create udp message for orocos
 //=====================================================
@@ -172,77 +171,94 @@ router.get('/fightedfires', function(req, res) {
 var udpMess;
 var buffer;
 var client;
+var jwt = require('jwt-simple');
+var secret = Buffer.from('fe1a1915a379f3be5394b64d14794932', 'hex');
+var watlevel = 50;
 router.post('/', function(req, res/*, next*/) {
-  console.log(req.body.key);
-  if(req.body.key == 'front') {
-    udpMess = speedToUdpMess(0.0, 0.6);
-    buffer = new Buffer(udpMess);
-    client = dgram.createSocket('udp4');
-    client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-      if(err) throw err;
-      //console.log('UDP message sent to ' + HOST +':'+ PORT);
-      client.close();
-    });
-  } else if(req.body.key == 'left') {
-    udpMess = speedToUdpMess(0.3, 0.0);
-    buffer = new Buffer(udpMess);
-    client = dgram.createSocket('udp4');
-    client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-      if(err) throw err;
-      //console.log('UDP message sent to ' + HOST +':'+ PORT);
-      client.close();
-    });
-  } else if(req.body.key == 'right') {
-    udpMess = speedToUdpMess(-0.3, 0.0);
-    buffer = new Buffer(udpMess);
-    client = dgram.createSocket('udp4');
-    client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-      if(err) throw err;
-      //console.log('UDP message sent to ' + HOST +':'+ PORT);
-      client.close();
-    });
-  } else if(req.body.key == 'back') {
-    udpMess = speedToUdpMess(0.0, -0.6);
-    buffer = new Buffer(udpMess);
-    client = dgram.createSocket('udp4');
-    client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-      if(err) throw err;
-      //console.log('UDP message sent to ' + HOST +':'+ PORT);
-      client.close();
-    });
-  } else if(req.body.key == 'space') {
-    if(watlevel < 70) {
-      watlevel = watlevel + 3;
-    } else {
-      robotTankEmpty = true;
-    }
-    for(var i = 0; i < treeslocations.length; i++) {
-    // close enough + good orientation
-      var diffX = treeslocations[i].x - robotx[0];
-      var diffY = treeslocations[i].y - roboty[0];
-      var normDiff = Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2));
-      diffX = diffX / normDiff;
-      diffY = diffY / normDiff;
-      var robotoX = Math.cos(roboto);
-      var robotoY = Math.sin(roboto);
-      var scalprod = robotoX * diffX + robotoY * diffY;
-      if((normDiff < 3) && (scalprod > 0.9) && firesStatesOfTrees[i]) {
-        console.log('USEFULL');
-        numFightedFires++;
-        var indexTree = i + 1;
-        var command1 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -10\' | yarp write /data/out /morse/treeonfire' + indexTree.toString() + '/teleporttf' + indexTree.toString() + '/in';
-        var command2 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -0.1\' | yarp write /data/out /morse/tree' + indexTree.toString() + '/teleport' + indexTree.toString() + '/in';
-        console.log(command1 + ' && ' + command2);
-        exec(command1 + ' && ' + command2, puts);
-        firesStatesOfTrees[i] = false;
+  console.log(req.body)
+  if(req.body.token) {
+    var decoded = jwt.decode(req.body.token, secret);
+    if(decoded.auth){
+      console.log(decoded);
+      if(req.body.key == 'front') {
+        udpMess = speedToUdpMess(0.0, 0.6);
+        buffer = new Buffer(udpMess);
+        client = dgram.createSocket('udp4');
+        client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+          if(err) throw err;
+          //console.log('UDP message sent to ' + HOST +':'+ PORT);
+          client.close();
+        });
+      } else if(req.body.key == 'left') {
+        udpMess = speedToUdpMess(0.3, 0.0);
+        buffer = new Buffer(udpMess);
+        client = dgram.createSocket('udp4');
+        client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+          if(err) throw err;
+          //console.log('UDP message sent to ' + HOST +':'+ PORT);
+          client.close();
+        });
+      } else if(req.body.key == 'right') {
+        udpMess = speedToUdpMess(-0.3, 0.0);
+        buffer = new Buffer(udpMess);
+        client = dgram.createSocket('udp4');
+        client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+          if(err) throw err;
+          //console.log('UDP message sent to ' + HOST +':'+ PORT);
+          client.close();
+        });
+      } else if(req.body.key == 'back') {
+        udpMess = speedToUdpMess(0.0, -0.6);
+        buffer = new Buffer(udpMess);
+        client = dgram.createSocket('udp4');
+        client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+          if(err) throw err;
+          //console.log('UDP message sent to ' + HOST +':'+ PORT);
+          client.close();
+        });
+      } else if(req.body.key == 'space') {
+        if(watlevel > 4) {
+          watlevel = watlevel - 3;
+        } else {
+          watlevel = 0;
+          robotTankEmpty = true;
+        }
+        for(var i = 0; i < treeslocations.length; i++) {
+          // close enough + good orientation
+          var diffX = treeslocations[i].x - robotx[0];
+          var diffY = treeslocations[i].y - roboty[0];
+          var normDiff = Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2));
+          diffX = diffX / normDiff;
+          diffY = diffY / normDiff;
+          var robotoX = Math.cos(roboto);
+          var robotoY = Math.sin(roboto);
+          var scalprod = robotoX * diffX + robotoY * diffY;
+          if((normDiff < 3) && (scalprod > 0.9) && firesStatesOfTrees[i]) {
+            console.log('USEFULL');
+            numFightedFires++;
+            var indexTree = i + 1;
+            var command1 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -10\' | yarp write /data/out /morse/treeonfire' + indexTree.toString() + '/teleporttf' + indexTree.toString() + '/in';
+            var command2 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -0.1\' | yarp write /data/out /morse/tree' + indexTree.toString() + '/teleport' + indexTree.toString() + '/in';
+            console.log(command1 + ' && ' + command2);
+            exec(command1 + ' && ' + command2, puts);
+            firesStatesOfTrees[i] = false;
+          }
+        }
       }
+      res.json({
+        posX: robotx,
+        posY: roboty,
+        orientation: roboto,
+        waterlevel: watlevel
+      });
+    }
+    else{
+      res.status(201).json("You're not playing !");
     }
   }
-  res.json({
-    posX: robotx,
-    posY: roboty,
-    orientation: roboto
-  });
+  else{
+    res.status(201).json("You're not playing !");
+  }
 });
 
 //=====================================================
@@ -284,15 +300,15 @@ setInterval(function() {
 //=====================================================
 // define fill/stopfill water functions
 var fillWaterInterval;
-var watlevel = 20;
 var robotTankEmpty = false;
 var isFillingWater = false;
 var fillingWater = function() {
   isFillingWater = true;
   clearInterval(fillWaterInterval);
   fillWaterInterval = setInterval(function() {
-    if(watlevel > 20) {
-      watlevel = watlevel - 3;
+    if( (watlevel < 100) && (watlevelContainer > 11) ) {
+      watlevel = watlevel + 10;
+      watlevelContainer = watlevelContainer - 10;
     }
   }, 500);
 };
@@ -348,71 +364,127 @@ setInterval(function() {
       //console.log($scope.widthwaterflow);
 }, 200);
 
-
-var watlevelContainer = 94;
+var watlevelContainer = 0;
 setInterval(function() {
 /*  if(watlevelContainer < 94) {
     watlevelContainer = watlevelContainer + 1;
   }*/
-  if((faucetxaxis < 2) && (faucetxaxis > -2) && watlevelContainer > 0) {
-    watlevelContainer = watlevelContainer - 1;//- widthwaterflow / 3;
+// ADD WATER
+  var leaksSum = 0;
+  for(var i = 0; i<leakPlacesNb; i++) {
+    if(!noleakat[i]){
+      leaksSum = leaksSum + 1;
+    }
+  }
+  if((faucetxaxis < 2) && (faucetxaxis > -2) && watlevelContainer < 99) {
+    watlevelContainer = watlevelContainer + waterwidth/7 - leaksSum/(2*leakPlacesNb); //TODO widthwater + leaks
+  } else if (watlevelContainer > 1){
+    watlevelContainer = watlevelContainer - leaksSum/leakPlacesNb;
   }
 }, 200);
 
-// functions in/de/creasing control states of water management
-var faucetctrlfctplus = function() {
-  if(faucetcontrol < 3) {
-    faucetcontrol = faucetcontrol + 1;
-  }
-};
 
-var faucetctrlfctminus = function() {
-  if(faucetcontrol > -3) {
-    faucetcontrol = faucetcontrol - 1;
-  }
-};
-
-var openingctrlfctplus = function() {
-  if(openingcontrol < 3) {
-    openingcontrol = openingcontrol + 1;
-  }
-};
-
-var openingctrlfctminus = function() {
-  if(openingcontrol > -3) {
-    openingcontrol = openingcontrol - 1;
-  }
-};
-
+var waterwidth = 0;
+var wrenchmode = false;
 // send new state of control of water management to client
 router.post('/watercontrol', function(req, res/*, next*/) {
-  console.log(req.body.key);
-  if(req.body.button == 'plusT') {
-    if(faucetcontrol < 3) {
-      faucetcontrol = faucetcontrol + 1;
-    }
-  } else if(req.body.button == 'minusT') {
-    if(faucetcontrol > -3) {
-      faucetcontrol = faucetcontrol - 1;
-    }
-  } else if(req.body.button == 'plusV') {
-    if(openingcontrol < 3) {
-      openingcontrol = openingcontrol + 1;
-    }
-  } else if(req.body.button == 'minusV') {
-    if(openingcontrol > -3) {
-      openingcontrol = openingcontrol - 1;
-    }
-  } 
-  res.json({
-    tapControl: faucetcontrol,
-    valveControl: openingcontrol
-  });
+console.log(req.body)
+ var repeater;
+if(req.body.token) {
+	var decoded = jwt.decode(req.body.token, secret);
+	console.log(decoded);
+	if(decoded.auth){
+	  if(req.body.button == 'plusT') {
+	    if(faucetcontrol < 3) {
+	      faucetcontrol = faucetcontrol + 1;
+	    }
+	  } else if(req.body.button == 'minusT') {
+	    if(faucetcontrol > -3) {
+	      faucetcontrol = faucetcontrol - 1;
+	    }
+	  } else if(req.body.button == 'pushButton') { // WATER PUSH BUTTON
+            waterwidth = 7;
+            var callCount = 1;
+            clearInterval(repeater);
+            repeater = setInterval(function () {
+              if (callCount < 8) {
+                waterwidth = 7 - callCount;
+                callCount += 1;
+              } else {
+                clearInterval(repeater);
+              }
+            }, 1000);
+	  } else if(req.body.button == 'wrenchButton') { // WRENCH 
+	    wrenchmode = !wrenchmode;
+          } else if(req.body.button == 'clickLeak') { // CLICK AT LEAK
+	    if(wrenchmode) {
+	      noleakat[req.body.leakid] = true;
+              wrenchmode = false;
+	    }
+	  } else if(req.body.button == 'newContainer') { // AND FINALLY "NEW CONTAINER"
+	    brokenContainer = false;
+            for (var i=0; i<leakPlacesNb; i++) {
+              noleakat[i] = true;
+            }
+            crossSize = 0;
+	  } 
+	  res.json({
+	    tapControl: faucetcontrol,
+	    wrenchMode: wrenchmode,
+            noLeakAt: noleakat,
+            brokenContainer: brokenContainer,
+            crossSize: crossSize
+	  });
+	}
+	else{
+		res.status(201).json("You're not playing !");
+	}
+}
+else{
+	res.status(201).json("You're not authenticated !");
+}
 });
 
 // give tap position, valve opening and water level of the container to client
 router.get('/watermanagement', function(req, res) {
-  res.json([xrobinet,vlvop,watlevelContainer]);
+  res.json([xrobinet,waterwidth,watlevelContainer]);
+});
+
+
+//=====================================================
+// leaks/container part
+//=====================================================
+// INIT
+var crossSize = 0;
+var leakPlacesNb = 12;
+var leakPlaces = [];
+var noleakat = [];
+var leakCounter = 0;
+for (var i=0; i<leakPlacesNb; i++) {
+  leakPlaces.push(leakCounter);
+  leakCounter++;
+  noleakat.push(true);
+}
+    
+// RANDOM LEAKS
+var brokenContainer = false;
+setInterval(function() {
+  var leaksNotEverywhere = false;
+  if(Math.random()<0.5) {
+    var myInt = Math.floor(Math.random()*leakPlacesNb);
+    noleakat[myInt] = false;
+    for(var i = 0; i<leakPlacesNb; i++){
+      leaksNotEverywhere = leaksNotEverywhere || noleakat[i];
+    }
+    if(!leaksNotEverywhere) {
+      brokenContainer = true;
+      crossSize = 25;
+    }
+  }
+}, 5000);
+
+router.get('/leaks', function(req, res) {
+  res.json([leakPlaces,noleakat,brokenContainer,crossSize]);
 });
 
 

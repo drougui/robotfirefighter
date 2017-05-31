@@ -35,6 +35,10 @@
 	height: 96vh;
 }
 
+.screenWrench{
+	cursor: url("/assets/images/wrench.png"), pointer;
+
+}
 
 .leftPart{
 	width: 35%;
@@ -792,8 +796,13 @@
         position: absolute;
 }
 
+@keyframes wheelanim {
+	100% {transform: rotate(360deg)}
+}
+
+
 .wheel{
-	background-image: url("/assets/images/wheel.png");
+	background-image: url("/assets/images/wheelBlack.png");
 	/*border-radius: 50%;
 	background-color: white;*/
 	height: 5vh;
@@ -801,7 +810,75 @@
 	background-size: 5vh 5vh;
         position: absolute;
 	z-index: 3;
+	animation-name: wheelanim;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
 }
+
+.wheelsmall{
+	background-image: url("/assets/images/wheelBlack.png");
+	/*border-radius: 50%;
+	background-color: white;*/
+	height: 2vh;
+	width: 2vh;
+	background-size: 2vh 2vh;
+        position: absolute;
+	z-index: 3;
+}
+
+.wheelsmall2{
+	background-image: url("/assets/images/wheelBlack.png");
+	/*border-radius: 50%;
+	background-color: white;*/
+	height: 2vh;
+	width: 2vh;
+	background-size: 2vh 2vh;
+	z-index: 3;
+}
+
+
+.speed{
+	display: flex;
+	font-size: 1vw;
+	justify-content: space-around;
+	align-items: center;
+	width: 6vw;
+}
+
+.wheelinverse{
+	animation-direction: reverse;
+}
+
+.wheel img{}
+
+.wheellll{
+	background-image: url("/assets/images/left_highspeed.gif");
+}
+
+.wheelll{
+	background-image: url("/assets/images/left_medspeed.gif");
+}
+
+.wheell{
+	background-image: url("/assets/images/left_lowspeed.gif");
+}
+
+.wheelrrr{
+	background-image: url("/assets/images/right_highspeed.gif");
+}
+
+.wheelrr{
+	background-image: url("/assets/images/right_medspeed.gif");
+}
+
+.wheelr{
+	background-image: url("/assets/images/right_lowspeed.gif");
+}
+
+
+
+
+
 
 .wmbuttons{
 	width: 9vw;
@@ -811,22 +888,113 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: space-around;
 }
 
 .wmbuttons i{
 	font-size: 3vw;
 }
 
+.buttonWheel{
+	width: 7vw;
+	display: flex;
+	justify-content: space-around;
+}
+
 .mainbuttonL{
-	cursor: pointer;
-	color: white;
-	font-size: 5vw;
+	color: black;
+	background-color: white;
+	height: 4vw;
+	width: 3vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 1vw;
 }
 
 .mainbuttonR{
-	font-size: 5vw;
+	color: black;
+	background-color: white;
+	height: 4vw;
+	width: 3vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 1vw;
+	transform: scale(-1, 1);
+}
+
+.pushButton{
+	color: black;
+	background-color: white;
+	height: 4vw;
+	width: 4vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 1vw;
+}
+
+.buttonTap{
+	height: 3vw;
+	width: 3vw;
+	background-size: 3vw 3vw;
+	background-image: url("/assets/images/tapWaterBlack.png");
+}
+
+.pbcircle{
+	border-radius: 100%;
+	width: 2.5vw;
+	height: 2.5vw;
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.pbcirclesmall{
+	border-radius: 100%;
+	width: 0.5vw;
+	height: 0.5vw;
+	background-color: white;
+}
+
+
+.wrenchButton{
+	color: black;
+	background-color: white;
+	height: 4vw;
+	width: 4vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 1vw;
+}
+
+
+
+
+.newContainerButton{
+	color: black;
+	background-color: white;
+	height: 4vw;
+	width: 4vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 1vw;
+}
+
+.cursorPointer{
 	cursor: pointer;
-	color: white;
+}
+
+
+.containerIcon{
+	height: 3vw;
+	width: 2vw;
+	background-size: 2vw 3vw;
+	background-image: url("/assets/images/container_icon_black.png");
 }
 
 .tankcontainerwaterpart{
@@ -836,13 +1004,31 @@
 .tankcontainerleakspart{
 	height: 50%;
 	width: 100%;
-	background-color: yellow; 
+	background-color: white; 
+}
+
+.wrapLeaks{
+	display: flex;
+	flex-wrap: wrap;
+/*	background-color: red;*/
+	height: 100%;
+	width: 100%;
+}
+
+.bigCross{
+	color: red;
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+
+.bigCross i{
+	font-size: 25vw;
 }
 
 .topleaks{
 	width: 100%;
 	height: 66%;
-	background: blue;
 	display: flex;
 	justify-content: space-between;
 }
@@ -850,16 +1036,15 @@
 .botleaks{
 	width: 100%;
 	height: 33%;
-	background: red;
 	display: flex;
 	justify-content: space-between;
 }
 
 .leak{
-	height: 100%;
+	height: 33%;
 	width: 5vw;
 	background-size: 5vw 100%;
-	background-image: url("/assets/images/leak.png");
+	background-image: url("/assets/images/crackblack.gif");
 }
 
 .leaktop{
@@ -870,9 +1055,9 @@
 }
 
 .containertap{
-	height: 100%;
-	width: 7vw;
-	background-size: 7vw 100%;
+	height: 10vh;
+	width: 4vw;
+	background-size: 4vw 10vh;
 	background-image: url("/assets/images/tapcontainer.png");
 	margin-left: 2vw;
 }
@@ -913,10 +1098,11 @@
 }
 
 .string{
-	background-color: white;
+/*	background-color: white;*/
 	height: 7vh;
 	position: absolute;
 	width: 0.2vw;
+	background: repeating-linear-gradient(60deg, white, white 0.1vw, black 0.2vw);
 }
 
 .curvepoint{
@@ -951,14 +1137,20 @@
 	top: 8%;
 }
 
+.robinetwaterContainer{
+	height: 3vw;
+	width: 1vw;
+	position: absolute;
+	display: flex;
+	justify-content: center;
+}
+
 .robinetwater{
 /*      background-color: white;*/
 	height: 3vw;
 	width: 0.7vw;
-	position: absolute;
 	background-size: 0.7vw 3vw;
-	background-image: url("/assets/images/water.gif");
-        /*top: 72px;*/
+	background-image: url("/assets/images/waterf.gif");
 }
 
 .bottomPipe{
@@ -1296,7 +1488,20 @@
 	position: absolute;
 	left: 30%;
 	top: 35%;
-	cursor: url("/assets/images/Wrench_font_awesome.png"), pointer;
+}
+
+.legsContainer{
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	height: 3vh;
+}
+
+.legs{
+	height: 5vh;
+	width: 10vw;
+	background-size: 10vw 5vh;
+	background-image: url("/assets/images/container_feets.png");
 }
 
 .tankcontainerwater{
@@ -1376,6 +1581,7 @@
 	/*background-color: #4F849E;*/
 	background-color: red;
 	width: 0.8vw;
+	z-index: 3
 }
 
 .cercle{
