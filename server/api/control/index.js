@@ -41,28 +41,44 @@ serverGet.on('listening', function() {
 var robotx = 0.0;
 var roboty = 0.0;
 var roboto = 0.0;
+var currentAutoMvt = false;
 serverGet.on('message', function(message, remote) {
+
   var byteArray = new Int8Array(4);
   for(var i = 0; i < 4; i++) {
     byteArray[i] = message[8 + 6 * 4 + i];
   }
   var posY = new Float32Array(byteArray.buffer);
+
   var byteArray2 = new Int8Array(4);
   for(var j = 0; j < 4; j++) {
     byteArray2[j] = message[8 + 7 * 4 + j];
   }
   var posX = new Float32Array(byteArray2.buffer);
+
   var byteArray3 = new Int8Array(4);
   for(var k = 0; k < 4; k++) {
     byteArray3[k] = message[8 + 8 * 4 + k];
   }
   var orientation = new Float32Array(byteArray3.buffer);
-  if(false) {
-    console.log(remote.address + ':' + remote.port + ' - ' + posX + '  ' + posY + '  ' + orientation);
+  
+  var byteArray4 = new Int8Array(2);
+  for(var l = 0; l < 2; l++) {
+    byteArray4[l] = message[8 + 50 * 4 + IND_ENDGOTO*2 + l];
+  }
+  var noMvt = new Int16Array(byteArray4.buffer);
+
+  if(true) {
+    console.log(remote.address + ':' + remote.port + ' - ' + posX + '  ' + posY + '  ' + orientation + '  ' + noMvt);
   }
   robotx = posX;
   roboty = posY;
   roboto = orientation;
+  if(noMvt==1) {
+    currentAutoMvt = false;
+  } else{
+    currentAutoMvt = true;
+  }
   // use fill/stop fill water functions
   if((roboty[0] < parseFloat(zoneslocations[0].y)+1) && (roboty[0] > parseFloat(zoneslocations[0].y)-1) && (robotx[0] < parseFloat(zoneslocations[0].x) + 1) && (robotx[0] > parseFloat(zoneslocations[0].x)-1)) {
     if(!isFillingWater) {
@@ -103,21 +119,12 @@ serverGet.on('message', function(message, remote) {
     counter = 0;
   }
   counter++;
-/*  if(tictac) {
-    mercurelevel = '50px';
-    tictac = false;
-    hotscreen = 0;
-  } else {
-    mercurelevel = '300px';
-    tictac = true;
-    hotscreen = 1;
-  }*/
 });
 serverGet.bind(PORTGET, HOST);
 var counter = 0;
 
 //=====================================================
-// create udp message for orocos
+// create udp message for orocos containing angular/linear speed
 //=====================================================
 function speedToUdpMess(as, ls) {
   var NB_INTS = 50;
@@ -139,15 +146,15 @@ function speedToUdpMess(as, ls) {
     integers[m] = 0;
   }
   var integersBytes = new Int8Array(integers.buffer);
-  var udpMess = new Int8Array(100);
+  var udpMess = new Int8Array(8 + 4*NB_FLOATS + 2*NB_INTS);
   for(var n = 0; n < 8; n++) {
     udpMess[n] = timestamp[n];
   }
-  for(var o = 0; o < 50; o++) {
+  for(var o = 0; o < 4*NB_FLOATS; o++) {
     udpMess[o + 8] = floatsBytes[o];
   }
-  for(var p = 0; p < 50; p++) {
-    udpMess[p + 58] = integersBytes[p];
+  for(var p = 0; p < 2*NB_INTS; p++) {
+    udpMess[p + 8 + 4*NB_FLOATS] = integersBytes[p];
   }
   return udpMess;
 }
@@ -244,7 +251,7 @@ router.post('/', function(req, res/*, next*/) {
             firesStatesOfTrees[i] = false;
           }
         }
-      }
+      } // TODO A METTRE DANS UN GET DECLARE COTE CLIENT
       res.json({
         posX: robotx,
         posY: roboty,
@@ -260,6 +267,108 @@ router.post('/', function(req, res/*, next*/) {
     res.status(201).json("You're not playing !");
   }
 });
+
+
+
+//=====================================================
+// create udp message for orocos position to reach
+//=====================================================
+function positionToUdpMess(x, y) {
+  var NB_INTS = 50;
+  var NB_FLOATS = 50;
+  //var LGTH_BYTES = 8 + NB_FLOATS * 4 + NB_INTS * 2;
+  var timestamp = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+  var floats = new Float32Array(NB_FLOATS);
+  floats[0] = 0.0;
+  floats[1] = 0.0;
+  floats[2] = x;
+  floats[3] = y;
+  for(var l = 4; l < NB_FLOATS; l++) {
+    floats[l] = 0.0;
+  }
+  var floatsBytes = new Int8Array(floats.buffer);
+  var integers = new Int16Array(50);
+  for(var m = 0; m < NB_INTS; m++) {
+    if(m==IND_MODE) {
+      integers[m] = autonomousRobot;
+    } else{
+      integers[m] = 0;
+    }
+  }
+  var integersBytes = new Int8Array(integers.buffer);
+  var udpMess = new Int8Array(8 + 4*NB_FLOATS + 2*NB_INTS);
+  for(var n = 0; n < 8; n++) {
+    udpMess[n] = timestamp[n];
+  }
+  for(var o = 0; o < 4*NB_FLOATS; o++) {
+    udpMess[o + 8] = floatsBytes[o];
+  }
+  for(var p = 0; p < 2*NB_INTS; p++) {
+    udpMess[p + 8 + 4*NB_FLOATS] = integersBytes[p];
+  }
+  return udpMess;
+}
+
+//=====================================================
+// TODO IF autonomous robot, then keys are not responding!
+//=====================================================
+// + fight fires
+// + when is it autonomous/manual? (print it on the screen)
+
+// MODE (AUTONOMOUS/MANUAL)
+
+var autonomousRobot = 1; // decide it here
+// UDP indexes
+var IND_MODE = 1
+var IND_ENDGOTO = 2
+
+
+/*
+udpMess = positionToUdpMess(7.0,1.0);
+buffer = new Buffer(udpMess);
+client = dgram.createSocket('udp4');
+client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+  if(err) throw err;
+  console.log('position to reach sent to ' + HOST +':'+ PORT);
+  client.close();
+});
+*/
+
+/*
+si batterie=temps pour go batery -> go battery
+sinon si trop chaud -> s'écarter des arbres
+sinon si plus d'eau -> go eau
+sinon si pres d'un arbre en feu -> tirer
+sinon: go arbre en feu
+*/
+var ixe = 7.0;
+var igrec = 1.0;
+
+setInterval(function() {
+  if(!currentAutoMvt){
+    var tempixe = ixe;
+    ixe = igrec;
+    igrec = tempixe; 
+    udpMess = positionToUdpMess(ixe,igrec);
+    buffer = new Buffer(udpMess);
+    client = dgram.createSocket('udp4');
+    client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+      if(err) throw err;
+      console.log('position to reach sent to ' + HOST +':'+ PORT);
+      client.close();
+    });
+  }
+}, 3000);
+
+
+
+
+
+
+
+
+
+
 
 //=====================================================
 // tree burning randomization
@@ -377,7 +486,7 @@ setInterval(function() {
     }
   }
   if((faucetxaxis < 2) && (faucetxaxis > -2) && watlevelContainer < 99) {
-    watlevelContainer = watlevelContainer + waterwidth/7 - leaksSum/(2*leakPlacesNb); //TODO widthwater + leaks
+    watlevelContainer = watlevelContainer + waterwidth/7 - leaksSum/(2*leakPlacesNb); 
   } else if (watlevelContainer > 1){
     watlevelContainer = watlevelContainer - leaksSum/leakPlacesNb;
   }
@@ -539,7 +648,6 @@ var stopFillingBattery = function() {
 // heat simulation part 
 //=====================================================
 
-// TODO go server side
 var tictac = false;
 var hotscreen = 0;
 var mercurelevel = '0.1vw';

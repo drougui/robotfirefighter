@@ -137,7 +137,6 @@ export class MainController {
       $http.get('/api/control/robotwater').then(response => {
         if(response.status === 200) {
           $scope.watlevel = response.data[0];
-          console.log("watlevel get: " + $scope.watlevel);
           robotTankEmpty = response.data[1];
         }
       });
