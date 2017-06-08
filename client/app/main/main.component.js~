@@ -14,22 +14,6 @@ export class MainController {
 
   /*@ngInject*/
   constructor($http, $scope, socket, hotkeys, $timeout, $interval) {
-/*
-    var canvas = document.createElement("canvas");
-    canvas.width = 24;
-    canvas.height = 24;
-    //document.body.appendChild(canvas);
-    var ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#000000";
-    ctx.font = "24px FontAwesome";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("\uf002", 12, 12);
-    var dataURL = canvas.toDataURL('image/png')
-    $('body').css('cursor', 'url('+dataURL+'), auto');
-*/
-
-/*    $('iframe').contents().find('img').css({with: '100%', 'height': '100%'});*/
 
     $scope.nbfighted = 0;
     this.$http = $http;
@@ -108,8 +92,8 @@ export class MainController {
     // - number of fighted fires
     // - water level
     // - remaining time
-    // - TODO temperature
-    // - TODO water management (remaining features)
+    // - temperature
+    // - water management
     $scope.firstPump = 2;
     $scope.nbonfire = 0;
     var coeffXrob = 10;
@@ -169,8 +153,17 @@ export class MainController {
           $scope.hotscreen = response.data[1];
         }
       });
-      
-      
+
+      $http.get('/api/control/robot').then(response => {
+        if(response.status === 200) {
+          $scope.propFromLeft = $scope.realToCssPoseX(response.data[0]);
+          $scope.propFromTop = $scope.realToCssPoseY(response.data[1]);
+          $scope.rotindeg = 180 - (response.data[2]+  3.14) * 360 / (2 * 3.14);
+          $scope.waterize = response.data[3];
+ //robotx,roboty,roboto,currentsplatch
+        }
+      });
+    
       tictac = !tictac;
       if(tictac){
         $scope.widthTrashTapWater = 5;
@@ -187,7 +180,7 @@ export class MainController {
 
     }, 500);
 
-/* TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO */
+
     $interval(function() {
       $http.get('/api/control/leaks').then(response => {
         if(response.status === 200) {
@@ -205,169 +198,6 @@ export class MainController {
 
 
   
-
-    // pump flow management
-/*
-    $interval(function() {
-    
-      var inouts = [];
-      var allFalse = true;
-      for(var i = 0; i < $scope.inoutpipes.length; i++) {
-        var myBool = Math.random()>0.5;
-        inouts.push(myBool);
-        allFalse = allFalse && !myBool; 
-      }
-      if (allFalse){
-        inouts[0] = true;
-      }
-
-      $scope.inoutpipes = inouts;
-    }, 10000);
-    $scope.pumpSelected = 0;
-    $scope.pumps = [9,27,45,63];
-    $scope.pumpsFlows = [5,0,0,0];
-    $scope.bendedpipes = [15,29,43,57];
-
-    $scope.inoutpipes = [true,true,false,false];
-
-    $scope.clickPump = function(number) {
-      if($scope.pumpSelected==number) {
-        $scope.pumpSelected = 0;
-      } else{
-        $scope.pumpSelected = number;
-      }
-    }
-  
-    $scope.pumpPlus = function(number) {
-      if($scope.pumpsFlows[number]<5) { 
-        $scope.pumpsFlows[number]++;
-      }
-    }
-
-    $scope.pumpMinus = function(number) {
-      if($scope.pumpsFlows[number]>0) {
-        $scope.pumpsFlows[number]--;
-      }
-      var sumFlows = 0;
-      var partialSumFlows = 0;
-      for(var i=0; i<$scope.pumpsFlows.length; i++) {
-        sumFlows = sumFlows + $scope.pumpsFlows[i];
-        if(i>0) {
-          partialSumFlows = partialSumFlows + $scope.pumpsFlows[i];
-        }
-      }
-      if(sumFlows<5) {
-        $scope.pumpsFlows[0] = 5-partialSumFlows;
-      }
-    }
-
-    $scope.tozero = function() {
-      if($scope.pumpSelected!=0) {
-        $scope.pumpsFlows[$scope.pumpSelected-1] = 0;
-      }
-      var sumFlows = 0;
-      var partialSumFlows = 0;
-      for(var i=0; i<$scope.pumpsFlows.length; i++) {
-        sumFlows = sumFlows + $scope.pumpsFlows[i];
-        if(i>0) {
-          partialSumFlows = partialSumFlows + $scope.pumpsFlows[i];
-        }
-      }
-      if(sumFlows<5) {
-        $scope.pumpsFlows[0] = 5-partialSumFlows;
-      }
-    }
-
-    $scope.toone = function() {
-      if($scope.pumpSelected!=0) {
-        $scope.pumpsFlows[$scope.pumpSelected-1] = 1;
-      }
-      var sumFlows = 0;
-      var partialSumFlows = 0;
-      for(var i=0; i<$scope.pumpsFlows.length; i++) {
-        sumFlows = sumFlows + $scope.pumpsFlows[i];
-        if(i>0) {
-          partialSumFlows = partialSumFlows + $scope.pumpsFlows[i];
-        }
-      }
-      if(sumFlows<5) {
-        $scope.pumpsFlows[0] = 5-partialSumFlows;
-      }
-    }
-
-    $scope.totwo = function() {
-      if($scope.pumpSelected!=0) {
-        $scope.pumpsFlows[$scope.pumpSelected-1] = 2;
-      }
-      var sumFlows = 0;
-      var partialSumFlows = 0;
-      for(var i=0; i<$scope.pumpsFlows.length; i++) {
-        sumFlows = sumFlows + $scope.pumpsFlows[i];
-        if(i>0) {
-          partialSumFlows = partialSumFlows + $scope.pumpsFlows[i];
-        }
-      }
-      if(sumFlows<5) {
-        $scope.pumpsFlows[0] = 5-partialSumFlows;
-      }
-    }
-
-    $scope.tothree = function() {
-      if($scope.pumpSelected!=0) {
-        $scope.pumpsFlows[$scope.pumpSelected-1] = 3;
-      }
-      var sumFlows = 0;
-      var partialSumFlows = 0;
-      for(var i=0; i<$scope.pumpsFlows.length; i++) {
-        sumFlows = sumFlows + $scope.pumpsFlows[i];
-        if(i>0) {
-          partialSumFlows = partialSumFlows + $scope.pumpsFlows[i];
-        }
-      }
-      if(sumFlows<5) {
-        $scope.pumpsFlows[0] = 5-partialSumFlows;
-      }
-    }
-
-    
-    $scope.tofour = function() {
-      if($scope.pumpSelected!=0) {
-        $scope.pumpsFlows[$scope.pumpSelected-1] = 4;
-      }
-      var sumFlows = 0;
-      var partialSumFlows = 0;
-      for(var i=0; i<$scope.pumpsFlows.length; i++) {
-        sumFlows = sumFlows + $scope.pumpsFlows[i];
-        if(i>0) {
-          partialSumFlows = partialSumFlows + $scope.pumpsFlows[i];
-        }
-      }
-      if(sumFlows<5) {
-        $scope.pumpsFlows[0] = 5-partialSumFlows;
-      }
-    }
-
-    
-    $scope.tofive = function() {
-      if($scope.pumpSelected!=0) {
-        $scope.pumpsFlows[$scope.pumpSelected-1] = 5;
-      }
-    }
-
-*/
-
-
-
-
-    $scope.$watch('pumpsFlows', function() {
-      /*var sumWeight = 0;
-      var counter = 0;
-      while(sumWeight<5) {
-        $scope.widthTrashTapWater =  $scope.widthTrashTapWater + 10;
-      }*/
-    })
-
-
     // -------------------------------------------------------------------------
     // send control/water action -> get position/orientation
     // -> use them to update corresponding variables of the map
@@ -487,7 +317,7 @@ export class MainController {
         console.log('WATER');
       }
       if(!robotTankEmpty) {
-        $scope.waterize = true;
+ //       $scope.waterize = true;
         if(!pending) {
           pending = true;
           $http.post('/api/control', {key: 'space',token: token}).then(response => {
@@ -496,6 +326,7 @@ export class MainController {
               $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
               $scope.propFromLeft = $scope.realToCssPoseX(response.data.posX[0]);
               $scope.watlevel = response.data.waterlevel;
+              $scope.waterize = response.data.splatch;
               console.log(response.data.waterlevel);
               if(debug) {
                 //console.log('watlevel: ' + response.data.waterlevel);
@@ -574,43 +405,6 @@ export class MainController {
     };
 
 
-
-
-// USE THIS FOR PUSH BUTTON, WRENCH MODE AND NEW CONTAINER
-// failles partout, no tap
-/*
-    $scope.openingcontrol = 0;
-    $scope.openingctrlfctplus = function() {
-      if($scope.openingcontrol < 3) {
-         if(!pendingButtons) {
-          pendingButtons = true;
-          $http.post('/api/control/watercontrol', {button: 'plusV',token: token}).then(response => {
-            pendingButtons = false;
-            if(response.status === 200) {
-              $scope.openingcontrol = response.data.valveControl;
-            } else if(debug) {
-              console.log('nok');
-            }
-          });
-        }
-      }
-    };
-    $scope.openingctrlfctminus = function() {
-      if($scope.openingcontrol > -3) {
-         if(!pendingButtons) {
-          pendingButtons = true;
-          $http.post('/api/control/watercontrol', {button: 'minusV',token: token}).then(response => {
-            pendingButtons = false;
-            if(response.status === 200) {
-              $scope.openingcontrol = response.data.valveControl;
-            } else if(debug) {
-              console.log('nok');
-            }
-          });
-        }
-      }
-    };
-*/
 //  send click on pushwater to server
     $scope.waterwidth = 0;
     $scope.waterPushButton = function() {
@@ -626,13 +420,7 @@ export class MainController {
         });
       }
     };
-/*
-    $scope.wrenchMode = false;
-    $scope.wrenchOnOff = function() {
-      $scope.wrenchMode = !$scope.wrenchMode;
-      
-    }
-*/
+
     $scope.wrenchOnOff = function() {
       if(!pendingButtons) {
         pendingButtons = true;
@@ -664,8 +452,6 @@ export class MainController {
       }
     };
 
-
-/* TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO */
     $scope.newContainer = function() {
       if(!pendingButtons) {
         pendingButtons = true;
@@ -682,79 +468,6 @@ export class MainController {
       }
     };
 
-  
-
-/* TODO put it in server part through previous functions*/
-
-/*    // INIT
-    $scope.crossSize = 0;
-    var leakPlacesNb = 12;
-    $scope.leakPlaces = [];
-    $scope.noleakat = [];
-    var leakCounter = 0;
-    for (var i=0; i<leakPlacesNb; i++) {
-      $scope.leakPlaces.push(leakCounter);
-      leakCounter++;
-      $scope.noleakat.push(true);
-    }
-    
-    // RANDOM LEAKS
-    $scope.brokenContainer = false;
-    $interval(function() {
-      var leaksNotEverywhere = false;
-      for(var i = 0; i< $scope.noleakat.length; i++){
-        var myBool = Math.random()>0.5;
-	if ($scope.noleakat[i] && myBool){
-          $scope.noleakat[i] = false;
-        }
-        leaksNotEverywhere = leaksNotEverywhere || $scope.noleakat[i];
-      }
-      if(!leaksNotEverywhere) {
-        $scope.brokenContainer = true;
-        $scope.crossSize = 25;
-      }
-    }, 5000);
-*/
-
-
-
-
-  
-    
-// END "put it on server side
-      
-/*      $timeout(function() {
-          $scope.waterwidth = 0.4
-      }, 100);
-      $timeout(function() {
-          $scope.waterwidth = 0.3
-      }, 100);
-      $timeout(function() {
-          $scope.waterwidth = 0.2
-      }, 100);
-      $timeout(function() {
-          $scope.waterwidth = 0.1
-      }, 100);
-      $timeout(function() {
-          $scope.waterwidth = 0
-      }, 100);
-*/
-
-/*
-    $scope.robcurve = [];
-    $scope.robaxis = [];
-    $scope.robticknumber = [];
-    for(var i = 0; i < 80; i=i+0.2) {
-      $scope.robcurve.push({x: i, y: coeffXrob * Math.cos( (i - 40 )*3.1415*2 / 80) + constXrob + 25});
-    }
-    for(var i = 0; i < 85; i=i+0.2) {
-      $scope.robaxis.push(i); 
-    }
-    for (var i = 0; i < 81; i = i + 8) {
-      var valeur = (i - 40)*10 / 40;
-      $scope.robticknumber.push({x: i, val: valeur});
-    }
-*/
 
     hotkeys.add('left', 'totheleft', $scope.totheleft);
     hotkeys.add('right', 'totheright', $scope.totheright);

@@ -1,0 +1,33 @@
+.page{
+	width: 100vw;
+	height: 97vh;
+	font-size: 1vw;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+	background-color: #bbbdf6;
+}
+
+.mainmsg{
+	
+}
+
+.mainBand{
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+	height: 10%;
+}
+
+.mainButton{
+	font-size: 250%;
+	background-color: #9893da;
+	padding: 2%;
+	border-radius: 0.5vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	cursor: pointer;
+}

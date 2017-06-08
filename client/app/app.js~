@@ -9,6 +9,7 @@ import 'angular-socket-io';
 
 import uiRouter from 'angular-ui-router';
 import uiBootstrap from 'angular-ui-bootstrap';
+import 'angular-hotkeys';
 // import ngMessages from 'angular-messages';
 
 
@@ -22,11 +23,12 @@ import main from './main/main.component';
 import constants from './app.constants';
 import util from '../components/util/util.module';
 import socket from '../components/socket/socket.service';
+ import AboutComponent from './about/about.component';
 
 import './app.css';
 
 angular.module('videogameApp', [ngCookies, ngResource, ngSanitize, 'btford.socket-io', uiRouter,
-  uiBootstrap, navbar, footer, main, constants, socket, util
+  uiBootstrap, navbar, footer, main, AboutComponent, constants, socket, util, 'cfp.hotkeys'
 ])
   .config(routeConfig);
 

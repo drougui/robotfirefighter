@@ -153,8 +153,17 @@ export class MainController {
           $scope.hotscreen = response.data[1];
         }
       });
-      
-      
+
+      $http.get('/api/control/robot').then(response => {
+        if(response.status === 200) {
+          $scope.propFromLeft = $scope.realToCssPoseX(response.data[0]);
+          $scope.propFromTop = $scope.realToCssPoseY(response.data[1]);
+          $scope.rotindeg = 180 - (response.data[2]+  3.14) * 360 / (2 * 3.14);
+          $scope.waterize = response.data[3];
+ //robotx,roboty,roboto,currentsplatch
+        }
+      });
+    
       tictac = !tictac;
       if(tictac){
         $scope.widthTrashTapWater = 5;
@@ -308,7 +317,7 @@ export class MainController {
         console.log('WATER');
       }
       if(!robotTankEmpty) {
-        $scope.waterize = true;
+ //       $scope.waterize = true;
         if(!pending) {
           pending = true;
           $http.post('/api/control', {key: 'space',token: token}).then(response => {
@@ -317,6 +326,7 @@ export class MainController {
               $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
               $scope.propFromLeft = $scope.realToCssPoseX(response.data.posX[0]);
               $scope.watlevel = response.data.waterlevel;
+              $scope.waterize = response.data.splatch;
               console.log(response.data.waterlevel);
               if(debug) {
                 //console.log('watlevel: ' + response.data.waterlevel);
@@ -499,7 +509,7 @@ export class MainController {
 
 export default angular.module('videogameApp.main', [uiRouter])
   .config(routing)
-  .component('main', {
+  .component('game', {
     template: require('./main.html'),
     controller: MainController
   })

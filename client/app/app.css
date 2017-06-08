@@ -43,7 +43,9 @@
 
 /* Component styles are injected through gulp */
 /* inject:css */
+@import 'about/about.css';
 @import 'main/main.css';
+@import 'welcome/welcome.css';
 @import '../components/footer/footer.css';
 @import '../components/modal/modal.css';
 /* endinject */

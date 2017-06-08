@@ -68,7 +68,7 @@ serverGet.on('message', function(message, remote) {
   }
   var noMvt = new Int16Array(byteArray4.buffer);
 
-  if(true) {
+  if(false) {
     console.log(remote.address + ':' + remote.port + ' - ' + posX + '  ' + posY + '  ' + orientation + '  ' + noMvt);
   }
   robotx = posX;
@@ -79,6 +79,8 @@ serverGet.on('message', function(message, remote) {
   } else{
     currentAutoMvt = true;
   }
+//  console.log("currentAutoMvt " + currentAutoMvt);
+//  console.log("noMvt " + noMvt);
   // use fill/stop fill water functions
   if((roboty[0] < parseFloat(zoneslocations[0].y)+1) && (roboty[0] > parseFloat(zoneslocations[0].y)-1) && (robotx[0] < parseFloat(zoneslocations[0].x) + 1) && (robotx[0] > parseFloat(zoneslocations[0].x)-1)) {
     if(!isFillingWater) {
@@ -181,6 +183,7 @@ var client;
 var jwt = require('jwt-simple');
 var secret = Buffer.from('fe1a1915a379f3be5394b64d14794932', 'hex');
 var watlevel = 50;
+var currentsplatch = false;
 router.post('/', function(req, res/*, next*/) {
   console.log(req.body)
   if(req.body.token) {
@@ -224,40 +227,18 @@ router.post('/', function(req, res/*, next*/) {
           client.close();
         });
       } else if(req.body.key == 'space') {
-        if(watlevel > 4) {
-          watlevel = watlevel - 3;
-        } else {
-          watlevel = 0;
-          robotTankEmpty = true;
-        }
-        for(var i = 0; i < treeslocations.length; i++) {
-          // close enough + good orientation
-          var diffX = treeslocations[i].x - robotx[0];
-          var diffY = treeslocations[i].y - roboty[0];
-          var normDiff = Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2));
-          diffX = diffX / normDiff;
-          diffY = diffY / normDiff;
-          var robotoX = Math.cos(roboto);
-          var robotoY = Math.sin(roboto);
-          var scalprod = robotoX * diffX + robotoY * diffY;
-          if((normDiff < 3) && (scalprod > 0.9) && firesStatesOfTrees[i]) {
-            console.log('USEFULL');
-            numFightedFires++;
-            var indexTree = i + 1;
-            var command1 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -10\' | yarp write /data/out /morse/treeonfire' + indexTree.toString() + '/teleporttf' + indexTree.toString() + '/in';
-            var command2 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -0.1\' | yarp write /data/out /morse/tree' + indexTree.toString() + '/teleport' + indexTree.toString() + '/in';
-            console.log(command1 + ' && ' + command2);
-            exec(command1 + ' && ' + command2, puts);
-            firesStatesOfTrees[i] = false;
-          }
-        }
+        throwWater();
       } // TODO A METTRE DANS UN GET DECLARE COTE CLIENT
       res.json({
         posX: robotx,
         posY: roboty,
         orientation: roboto,
-        waterlevel: watlevel
+        waterlevel: watlevel,
+	splatch: currentsplatch
       });
+      setTimeout(function() {
+          currentsplatch = false;
+      }, 100);
     }
     else{
       res.status(201).json("You're not playing !");
@@ -267,6 +248,50 @@ router.post('/', function(req, res/*, next*/) {
     res.status(201).json("You're not playing !");
   }
 });
+
+// give pos/orientation/splatch to client
+router.get('/robot', function(req, res) {
+  res.json([robotx[0],roboty[0],roboto[0],currentsplatch]);
+});
+
+
+//=====================================================
+// SPLATCH
+//=====================================================
+function throwWater() {
+  if(watlevel > 4) {
+    watlevel = watlevel - 3;
+    currentsplatch = true;
+  } else {
+    watlevel = 0;
+    robotTankEmpty = true;
+    currentsplatch = false;
+  }
+  for(var i = 0; i < treeslocations.length; i++) {
+    // close enough + good orientation
+    var diffX = treeslocations[i].x - robotx[0];
+    var diffY = treeslocations[i].y - roboty[0];
+    var normDiff = Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2));
+    diffX = diffX / normDiff;
+    diffY = diffY / normDiff;
+    var robotoX = Math.cos(roboto);
+    var robotoY = Math.sin(roboto);
+    var scalprod = robotoX * diffX + robotoY * diffY;
+    if((normDiff < 3) && (scalprod > 0.9) && firesStatesOfTrees[i] && !robotTankEmpty) {
+      console.log('USEFULL');
+      numFightedFires++;
+      var indexTree = i + 1;
+      var command1 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -10\' | yarp write /data/out /morse/treeonfire' + indexTree.toString() + '/teleporttf' + indexTree.toString() + '/in';
+      var command2 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -0.1\' | yarp write /data/out /morse/tree' + indexTree.toString() + '/teleport' + indexTree.toString() + '/in';
+      console.log(command1 + ' && ' + command2);
+      exec(command1 + ' && ' + command2, puts);
+      firesStatesOfTrees[i] = false;
+    }
+  }
+  setTimeout(function() {
+          currentsplatch = false;
+  }, 100);
+}
 
 
 
@@ -312,25 +337,16 @@ function positionToUdpMess(x, y) {
 //=====================================================
 // TODO IF autonomous robot, then keys are not responding!
 //=====================================================
+// + fight fires
+// + when is it autonomous/manual? (print it on the screen)
 
 // MODE (AUTONOMOUS/MANUAL)
 
-var autonomousRobot = 1; // decide it here
+var autonomousRobot = 1; 	// toutes les minutes, on tire au sort si autonome ou pas
+				// + dans une zone bien définie, c'est toujours manuel
 // UDP indexes
 var IND_MODE = 1
 var IND_ENDGOTO = 2
-
-
-/*
-udpMess = positionToUdpMess(7.0,1.0);
-buffer = new Buffer(udpMess);
-client = dgram.createSocket('udp4');
-client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-  if(err) throw err;
-  console.log('position to reach sent to ' + HOST +':'+ PORT);
-  client.close();
-});
-*/
 
 /*
 si batterie=temps pour go batery -> go battery
@@ -341,22 +357,27 @@ sinon: go arbre en feu
 */
 var ixe = 7.0;
 var igrec = 1.0;
-
+var firstTime = true;
+/* TODO: USE throwWater() AND DECLARE A GET IN CLIENT PART TO GET "SPLATCH" (and pos/orientation) [otherwise, we do not see water]*/
 setInterval(function() {
-  if(!currentAutoMvt){
+  if(!currentAutoMvt || firstTime){
+    firstTime = false;
+    console.log("!!!!!!!!!!!! I THROW WATER !!!!!!!!!!!!")
+    throwWater();
     var tempixe = ixe;
     ixe = igrec;
     igrec = tempixe; 
     udpMess = positionToUdpMess(ixe,igrec);
     buffer = new Buffer(udpMess);
     client = dgram.createSocket('udp4');
+    console.log("!!!!!!!!!!!! I GO TO GOAL !!!!!!!!!!!!")
     client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
       if(err) throw err;
       console.log('position to reach sent to ' + HOST +':'+ PORT);
       client.close();
     });
   }
-}, 3000);
+}, 1000);
 
 
 

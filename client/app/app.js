@@ -23,11 +23,13 @@ import main from './main/main.component';
 import constants from './app.constants';
 import util from '../components/util/util.module';
 import socket from '../components/socket/socket.service';
+ import AboutComponent from './about/about.component';
+import WelcomeComponent from './welcome/welcome.component';
 
 import './app.css';
 
 angular.module('videogameApp', [ngCookies, ngResource, ngSanitize, 'btford.socket-io', uiRouter,
-  uiBootstrap, navbar, footer, main, constants, socket, util, 'cfp.hotkeys'
+  uiBootstrap, navbar, footer, main, AboutComponent, WelcomeComponent, constants, socket, util, 'cfp.hotkeys'
 ])
   .config(routeConfig);
 

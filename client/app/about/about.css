@@ -1,0 +1,12 @@
+.pageAbout{
+	width: 98vw;
+	height: 124vw;
+}
+
+.poster{
+	height: 100%;
+	width: 98vw;
+	background-size: 100vw auto;
+	background-image: url("/assets/images/poster_site.png");
+}
+
