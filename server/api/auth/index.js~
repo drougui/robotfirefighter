@@ -13,5 +13,7 @@ router.patch('/:id', controller.patch);
 router.delete('/:id', controller.destroy);*/
 
 router.get('/',controller.status);
-
+router.get('/play',controller.play);
+router.get('/killall',controller.killall);
+router.get('/start',controller.killall);
 module.exports = router;

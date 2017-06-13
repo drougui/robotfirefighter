@@ -14,4 +14,6 @@ router.delete('/:id', controller.destroy);*/
 
 router.get('/',controller.status);
 router.get('/play',controller.play);
+router.get('/killall',controller.killall);
+router.get('/start',controller.start);
 module.exports = router;

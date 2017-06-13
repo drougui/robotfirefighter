@@ -82,3 +82,15 @@ export function play(req, res) {
 	}
 
 }
+
+var sys = require('sys');
+var exec = require('child_process').exec;
+export function killall(req, res) {
+  exec('bash ~/driving-human-robots-interaction/killAll.sh');
+  res.status(200).json("everything killed")
+}
+
+export function start(req, res) {
+  exec('bash ~/driving-human-robots-interaction/lance_opt_videogame.sh');
+  res.status(200).json("restart")
+}

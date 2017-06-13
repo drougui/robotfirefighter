@@ -50,6 +50,32 @@ export class MainController {
       })
     }
 
+
+    $scope.killall = function(){
+      $http.get('/api/auth/killall').then(response => {
+        console.log(response);
+        if(response.status === 200){
+          //token=response.data;			
+        }
+        else{
+          //$scope.emptySlot=false;
+        }
+      })
+    }
+
+    $scope.start = function(){
+      $http.get('/api/auth/start').then(response => {
+        console.log(response);
+        if(response.status === 200){
+          //token=response.data;			
+        }
+        else{
+          //$scope.emptySlot=false;
+        }
+      })
+    }
+
+
     // get trees locations from json file
     var treeslocations;
     $scope.trees = [];
@@ -160,6 +186,10 @@ export class MainController {
           $scope.propFromTop = $scope.realToCssPoseY(response.data[1]);
           $scope.rotindeg = 180 - (response.data[2]+  3.14) * 360 / (2 * 3.14);
           $scope.waterize = response.data[3];
+/*          $timeout(function() {
+
+            $scope.waterize = false;
+          }, 100);*/
  //robotx,roboty,roboto,currentsplatch
         }
       });
@@ -195,7 +225,6 @@ export class MainController {
 
     var tictac = true; 
     $scope.iconBatt = 0; 
-
 
   
     // -------------------------------------------------------------------------
@@ -336,9 +365,9 @@ export class MainController {
             }
           });
         }
-        $timeout(function() {
+/*        $timeout(function() {
           $scope.waterize = false;
-        }, 100);
+        }, 100);*/
       }
     };
 

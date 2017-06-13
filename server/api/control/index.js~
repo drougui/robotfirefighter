@@ -99,7 +99,7 @@ serverGet.on('message', function(message, remote) {
   }
   // heat simulation
   var equilibriumDist = 3.0;
-  var itNbBeforeChange = 120;
+  var itNbBeforeChange = 1;
   if(counter > itNbBeforeChange) {
     var minDistance = 3.5;
     for(var q = 0; q < treeslocations.length; q++) {
@@ -108,7 +108,7 @@ serverGet.on('message', function(message, remote) {
         minDistance = Math.min(minDistance, distance);
       }
     }
-    var heatIncrement = (equilibriumDist - minDistance) / equilibriumDist;
+    var heatIncrement = (equilibriumDist - minDistance)*0.01 / equilibriumDist;
     mercurelevelfloat = mercurelevelfloat + heatIncrement;
     if(mercurelevelfloat > 300) {
       mercurelevelfloat = 300;
@@ -120,6 +120,7 @@ serverGet.on('message', function(message, remote) {
     hotscreen = mercurelevelfloat/300;
     counter = 0;
   }
+  //console.log(counter);
   counter++;
 });
 serverGet.bind(PORTGET, HOST);
@@ -290,7 +291,7 @@ function throwWater() {
   }
   setTimeout(function() {
           currentsplatch = false;
-  }, 100);
+  }, 500);
 }
 
 
@@ -355,18 +356,42 @@ sinon si plus d'eau -> go eau
 sinon si pres d'un arbre en feu -> tirer
 sinon: go arbre en feu
 */
-var ixe = 7.0;
-var igrec = 1.0;
+var ixe = zoneslocations[0].x;
+var igrec = zoneslocations[0].y;
 var firstTime = true;
+var tempxy = 1.0;
 /* TODO: USE throwWater() AND DECLARE A GET IN CLIENT PART TO GET "SPLATCH" (and pos/orientation) [otherwise, we do not see water]*/
 setInterval(function() {
   if(!currentAutoMvt || firstTime){
     firstTime = false;
-    console.log("!!!!!!!!!!!! I THROW WATER !!!!!!!!!!!!")
     throwWater();
-    var tempixe = ixe;
+    console.log("!!!!!!!!!!!! I THROW WATER !!!!!!!!!!!!")
+    var gotoX = zoneslocations[1].x;
+    var gotoY =  zoneslocations[1].y;
+    for (var i=0;i<firesStatesOfTrees.length;i++){
+      if (firesStatesOfTrees[i]){
+        var gotoX = treeslocations[i].x;
+        var gotoY = treeslocations[i].y;
+      }
+    }
+    var vecteurX = gotoX -robotx[0];
+    var vecteurY = gotoY -roboty[0];
+    var normDirection = Math.sqrt(Math.pow(vecteurX, 2) + Math.pow(vecteurY, 2));
+    vecteurX = vecteurX/normDirection;
+    vecteurY = vecteurY/normDirection;
+    ixe = gotoX -vecteurX;
+    igrec = gotoY -vecteurY;
+/*    var tempixe = ixe;
     ixe = igrec;
-    igrec = tempixe; 
+    igrec = tempixe;
+    tempxy = -tempxy;*/
+    ixe = gotoX;
+    igrec = gotoY;
+/*    ixe = parseFloat(ixe) + tempxy;
+    igrec = parseFloat(igrec) + tempxy;
+    console.log("------ X,Y : ");
+    console.log(ixe);
+    console.log(igrec);*/
     udpMess = positionToUdpMess(ixe,igrec);
     buffer = new Buffer(udpMess);
     client = dgram.createSocket('udp4');
