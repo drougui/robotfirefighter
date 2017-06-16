@@ -27,7 +27,17 @@
   </form>
 </div> -->
 
+    <!-- OVERLAYS -->
+
+
+
+
 <div class="screen" ng-class="{screenWrench: wrenchMode}" ng-keypress="myFunct($event)">
+	<div ng-class="{overlayOpen: overlayOpen}" class="overlay">
+		<div class="loadGif">
+			<!--<md-progress-circular md-mode="indeterminate"></md-progress-circular>-->
+		</div>
+	</div>
 	<div class="leftPart">  
 		<div class="missionBlock">
 			<div class="maincontainermission">
@@ -211,10 +221,12 @@ leaks/wrench/etc in server files-->
 						Slot libre
 						<button ng-click="play()">Jouer</button>
 					</div>
-					<button ng-click="killall()">Kill all!</button>
+					<button ng-click="killall()" ui-sref="welcome">Kill all!</button>
+<!--					<button ng-click="start()">Start!</button> -->
 				</div>
 				<div class="streamcamera">
-					<img class="imagecam" src="http://localhost:8080/?action=stream"   scrolling="no" frameBorder="0">
+<!--					<img class="imagecam" src="http://localhost:8080/?action=stream"   scrolling="no" frameBorder="0"> -->
+					<img class="imagecam" src="http://{{ipaddress}}:8080/?action=stream" scrolling="no" frameBorder="0"> 
 					<div class="splatchContainer">
 				        	<div class="splatch" ng-class="{visiblesplatch: waterize}">
 				        	</div>

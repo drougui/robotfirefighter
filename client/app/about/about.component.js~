@@ -16,7 +16,6 @@ export class AboutComponent {
     'ngInject';
     this.$http = $http;
     this.socket = socket;
-  
   }
 
 }

@@ -29,8 +29,7 @@ export class WelcomeComponent {
         if(response.status === 200){
           console.log("give token");
           // ok, I give a token to you
-          token=response.data;
-          sharedProperties.setProperty(token);
+          token=response.data;	
           // and I launch the videogame
           $http.get('/api/control/start').then(response => {
             console.log(response);

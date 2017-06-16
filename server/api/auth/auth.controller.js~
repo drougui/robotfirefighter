@@ -62,35 +62,51 @@ function handleError(res, statusCode) {
     res.status(statusCode).send(err);
   };
 }
+
 var emptySlot=true;
 var jwt = require('jwt-simple');
 var payload = {auth:true};
 var secret = Buffer.from('fe1a1915a379f3be5394b64d14794932', 'hex')
 
+
+
+// TODO: changer la valeur de emptySlot selon l'activité du mec (fin du jeu/30sec sans rien toucher => killall + emptySlot = true
+export function newtoken(req,res) {
+  console.log("FUNCTION NEWTOKEN");
+  console.log(req.body)
+  if(req.body.token) {
+    var decoded = jwt.decode(req.body.token, secret);
+    if(decoded.auth){
+      console.log(decoded);
+      emptySlot=true;
+      console.log("EMPTYSLOT AUTH: ");
+      console.log(emptySlot);
+      res.status(200).json("SLOT IS NOW EMPTY");
+    } else{
+      res.status(403).json("NOK");
+    }
+  } else{
+    res.status(403).json("NOK");
+  }
+}
+
 // Gets a list of Auths
 export function status(req, res) {
  res.status(200).json(emptySlot)
 }
+
+// BEGIN A PLAY SESSION
 export function play(req, res) {
-	if(emptySlot){
-		global.token = jwt.encode(payload, secret);
-		 res.status(200).json(global.token)
-		emptySlot=false;
-	}
-	else{
-		 res.status(403).json("NOK")
-	}
-
+  if(emptySlot){
+    global.token = jwt.encode(payload, secret);
+    res.status(200).json(global.token);
+    emptySlot=false;
+    console.log("I GIVE A NEW TOKEN!");
+    // TODO compte à rebour GLOBAL pour rendre le slot empty (15min) ce timeout doit etre killé si le slot est libéré d'une autre manière 
+  }
+  else{
+    res.status(403).json("NOK");
+  }
 }
 
-var sys = require('sys');
-var exec = require('child_process').exec;
-export function killall(req, res) {
-  exec('bash ~/driving-human-robots-interaction/killAll.sh');
-  res.status(200).json("everything killed")
-}
 
-export function start(req, res) {
-  exec('bash ~/driving-human-robots-interaction/lance_opt_videogame.sh');
-  res.status(200).json("restart")
-}

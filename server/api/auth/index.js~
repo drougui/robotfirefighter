@@ -12,8 +12,9 @@ router.put('/:id', controller.upsert);
 router.patch('/:id', controller.patch);
 router.delete('/:id', controller.destroy);*/
 
-router.get('/',controller.status);
-router.get('/play',controller.play);
-router.get('/killall',controller.killall);
-router.get('/start',controller.killall);
+router.get('/', controller.status);
+router.get('/play', controller.play);
+router.get('/newtoken', controller.newtoken);
+//router.get('/killall',controller.killall);
+//router.get('/start',controller.start);
 module.exports = router;

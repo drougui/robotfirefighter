@@ -2,6 +2,194 @@
 var express = require('express');
 var router = express.Router();
 
+
+// TODO TO BE RESET
+// mercurelevelfloat
+// firesStatesOfTrees
+// watlevel
+// robotTankEmpty
+/*
+var leakCounter = 0;
+for (var i=0; i<leakPlacesNb; i++) {
+  leakPlaces.push(leakCounter);
+  leakCounter++;
+  noleakat.push(true);
+}
+    var vlvop = 1;
+xrobinet
+var watlevelContainer = 0;
+
+var hotscreen = 0;
+var mercurelevel = '0.1vw';
+
+var remainingtime = 600;
+
+var batteryLevel = 24;
+
+var numFightedFires = 0;
+*/
+
+// GET LOCAL IP ADDRESS FOR STREAMING
+var IPaddress =""; 
+require('dns').lookup(require('os').hostname(), function (err, add, fam) {
+  console.log('addr: '+add);
+  IPaddress = add;
+})
+
+router.get('/ipaddress', function(req, res) {
+  res.json(IPaddress);
+  console.log("ip address sent");
+  console.log(IPaddress);
+});
+
+global.isgameready = false;
+var net = require('net');
+
+var server = net.createServer(function(socket) {
+  socket.write('Echo server\r\n');
+  //socket.pipe(socket);
+  console.log("TCP SERVER: 'JE RECOIS!'");
+  socket.on('data', function(data){
+  //console.log(data);
+  var textChunk = data.toString('utf8');
+    console.log(textChunk);
+  });
+  global.isgameready = true;
+});
+
+server.listen(50002, 'localhost');
+
+router.get('/gameready', function(req, res) {
+  res.json(global.isgameready);
+  global.isgameready = false;
+  console.log("server get GAME READY")
+});
+
+
+
+
+
+var waterManagementInterval;
+var leaksInterval;
+var waterFlowInterval;
+var timeInterval;
+var batteryInterval;
+var treeBurningInterval;
+var fillWaterInterval;
+var fillBatteryInterval;
+
+
+
+
+
+var xrobinet = 42;
+var mercurelevelfloat = 10;
+var mercurelevel = '0.1vw';
+var hotscreen = 0;
+var firesStatesOfTrees = [false, false, false, false, false, false];
+var watlevel = 50;
+var robotTankEmpty = false;
+var isFillingWater = false;
+// stopFillingWater();
+// stopFillingBattery();
+/*
+var stopFillingWater = function() {
+  clearInterval(fillWaterInterval);
+  isFillingWater = false;
+};
+// give watlevel to client
+router.get('/robotwater', function(req, res) {
+  res.json([watlevel,robotTankEmpty]);
+});
+*/
+// INIT
+var crossSize = 0;
+var leakPlacesNb = 12;
+var leakPlaces = [];
+var noleakat = [];
+var leakCounter = 0;
+for (var i=0; i<leakPlacesNb; i++) {
+  leakPlaces.push(leakCounter);
+  leakCounter++;
+  noleakat.push(true);
+}
+var vlvop = 1;
+var watlevelContainer = 0;
+var remainingtime = 600;
+var batteryLevel = 24;
+var numFightedFires = 0;
+
+//router.get('/killall',killall);
+router.post('/killall', killall);
+
+router.get('/start',start);
+router.get('/launchgame',launchgame);
+
+var sys = require('sys');
+var exec = require('child_process').exec;
+
+function killall(req, res) {
+  if(req.body.token) {
+    var decoded = jwt.decode(req.body.token, secret);
+    console.log(decoded);
+    if(decoded.auth){
+      exec('bash ~/driving-human-robots-interaction/killAll.sh');
+      xrobinet = 42;
+      mercurelevelfloat = 10;
+      mercurelevel = '0.1vw';
+      hotscreen = 0;
+      firesStatesOfTrees = [false, false, false, false, false, false];
+      watlevel = 50;
+      robotTankEmpty = false;
+      isFillingWater = false;
+  // stopFillingWater();
+  // stopFillingBattery();
+  /*
+  var stopFillingWater = function() {
+    clearInterval(fillWaterInterval);
+    isFillingWater = false;
+  };
+    // give watlevel to client
+    router.get('/robotwater', function(req, res) {
+    res.json([watlevel,robotTankEmpty]);
+  });
+  */
+      crossSize = 0;
+      leakPlacesNb = 12;
+      leakPlaces = [];
+      noleakat = [];
+      leakCounter = 0;
+      for (var i=0; i<leakPlacesNb; i++) {
+        leakPlaces.push(leakCounter);
+        leakCounter++;
+        noleakat.push(true);
+      }
+      vlvop = 1;
+      watlevelContainer = 0;
+      remainingtime = 600;
+      batteryLevel = 24;
+      numFightedFires = 0;
+
+      // clear intervals 
+      clearInterval(waterManagementInterval);
+      clearInterval(leaksInterval);
+      clearInterval(waterFlowInterval);
+      clearInterval(timeInterval);
+      clearInterval(batteryInterval);
+      clearInterval(treeBurningInterval);
+      clearInterval(fillWaterInterval);
+      clearInterval(fillBatteryInterval);
+      res.status(200).json("everything killed")
+    }
+  }
+}
+
+function start(req, res) {
+  exec('bash ~/driving-human-robots-interaction/restart.sh');
+  res.status(200).json("restart")
+}
+
+
 //=====================================================
 // define trees locations using treeslocs.json
 //=====================================================
@@ -126,6 +314,17 @@ serverGet.on('message', function(message, remote) {
 serverGet.bind(PORTGET, HOST);
 var counter = 0;
 
+
+//=====================================================
+// heat simulation part 
+//=====================================================
+
+// give temp/screen effect to client
+router.get('/temperature', function(req, res) {
+  res.json([mercurelevel,hotscreen]);
+});
+
+
 //=====================================================
 // create udp message for orocos containing angular/linear speed
 //=====================================================
@@ -165,25 +364,25 @@ function speedToUdpMess(as, ls) {
 //=====================================================
 // controls (MOVES ~ speedToUdpMess & WATER ~ exec)
 //=====================================================
-var sys = require('sys');
-var exec = require('child_process').exec;
+//var sys = require('sys');
+//var exec = require('child_process').exec;
 function puts(error, stdout) {
   sys.puts(stdout);
 }
-var firesStatesOfTrees = [false, false, false, false, false, false];
-var numFightedFires = 0;
+
 router.get('/fires', function(req, res) {
   res.json(firesStatesOfTrees);
 });
 router.get('/fightedfires', function(req, res) {
   res.json(numFightedFires);
 });
+
+
 var udpMess;
 var buffer;
 var client;
 var jwt = require('jwt-simple');
 var secret = Buffer.from('fe1a1915a379f3be5394b64d14794932', 'hex');
-var watlevel = 50;
 var currentsplatch = false;
 router.post('/', function(req, res/*, next*/) {
   console.log(req.body)
@@ -229,7 +428,7 @@ router.post('/', function(req, res/*, next*/) {
         });
       } else if(req.body.key == 'space') {
         throwWater();
-      } // TODO A METTRE DANS UN GET DECLARE COTE CLIENT
+      }
       res.json({
         posX: robotx,
         posY: roboty,
@@ -335,214 +534,18 @@ function positionToUdpMess(x, y) {
   return udpMess;
 }
 
-//=====================================================
-// TODO IF autonomous robot, then keys are not responding!
-//=====================================================
-// + fight fires
-// + when is it autonomous/manual? (print it on the screen)
-
-// MODE (AUTONOMOUS/MANUAL)
-
-var autonomousRobot = 1; 	// toutes les minutes, on tire au sort si autonome ou pas
-				// + dans une zone bien définie, c'est toujours manuel
-// UDP indexes
-var IND_MODE = 1
-var IND_ENDGOTO = 2
-
-/*
-si batterie=temps pour go batery -> go battery
-sinon si trop chaud -> s'écarter des arbres
-sinon si plus d'eau -> go eau
-sinon si pres d'un arbre en feu -> tirer
-sinon: go arbre en feu
-*/
-var ixe = zoneslocations[0].x;
-var igrec = zoneslocations[0].y;
-var firstTime = true;
-var tempxy = 1.0;
-/* TODO: USE throwWater() AND DECLARE A GET IN CLIENT PART TO GET "SPLATCH" (and pos/orientation) [otherwise, we do not see water]*/
-setInterval(function() {
-  if(!currentAutoMvt || firstTime){
-    firstTime = false;
-    throwWater();
-    console.log("!!!!!!!!!!!! I THROW WATER !!!!!!!!!!!!")
-    var gotoX = zoneslocations[1].x;
-    var gotoY =  zoneslocations[1].y;
-    for (var i=0;i<firesStatesOfTrees.length;i++){
-      if (firesStatesOfTrees[i]){
-        var gotoX = treeslocations[i].x;
-        var gotoY = treeslocations[i].y;
-      }
-    }
-    var vecteurX = gotoX -robotx[0];
-    var vecteurY = gotoY -roboty[0];
-    var normDirection = Math.sqrt(Math.pow(vecteurX, 2) + Math.pow(vecteurY, 2));
-    vecteurX = vecteurX/normDirection;
-    vecteurY = vecteurY/normDirection;
-    ixe = gotoX -vecteurX;
-    igrec = gotoY -vecteurY;
-/*    var tempixe = ixe;
-    ixe = igrec;
-    igrec = tempixe;
-    tempxy = -tempxy;*/
-    ixe = gotoX;
-    igrec = gotoY;
-/*    ixe = parseFloat(ixe) + tempxy;
-    igrec = parseFloat(igrec) + tempxy;
-    console.log("------ X,Y : ");
-    console.log(ixe);
-    console.log(igrec);*/
-    udpMess = positionToUdpMess(ixe,igrec);
-    buffer = new Buffer(udpMess);
-    client = dgram.createSocket('udp4');
-    console.log("!!!!!!!!!!!! I GO TO GOAL !!!!!!!!!!!!")
-    client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-      if(err) throw err;
-      console.log('position to reach sent to ' + HOST +':'+ PORT);
-      client.close();
-    });
-  }
-}, 1000);
 
 
-
-
-
-
-
-
-
-
-
-//=====================================================
-// tree burning randomization
-//=====================================================
-var alea1 = -1;
-var alea2 = -1;
-var treenumber = -1;
-var onfire = false;
-var timerStart = 0;
-setInterval(function() {
-  // wait 15secs to be sure to send information to morse correctly
-  if(timerStart < 14) {
-    timerStart += 3;
-  } else {
-    alea1 = Math.random();
-    alea2 = Math.random();
-    treenumber = Math.floor(alea1 * treeslocations.length);
-    onfire = false;
-    if(alea2 < 0.33333) {
-      onfire = true;
-    }
-    if(onfire && (treenumber != -1) && !firesStatesOfTrees[treenumber]) {
-      firesStatesOfTrees[treenumber] = true;
-      // update states of fires to show them on the map
-      var indexTree = treenumber + 1;
-      var command1 = 'echo \'' + treeslocations[treenumber].x.toString() + ' ' + treeslocations[treenumber].y.toString() + ' -0.1\' | yarp write /data/out /morse/treeonfire' + indexTree.toString() + '/teleporttf' + indexTree.toString() + '/in';
-      var command2 = 'echo \'' + treeslocations[treenumber].x.toString() + ' ' + treeslocations[treenumber].y.toString() + ' -10\' | yarp write /data/out /morse/tree' + indexTree.toString() + '/teleport' + indexTree.toString() + '/in';
-      var command = command2 + ' && ' + command1;
-      console.log(command);
-      exec(command, puts);
-    }
-    console.log('new fire ? ' + treenumber + ' ' + onfire);
-  }
-}, 3000);
-
-//=====================================================
-// robot tank
-//=====================================================
-// define fill/stopfill water functions
-var fillWaterInterval;
-var robotTankEmpty = false;
-var isFillingWater = false;
-var fillingWater = function() {
-  isFillingWater = true;
-  clearInterval(fillWaterInterval);
-  fillWaterInterval = setInterval(function() {
-    if( (watlevel < 100) && (watlevelContainer > 11) ) {
-      watlevel = watlevel + 10;
-      watlevelContainer = watlevelContainer - 10;
-    }
-  }, 500);
-};
-var stopFillingWater = function() {
-  clearInterval(fillWaterInterval);
-  isFillingWater = false;
-};
-// give watlevel to client
-router.get('/robotwater', function(req, res) {
-  res.json([watlevel,robotTankEmpty]);
-});
-
-
-//=====================================================
-// water management part: 
-//=====================================================
-var openingcontrol = 0;
-var faucetcontrol = 0;
-
-var pivalue = 3.1415;
-
-var xrobinet = 42;
-
-var valveopening = 1;
-var vlvop = 1;
-var widthwaterflow = 10 - Math.abs(vlvop);
-
-var coeffspeed = 25;
-var coeffspeedopening = 0.1;
-
-var faucetxaxis = 2 * 10 / 40;
-setInterval(function() {
-  if((xrobinet <= 80) && (xrobinet >= 0)) {
-    xrobinet = xrobinet + coeffspeed * (pivalue / 80) * Math.sin(pivalue * xrobinet / 40 - pivalue) + faucetcontrol;
-  } else if(xrobinet > 80) {
-    xrobinet = 80;
-  } else if(xrobinet < 0) {
-    xrobinet = 0;
-  }
-  var fxa = (xrobinet - 40) * 10 / 40;
-  faucetxaxis = fxa.toPrecision(1);
-  if((vlvop <= 10) && (vlvop >= 0)) {
-    vlvop = vlvop + coeffspeedopening * (pivalue / 10) * Math.sin(pivalue * vlvop / 5 - pivalue) + coeffspeedopening * openingcontrol;
-    var tempvar = vlvop.toPrecision(1);
-  } else if(vlvop > 10) {
-    vlvop = 10;
-  } else if(vlvop < 0) {
-    vlvop = 0;
-  }
-  var temp = (vlvop - 5) * 10 / 5;
-    valveopening = temp.toPrecision(1);
-    widthwaterflow = 10 - Math.abs(temp);
-      //console.log($scope.widthwaterflow);
-}, 200);
-
-var watlevelContainer = 0;
-setInterval(function() {
-/*  if(watlevelContainer < 94) {
-    watlevelContainer = watlevelContainer + 1;
-  }*/
-// ADD WATER
-  var leaksSum = 0;
-  for(var i = 0; i<leakPlacesNb; i++) {
-    if(!noleakat[i]){
-      leaksSum = leaksSum + 1;
-    }
-  }
-  if((faucetxaxis < 2) && (faucetxaxis > -2) && watlevelContainer < 99) {
-    watlevelContainer = watlevelContainer + waterwidth/7 - leaksSum/(2*leakPlacesNb); 
-  } else if (watlevelContainer > 1){
-    watlevelContainer = watlevelContainer - leaksSum/leakPlacesNb;
-  }
-}, 200);
 
 
 var waterwidth = 0;
 var wrenchmode = false;
+var openingcontrol = 0;
+var faucetcontrol = 0;
 // send new state of control of water management to client
 router.post('/watercontrol', function(req, res/*, next*/) {
-console.log(req.body)
- var repeater;
+console.log(req.body);
+var repeater;
 if(req.body.token) {
 	var decoded = jwt.decode(req.body.token, secret);
 	console.log(decoded);
@@ -604,71 +607,8 @@ router.get('/watermanagement', function(req, res) {
 });
 
 
-//=====================================================
-// leaks/container part
-//=====================================================
-// INIT
-var crossSize = 0;
-var leakPlacesNb = 12;
-var leakPlaces = [];
-var noleakat = [];
-var leakCounter = 0;
-for (var i=0; i<leakPlacesNb; i++) {
-  leakPlaces.push(leakCounter);
-  leakCounter++;
-  noleakat.push(true);
-}
-    
-// RANDOM LEAKS
-var brokenContainer = false;
-setInterval(function() {
-  var leaksNotEverywhere = false;
-  if(Math.random()<0.5) {
-    var myInt = Math.floor(Math.random()*leakPlacesNb);
-    noleakat[myInt] = false;
-    for(var i = 0; i<leakPlacesNb; i++){
-      leaksNotEverywhere = leaksNotEverywhere || noleakat[i];
-    }
-    if(!leaksNotEverywhere) {
-      brokenContainer = true;
-      crossSize = 25;
-    }
-  }
-}, 5000);
-
-router.get('/leaks', function(req, res) {
-  res.json([leakPlaces,noleakat,brokenContainer,crossSize]);
-});
 
 
-//=====================================================
-// remaining time part
-//=====================================================
-var remainingtime = 600;
-setInterval(function() {
-  if(remainingtime > 0) {
-    remainingtime = remainingtime - 1;
-  }
-}, 1000);
-// give remaining time to client
-router.get('/time', function(req, res) {
-  res.json(remainingtime);
-});
-
-//=====================================================
-// battery part 
-// TODO: discharging rate higher when moving/using water
-//=====================================================
-var batteryLevel = 24;
-setInterval(function() {
-  if(batteryLevel > 0) {
-    batteryLevel = batteryLevel - 0.1;
-  }
-}, 1000);
-// give battery level to client
-router.get('/battery', function(req, res) {
-  res.json(batteryLevel);
-});
 
 var fillBatteryInterval;
 var batteryEmpty = false;
@@ -688,30 +628,275 @@ var stopFillingBattery = function() {
 };
 
 
-//=====================================================
-// heat simulation part 
-//=====================================================
 
-var tictac = false;
-var hotscreen = 0;
-var mercurelevel = '0.1vw';
-var mercurelevelfloat = 10;
+
+//=====================================================
+// TODO IF autonomous robot, then keys are not responding!
+//=====================================================
+// + fight fires
+// + when is it autonomous/manual? (print it on the screen)
+
+// MODE (AUTONOMOUS/MANUAL)
+
+var autonomousRobot = 1; 	// toutes les minutes, on tire au sort si autonome ou pas
+				// + dans une zone bien définie, c'est toujours manuel
+// UDP indexes
+var IND_MODE = 1
+var IND_ENDGOTO = 2
+
 /*
+si batterie=temps pour go batery -> go battery
+sinon si trop chaud -> s'écarter des arbres
+sinon si plus d'eau -> go eau
+sinon si pres d'un arbre en feu -> tirer
+sinon: go arbre en feu
+*/
+var ixe = zoneslocations[0].x;
+var igrec = zoneslocations[0].y;
+var firstTime = true;
+var tempxy = 1.0;
+// TODO mettre ca dans le launch/kill vvv
 setInterval(function() {
-  if(tictac) {
-    mercurelevel = '50px';
-    tictac = false;
-    hotscreen = 0;
-  } else {
-    mercurelevel = '300px';
-    tictac = true;
-    hotscreen = 1;
+  if(false &&(!currentAutoMvt || firstTime)){
+    firstTime = false;
+    throwWater();
+    console.log("!!!!!!!!!!!! I THROW WATER !!!!!!!!!!!!")
+    var gotoX = zoneslocations[1].x;
+    var gotoY =  zoneslocations[1].y;
+    for (var i=0;i<firesStatesOfTrees.length;i++){
+      if (firesStatesOfTrees[i]){
+        var gotoX = treeslocations[i].x;
+        var gotoY = treeslocations[i].y;
+      }
+    }
+    var vecteurX = gotoX -robotx[0];
+    var vecteurY = gotoY -roboty[0];
+    var normDirection = Math.sqrt(Math.pow(vecteurX, 2) + Math.pow(vecteurY, 2));
+    vecteurX = vecteurX/normDirection;
+    vecteurY = vecteurY/normDirection;
+    ixe = gotoX -vecteurX;
+    igrec = gotoY -vecteurY;
+/*    var tempixe = ixe;
+    ixe = igrec;
+    igrec = tempixe;
+    tempxy = -tempxy;*/
+    ixe = gotoX;
+    igrec = gotoY;
+/*    ixe = parseFloat(ixe) + tempxy;
+    igrec = parseFloat(igrec) + tempxy;
+    console.log("------ X,Y : ");
+    console.log(ixe);
+    console.log(igrec);*/
+    udpMess = positionToUdpMess(ixe,igrec);
+    buffer = new Buffer(udpMess);
+    client = dgram.createSocket('udp4');
+    console.log("!!!!!!!!!!!! I GO TO GOAL !!!!!!!!!!!!")
+    client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+      if(err) throw err;
+      console.log('position to reach sent to ' + HOST +':'+ PORT);
+      client.close();
+    });
   }
 }, 1000);
-*/
-// give temp/screen effect to client
-router.get('/temperature', function(req, res) {
-  res.json([mercurelevel,hotscreen]);
+
+
+
+
+
+
+var brokenContainer = false;
+router.get('/leaks', function(req, res) {
+  res.json([leakPlaces,noleakat,brokenContainer,crossSize]);
 });
+router.get('/battery', function(req, res) {
+  res.json(batteryLevel);
+});
+router.get('/time', function(req, res) {
+  res.json(remainingtime);
+});
+
+export function launchgame(req, res) {
+
+  //=====================================================
+  // tree burning randomization 
+  //=====================================================
+  var alea1 = -1;
+  var alea2 = -1;
+  var treenumber = -1;
+  var onfire = false;
+  var timerStart = 0;
+  treeBurningInterval = setInterval(function() {
+  // wait 15secs to be sure to send information to morse correctly
+    /*if(timerStart < 14) {
+      timerStart += 3;
+    } else {*/
+    alea1 = Math.random();
+    alea2 = Math.random();
+    treenumber = Math.floor(alea1 * treeslocations.length);
+    onfire = false;
+    if(alea2 < 0.33333) {
+      onfire = true;
+    }
+    if(onfire && (treenumber != -1) && !firesStatesOfTrees[treenumber]) {
+      firesStatesOfTrees[treenumber] = true;
+      // update states of fires to show them on the map
+      var indexTree = treenumber + 1;
+      var command1 = 'echo \'' + treeslocations[treenumber].x.toString() + ' ' + treeslocations[treenumber].y.toString() + ' -0.1\' | yarp write /data/out /morse/treeonfire' + indexTree.toString() + '/teleporttf' + indexTree.toString() + '/in';
+      var command2 = 'echo \'' + treeslocations[treenumber].x.toString() + ' ' + treeslocations[treenumber].y.toString() + ' -10\' | yarp write /data/out /morse/tree' + indexTree.toString() + '/teleport' + indexTree.toString() + '/in';
+      var command = command2 + ' && ' + command1;
+      console.log(command);
+      exec(command, puts);
+    }
+    console.log('new fire ? ' + treenumber + ' ' + onfire);
+  //  }
+  }, 3000);
+
+
+  //=====================================================
+  // water management part: 
+  //=====================================================
+  var pivalue = 3.1415;
+  var valveopening = 1;
+  var widthwaterflow = 10 - Math.abs(vlvop);
+  var coeffspeed = 25;
+  var coeffspeedopening = 0.1;
+  var faucetxaxis = 2 * 10 / 40;
+  waterManagementInterval = setInterval(function() {
+    if((xrobinet <= 80) && (xrobinet >= 0)) {
+      xrobinet = xrobinet + coeffspeed * (pivalue / 80) * Math.sin(pivalue * xrobinet / 40 - pivalue) + faucetcontrol;
+    } else if(xrobinet > 80) {
+      xrobinet = 80;
+    } else if(xrobinet < 0) {
+        xrobinet = 0;
+    }
+    var fxa = (xrobinet - 40) * 10 / 40;
+    faucetxaxis = fxa.toPrecision(1);
+    if((vlvop <= 10) && (vlvop >= 0)) {
+      vlvop = vlvop + coeffspeedopening * (pivalue / 10) * Math.sin(pivalue * vlvop / 5 - pivalue) + coeffspeedopening * openingcontrol;
+      var tempvar = vlvop.toPrecision(1);
+    } else if(vlvop > 10) {
+      vlvop = 10;
+    } else if(vlvop < 0) {
+      vlvop = 0;
+    }
+    var temp = (vlvop - 5) * 10 / 5;
+    valveopening = temp.toPrecision(1);
+    widthwaterflow = 10 - Math.abs(temp);
+      //console.log($scope.widthwaterflow);
+  }, 200);
+
+
+  waterFlowInterval = setInterval(function() {
+/*  if(watlevelContainer < 94) {
+    watlevelContainer = watlevelContainer + 1;
+  }*/
+// ADD WATER
+    var leaksSum = 0;
+    for(var i = 0; i<leakPlacesNb; i++) {
+      if(!noleakat[i]){
+        leaksSum = leaksSum + 1;
+      }
+    }
+    if((faucetxaxis < 2) && (faucetxaxis > -2) && watlevelContainer < 99) {
+      watlevelContainer = watlevelContainer + waterwidth/7 - leaksSum/(2*leakPlacesNb); 
+    } else if (watlevelContainer > 1){
+      watlevelContainer = watlevelContainer - leaksSum/leakPlacesNb;
+    }
+  }, 200);
+
+
+  //=====================================================
+  // remaining time part
+  //=====================================================
+
+  timeInterval = setInterval(function() {
+    if(remainingtime > 0) {
+      remainingtime = remainingtime - 1;
+    }
+  }, 1000);
+  // give remaining time to client
+  
+
+
+  //=====================================================
+  // battery part 
+  // TODO: discharging rate higher when moving/using water
+  //=====================================================
+  batteryInterval = setInterval(function() {
+    if(batteryLevel > 0) {
+      batteryLevel = batteryLevel - 0.1;
+    }
+  }, 1000);
+  // give battery level to client
+  
+
+  //=====================================================
+  // leaks/container part
+  //=====================================================
+
+    
+  // RANDOM LEAKS
+  leaksInterval = setInterval(function() {
+    var leaksNotEverywhere = false;
+    if(Math.random()<0.5) {
+      var myInt = Math.floor(Math.random()*leakPlacesNb);
+      noleakat[myInt] = false;
+      for(var i = 0; i<leakPlacesNb; i++){
+        leaksNotEverywhere = leaksNotEverywhere || noleakat[i];
+      }
+      if(!leaksNotEverywhere) {
+        brokenContainer = true;
+        crossSize = 25;
+      }
+    }
+  }, 5000);
+
+
+  res.status(200).json("launched!")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//=====================================================
+// robot tank
+//=====================================================
+// define fill/stopfill water functions
+var fillWaterInterval;
+var robotTankEmpty = false;
+var isFillingWater = false;
+var fillingWater = function() {
+  isFillingWater = true;
+  clearInterval(fillWaterInterval);
+  fillWaterInterval = setInterval(function() {
+    if( (watlevel < 100) && (watlevelContainer > 11) ) {
+      watlevel = watlevel + 10;
+      watlevelContainer = watlevelContainer - 10;
+    }
+  }, 500);
+};
+var stopFillingWater = function() {
+  clearInterval(fillWaterInterval);
+  isFillingWater = false;
+};
+// give watlevel to client
+router.get('/robotwater', function(req, res) {
+  res.json([watlevel,robotTankEmpty]);
+});
+
+
 
 module.exports = router;

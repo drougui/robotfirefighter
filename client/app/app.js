@@ -23,15 +23,26 @@ import main from './main/main.component';
 import constants from './app.constants';
 import util from '../components/util/util.module';
 import socket from '../components/socket/socket.service';
- import AboutComponent from './about/about.component';
-import WelcomeComponent from './welcome/welcome.component';
-
+import AboutComponent from './about/about.component';
+import welcome from './welcome/welcome.component';
+import LoadingComponent from './loading/loading.component';
+import HowtoComponent from './howto/howto.component';
+import TrainComponent from './train/train.component';
 import './app.css';
 
 angular.module('videogameApp', [ngCookies, ngResource, ngSanitize, 'btford.socket-io', uiRouter,
-  uiBootstrap, navbar, footer, main, AboutComponent, WelcomeComponent, constants, socket, util, 'cfp.hotkeys'
-])
-  .config(routeConfig);
+  uiBootstrap, navbar, footer, main, welcome, AboutComponent, LoadingComponent, TrainComponent, HowtoComponent, constants, socket, util, 'cfp.hotkeys'
+]).service('sharedProperties', function () {
+        var property = "";
+        return {
+            getProperty: function () {
+                return property;
+            },
+            setProperty: function(value) {
+                property = value;
+            }
+        };
+    }).config(routeConfig);
 
 angular.element(document)
   .ready(() => {

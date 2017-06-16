@@ -1,12 +1,15 @@
 .pageAbout{
-	width: 98vw;
-	height: 124vw;
+	width: 99vw;
+	height: 123vw;
 }
 
 .poster{
 	height: 100%;
-	width: 98vw;
-	background-size: 100vw auto;
+	width: 99vw;
+	background-size: 99vw auto;
 	background-image: url("/assets/images/poster_site.png");
 }
 
+.test{
+	background-color: red;
+}

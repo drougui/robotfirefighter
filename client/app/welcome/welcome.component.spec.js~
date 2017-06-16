@@ -1,0 +1,58 @@
+'use strict';
+
+import welcome from './welcome.component';
+import {
+  WelcomeController
+} from './welcome.component';
+
+describe('Component: WelcomeComponent', function() {
+  beforeEach(angular.mock.module(welcome));
+  beforeEach(angular.mock.module('stateMock'));
+  beforeEach(angular.mock.module('socketMock'));
+
+  var scope;
+  var welcomeComponent;
+  var state;
+  var $httpBackend;
+
+  // Initialize the controller and a mock scope
+  beforeEach(inject(function(_$httpBackend_, $http, $componentController, $rootScope, $state,
+    socket) {
+    $httpBackend = _$httpBackend_;
+    $httpBackend.expectGET('/api/things')
+      .respond(['HTML5 Boilerplate', 'AngularJS', 'Karma', 'Express']);
+
+    scope = $rootScope.$new();
+    state = $state;
+    welcomeComponent = $componentController('welcome', {
+      $http,
+      $scope: scope,
+      socket
+    });
+  }));
+
+  it('should attach a list of things to the controller', function() {
+    welcomeComponent.$onInit();
+    $httpBackend.flush();
+  });
+});
+
+/*'use strict';
+
+describe('Component: WelcomeComponent', function() {
+  // load the controller's module
+  beforeEach(module('robotfirefighterApp.welcome'));
+
+  var WelcomeComponent;
+
+  // Initialize the controller and a mock scope
+  beforeEach(inject(function($componentController) {
+    WelcomeComponent = $componentController('welcome', {});
+  }));
+
+  it('should ...', function() {
+    expect(1).toEqual(1);
+  });
+});
+
+*/

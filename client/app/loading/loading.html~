@@ -1,0 +1,3 @@
+<div class="loading">LOADING...
+	<button ui-sref="game" ng-if="playEnabled"> play </button>
+</div>

@@ -1,3 +1,4 @@
 <div class="pageAbout">
-<!--	<div class="poster"> </div> -->
+	<div ng-style="{opacity: 0}"> BBBB </div>
+	<div class="poster"> </div>
 </div>
