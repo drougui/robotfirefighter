@@ -1,5 +1,18 @@
 .loading{
 	height: 100vh;
 	width: 100vw;
-	font-size: 10vw;
+	font-size: 5vw;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.advice{
+	font-size: 2vw;
+}
+
+.loadpart{
+	display: flex;
+	width: 50vw;
 }

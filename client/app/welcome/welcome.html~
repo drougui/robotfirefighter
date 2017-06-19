@@ -1,7 +1,8 @@
 <div class="page">
 	<div class="mainmsg"> Welcome at HoRIzon's webpage. The Robot Firefighter game is waiting for you! </div>
 	<div class="mainBand">
-		<div class="mainButton" ui-sref="loading" ng-click="start()"> PLAY/SEE </div>
+		<div class="mainButton" ui-sref="loading" ng-click="play()" ng-if="emptySlot"> PLAY </div>
+		<div class="mainButton" ui-sref="loading" ng-click="see()" ng-if="!emptySlot"> SEE </div>
 		<div class="mainButton" ui-sref="howto"> HOW TO PLAY? </div>
 		<div class="mainButton" ui-sref="train"> TRAIN </div>
 		<div class="mainButton" ui-sref="about"> ABOUT </div>

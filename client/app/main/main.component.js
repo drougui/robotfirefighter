@@ -13,9 +13,7 @@ export class MainController {
   newThing = '';
 
   /*@ngInject*/
-  constructor($http, $scope, socket, hotkeys, $timeout, $interval, sharedProperties) {
-    // GET TOKEN from app.js
-    var token = sharedProperties.getProperty();
+  constructor($http, $scope, socket, hotkeys, $timeout, $interval, sharedProperties, $rootScope) {
 
     // GET IP ADDRESS
     $scope.ipaddress = "";
@@ -23,9 +21,8 @@ export class MainController {
       console.log(response.data);
       $scope.ipaddress=response.data;
     })
-/*    console.log("IP ADDRESS:");
-    console.log($scope.ipaddress);
-*/
+
+    // TODO overlays
     $scope.overlayOpen = false;
     $scope.nbfighted = 0;
     this.$http = $http;
@@ -43,35 +40,16 @@ export class MainController {
     $scope.realToCssPoseY = function(realPose) {
       return (95 - (realPose + translationY) * 100.0 / normalizationY).toString() + '%';
     };
-    /*
-    // token or notoken
-    var token = "";
-    $http.get('/api/auth').then(response => {
-      console.log(response);
-      $scope.emptySlot=response.data;
-    })
-    $scope.play = function(){
-      $http.get('/api/auth/play').then(response => {
-        console.log(response);
-        if(response.status === 200){
-          token=response.data;			
-        }
-        else{
-          $scope.emptySlot=false;
-        }
-      })
-    }
-*/
 
 
     $scope.start = function(){
       $http.get('/api/control/start').then(response => {
         console.log(response);
         if(response.status === 200){
-          //token=response.data;			
+
         }
         else{
-          //$scope.emptySlot=false;
+
         }
       })
     }
@@ -187,11 +165,6 @@ export class MainController {
           $scope.propFromTop = $scope.realToCssPoseY(response.data[1]);
           $scope.rotindeg = 180 - (response.data[2]+  3.14) * 360 / (2 * 3.14);
           $scope.waterize = response.data[3];
-/*          $timeout(function() {
-
-            $scope.waterize = false;
-          }, 100);*/
- //robotx,roboty,roboto,currentsplatch
         }
       });
     
@@ -206,9 +179,6 @@ export class MainController {
       } else {
         $scope.iconBatt = 0;
       }
-
-      
-
     }, 500);
     $scope.$on("$destroy", function() {
         if (mainInterval) {
@@ -239,18 +209,34 @@ export class MainController {
   
 
 
-    
+    // TODO ISPLAYING (with token) sent to control and auth every 10sec
+    var isPlaying = false;
+    var isPlayingInterval = $interval(function() {
+      console.log(isPlaying);
+      /*$http.post('/api/control/isplaying').then(response => {
+        if(response.status === 200) {
+
+        }
+      });
+        $http.post('/api/auth/isplaying').then(response => {
+        if(response.status === 200) {
+
+        }
+      });*/
+       isPlaying = false;
+     }, 10000);
+
+
+    var myToken = $rootScope.token;
     $scope.killall = function(){
+      myToken = $rootScope.token;
       if(!pending) {
         pending = true;
-        console.log("KILLALL FUNCTION");
-        $http.post('/api/control/killall', {token: token}).then(response => {
+        $http.post('/api/control/killall', {token: myToken}).then(response => {
           pending = false;
-          console.log("http.post /api/control/killall");
+          console.log($rootScope.token);
           if(response.status === 200) {
-            console.log("launch http post newtoken: ")
-            $http.post('/api/auth/newtoken', {token: token}).then(response => {
-              console.log("http.post /api/auth/newtoken");
+            $http.post('/api/auth/newtoken', {token: myToken}).then(response => { // TODO maybe after $http.post('/api/control/killall' ?
               if(response.status === 200) {
             
               } else if(debug) {
@@ -277,12 +263,13 @@ export class MainController {
 
     var pending = false;
     $scope.totheleft = function() {
+      myToken = $rootScope.token;
       if(debug) {
         console.log('totheleft');
       }
       if(!pending) {
         pending = true;
-        $http.post('/api/control', {key: 'left',token: token}).then(response => {
+        $http.post('/api/control', {key: 'left',token: myToken}).then(response => {
           pending = false;
           if(response.status === 200) {
             $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
@@ -293,9 +280,10 @@ export class MainController {
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
-		if (pressedKeys[38] && !pressedKeys[37]) {
-    			$scope.forward();
-  		}
+            if (pressedKeys[38] && !pressedKeys[37]) {
+              $scope.forward();
+            }
+            isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }
@@ -304,12 +292,13 @@ export class MainController {
     };
 
     $scope.totheright = function() {
+      myToken = $rootScope.token;
       if(debug) {
         console.log('totheright');
       }
       if(!pending) {
         pending = true;
-        $http.post('/api/control', {key: 'right',token: token}).then(response => {
+        $http.post('/api/control', {key: 'right',token: myToken}).then(response => {
           pending = false;
           if(response.status === 200) {
             $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
@@ -320,9 +309,10 @@ export class MainController {
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
-		if (pressedKeys[38] && !pressedKeys[39]) {
-    			$scope.forward();
-  		}
+            if (pressedKeys[38] && !pressedKeys[39]) {
+              $scope.forward();
+            }
+            isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }
@@ -331,37 +321,13 @@ export class MainController {
     };
 
     $scope.backward = function() {
+      myToken = $rootScope.token;
       if(debug) {
         console.log('backward');
       }
       if(!pending) {
         pending = true;
-        $http.post('/api/control', {key: 'back',token: token}).then(response => {
-		//response.data
-          if(response.status === 200) {
-            $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
-            $scope.propFromLeft = $scope.realToCssPoseX(response.data.posX[0]);
-            $scope.rotindeg = 180 - (response.data.orientation[0] + 3.14) * 360 / (2 * 3.14);
-            if(debug) {
-              console.log(response.data.posX[0]);
-              console.log(response.data.posY[0]);
-              console.log(response.data.orientation[0]);
-            }
-            pending = false;
-          } else if(debug) {
-            console.log('nok');
-          }
-        });
-      }
-    };
-
-    $scope.forward = function() {
-      if(debug) {
-        console.log('forward');
-      }
-      if(!pending) {
-        pending = true;
-        $http.post('/api/control', {key: 'front',token: token}).then(response => {
+        $http.post('/api/control', {key: 'back',token: myToken}).then(response => {
           pending = false;
           if(response.status === 200) {
             $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
@@ -372,6 +338,34 @@ export class MainController {
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
+            isPlaying = true;
+            isPlaying = true;
+          } else if(debug) {
+            console.log('nok');
+          }
+        });
+      }
+    };
+
+    $scope.forward = function() {
+      myToken = $rootScope.token;
+      if(debug) {
+        console.log('forward');
+      }
+      if(!pending) {
+        pending = true;
+        $http.post('/api/control', {key: 'front',token: myToken}).then(response => {
+          pending = false;
+          if(response.status === 200) {
+            $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
+            $scope.propFromLeft = $scope.realToCssPoseX(response.data.posX[0]);
+            $scope.rotindeg = 180 - (response.data.orientation[0] + 3.14) * 360 / (2 * 3.14);
+            if(debug) {
+              console.log(response.data.posX[0]);
+              console.log(response.data.posY[0]);
+              console.log(response.data.orientation[0]);
+            }
+            isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }
@@ -381,6 +375,7 @@ export class MainController {
 
     var robotTankEmpty;
     $scope.water = function() {
+      myToken = $rootScope.token;
       if(debug) {
         console.log('WATER');
       }
@@ -388,7 +383,7 @@ export class MainController {
  //       $scope.waterize = true;
         if(!pending) {
           pending = true;
-          $http.post('/api/control', {key: 'space',token: token}).then(response => {
+          $http.post('/api/control', {key: 'space',token: myToken}).then(response => {
             pending = false;
             if(response.status === 200) {
               $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
@@ -399,6 +394,7 @@ export class MainController {
               if(debug) {
                 //console.log('watlevel: ' + response.data.waterlevel);
               }
+              isPlaying = true;
             } else if(debug) {
               console.log('nok');
             }
@@ -422,10 +418,11 @@ export class MainController {
 
     // tap direction through wheel
     $scope.faucetctrlfctplus = function() {
+      myToken = $rootScope.token;
       if($scope.faucetcontrol < 3) {
         if(!pendingButtons) {
           pendingButtons = true;
-          $http.post('/api/control/watercontrol', {button: 'plusT',token: token}).then(response => {
+          $http.post('/api/control/watercontrol', {button: 'plusT',token: myToken}).then(response => {
             pendingButtons = false;
             if(response.status === 200) {
               $scope.faucetcontrol = response.data.tapControl;
@@ -440,6 +437,7 @@ export class MainController {
               if($scope.faucetcontrol>0) {
                 $scope.faucetcontrol = '+' + $scope.faucetcontrol;
               }
+              isPlaying = true;
             } else if(debug) {
               console.log('nok');
             }
@@ -449,11 +447,12 @@ export class MainController {
     };
 
     $scope.faucetctrlfctminus = function() {
+      myToken = $rootScope.token;
       if($scope.faucetcontrol > -3) {
         console.log("yo!");
         if(!pendingButtons) {
           pendingButtons = true;
-          $http.post('/api/control/watercontrol', {button: 'minusT',token: token}).then(response => {
+          $http.post('/api/control/watercontrol', {button: 'minusT',token: myToken}).then(response => {
             pendingButtons = false;
             if(response.status === 200) {
               $scope.faucetcontrol = response.data.tapControl;
@@ -464,6 +463,7 @@ export class MainController {
               } else {
                 $scope.direction = 0;
               }
+              isPlaying = true;
               $scope.animtime = 10 - Math.abs($scope.faucetcontrol)*3;
             } else if(debug) {
               console.log('nok');
@@ -477,12 +477,14 @@ export class MainController {
 //  send click on pushwater to server
     $scope.waterwidth = 0;
     $scope.waterPushButton = function() {
+      myToken = $rootScope.token;
       if(!pendingButtons) {
         pendingButtons = true;
-        $http.post('/api/control/watercontrol', {button: 'pushButton',token: token}).then(response => {
+        $http.post('/api/control/watercontrol', {button: 'pushButton',token: myToken}).then(response => {
           pendingButtons = false;
           if(response.status === 200) {
             console.log("pushbutton well received")
+            isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }
@@ -491,13 +493,15 @@ export class MainController {
     };
 
     $scope.wrenchOnOff = function() {
+      myToken = $rootScope.token;
       if(!pendingButtons) {
         pendingButtons = true;
-        $http.post('/api/control/watercontrol', {button: 'wrenchButton',token: token}).then(response => {
+        $http.post('/api/control/watercontrol', {button: 'wrenchButton',token: myToken}).then(response => {
           pendingButtons = false;
           if(response.status === 200) {
             $scope.wrenchMode = response.data.wrenchMode;
-            console.log("wrench mode ON/OFF! MODE: " + $scope.wrenchMode )
+            console.log("wrench mode ON/OFF! MODE: " + $scope.wrenchMode );
+            isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }
@@ -506,14 +510,16 @@ export class MainController {
     };
 
     $scope.clickLeak = function(leakId) {
+      myToken = $rootScope.token;
       if(!pendingButtons) {
         pendingButtons = true;
-        $http.post('/api/control/watercontrol', {button: 'clickLeak', leakid: leakId, token: token}).then(response => {
+        $http.post('/api/control/watercontrol', {button: 'clickLeak', leakid: leakId, token: myToken}).then(response => {
           pendingButtons = false;
           if(response.status === 200) {
             $scope.noleakat = response.data.noLeakAt;
             $scope.wrenchMode = response.data.wrenchMode;
             console.log("clikleak -- : " + $scope.noleakat )
+            isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }
@@ -522,14 +528,16 @@ export class MainController {
     };
 
     $scope.newContainer = function() {
+      myToken = $rootScope.token;
       if(!pendingButtons) {
         pendingButtons = true;
-        $http.post('/api/control/watercontrol', {button: 'newContainer', token: token}).then(response => {
+        $http.post('/api/control/watercontrol', {button: 'newContainer', token: myToken}).then(response => {
           pendingButtons = false;
           if(response.status === 200) {
             $scope.noleakat = response.data.noLeakAt;
             $scope.brokenContainer = response.data.brokenContainer;
             $scope.crossSize = response.data.crossSize;
+            isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }
@@ -543,7 +551,7 @@ export class MainController {
     hotkeys.add('down', 'backward', $scope.backward);
     hotkeys.add('up', 'forward', $scope.forward);
     hotkeys.add('space', 'water', $scope.water);
-// s d a z e
+// TODO s d a z e
     hotkeys.add('0', 'tozero', $scope.tozero);
     hotkeys.add('1', 'toone', $scope.toone);
     hotkeys.add('2', 'totwo', $scope.totwo);

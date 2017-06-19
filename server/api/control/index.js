@@ -42,29 +42,28 @@ router.get('/ipaddress', function(req, res) {
   console.log(IPaddress);
 });
 
-global.isgameready = false;
-var net = require('net');
-
-var server = net.createServer(function(socket) {
-  socket.write('Echo server\r\n');
-  //socket.pipe(socket);
-  console.log("TCP SERVER: 'JE RECOIS!'");
-  socket.on('data', function(data){
-  //console.log(data);
-  var textChunk = data.toString('utf8');
-    console.log(textChunk);
-  });
-  global.isgameready = true;
+//=====================================================
+// define trees locations using treeslocs.json
+//=====================================================
+var fs = require('fs');
+var chaine = fs.readFileSync('/home/drougard/driving-human-robots-interaction/treeslocs.json', 'UTF-8');
+var treeslocations = JSON.parse(chaine);
+console.log('TREES LOCATIONS');
+console.log(treeslocations[0].x);
+router.get('/', function(req, res) {
+  res.json(chaine);
 });
 
-server.listen(50002, 'localhost');
-
-router.get('/gameready', function(req, res) {
-  res.json(global.isgameready);
-  global.isgameready = false;
-  console.log("server get GAME READY")
+//=====================================================
+// define zones locations using zones.json
+//=====================================================
+var chaine2 = fs.readFileSync('/home/drougard/driving-human-robots-interaction/zones.json', 'UTF-8');
+var zoneslocations = JSON.parse(chaine2);
+console.log('ZONES LOCATIONS');
+console.log(zoneslocations[0].x);
+router.get('/zones', function(req, res) {
+  res.json(chaine2);
 });
-
 
 
 
@@ -77,16 +76,14 @@ var batteryInterval;
 var treeBurningInterval;
 var fillWaterInterval;
 var fillBatteryInterval;
-
-
-
-
-
 var xrobinet = 42;
 var mercurelevelfloat = 10;
 var mercurelevel = '0.1vw';
 var hotscreen = 0;
-var firesStatesOfTrees = [false, false, false, false, false, false];
+var firesStatesOfTrees = [];
+for(var i=0; i<treeslocations.length;i++) {
+  firesStatesOfTrees.push(false);
+}
 var watlevel = 50;
 var robotTankEmpty = false;
 var isFillingWater = false;
@@ -122,8 +119,8 @@ var numFightedFires = 0;
 //router.get('/killall',killall);
 router.post('/killall', killall);
 
-router.get('/start',start);
-router.get('/launchgame',launchgame);
+router.post('/start',start);
+router.post('/launchgame',launchgame);
 
 var sys = require('sys');
 var exec = require('child_process').exec;
@@ -138,7 +135,10 @@ function killall(req, res) {
       mercurelevelfloat = 10;
       mercurelevel = '0.1vw';
       hotscreen = 0;
-      firesStatesOfTrees = [false, false, false, false, false, false];
+      firesStatesOfTrees = [];
+      for(var i=0; i<treeslocations.length;i++) {
+        firesStatesOfTrees.push(false);
+      }
       watlevel = 50;
       robotTankEmpty = false;
       isFillingWater = false;
@@ -181,37 +181,34 @@ function killall(req, res) {
       clearInterval(fillBatteryInterval);
       res.status(200).json("everything killed")
     }
+    else{
+      res.status(401).json("Invalid token");
+    }
+  }
+  else{
+    res.status(401).json("No token");
   }
 }
 
 function start(req, res) {
-  exec('bash ~/driving-human-robots-interaction/restart.sh');
-  res.status(200).json("restart")
+  if(req.body.token) {
+    var decoded = jwt.decode(req.body.token, secret);
+    console.log(decoded);
+    if(decoded.auth){
+      exec('bash ~/driving-human-robots-interaction/restart.sh');
+      res.status(200).json("restart");
+    }
+    else{
+      res.status(401).json("Invalid token");
+    }
+  }
+  else{
+    res.status(401).json("No token given");
+  }
 }
 
 
-//=====================================================
-// define trees locations using treeslocs.json
-//=====================================================
-var fs = require('fs');
-var chaine = fs.readFileSync('/home/drougard/driving-human-robots-interaction/treeslocs.json', 'UTF-8');
-var treeslocations = JSON.parse(chaine);
-console.log('TREES LOCATIONS');
-console.log(treeslocations[0].x);
-router.get('/', function(req, res) {
-  res.json(chaine);
-});
 
-//=====================================================
-// define zones locations using zones.json
-//=====================================================
-var chaine2 = fs.readFileSync('/home/drougard/driving-human-robots-interaction/zones.json', 'UTF-8');
-var zoneslocations = JSON.parse(chaine2);
-console.log('ZONES LOCATIONS');
-console.log(zoneslocations[0].x);
-router.get('/zones', function(req, res) {
-  res.json(chaine2);
-});
 
 //=====================================================
 // get position/orientation from orocos
@@ -441,11 +438,11 @@ router.post('/', function(req, res/*, next*/) {
       }, 100);
     }
     else{
-      res.status(201).json("You're not playing !");
+      res.status(401).json("Invalid token");
     }
   }
   else{
-    res.status(201).json("You're not playing !");
+    res.status(401).json("No token given");
   }
 });
 
@@ -544,61 +541,61 @@ var openingcontrol = 0;
 var faucetcontrol = 0;
 // send new state of control of water management to client
 router.post('/watercontrol', function(req, res/*, next*/) {
-console.log(req.body);
-var repeater;
-if(req.body.token) {
-	var decoded = jwt.decode(req.body.token, secret);
-	console.log(decoded);
-	if(decoded.auth){
-	  if(req.body.button == 'plusT') {
-	    if(faucetcontrol < 3) {
-	      faucetcontrol = faucetcontrol + 1;
-	    }
-	  } else if(req.body.button == 'minusT') {
-	    if(faucetcontrol > -3) {
-	      faucetcontrol = faucetcontrol - 1;
-	    }
-	  } else if(req.body.button == 'pushButton') { // WATER PUSH BUTTON
-            waterwidth = 7;
-            var callCount = 1;
-            clearInterval(repeater);
-            repeater = setInterval(function () {
-              if (callCount < 8) {
-                waterwidth = 7 - callCount;
-                callCount += 1;
-              } else {
-                clearInterval(repeater);
-              }
-            }, 1000);
-	  } else if(req.body.button == 'wrenchButton') { // WRENCH 
-	    wrenchmode = !wrenchmode;
-          } else if(req.body.button == 'clickLeak') { // CLICK AT LEAK
-	    if(wrenchmode) {
-	      noleakat[req.body.leakid] = true;
-              wrenchmode = false;
-	    }
-	  } else if(req.body.button == 'newContainer') { // AND FINALLY "NEW CONTAINER"
-	    brokenContainer = false;
-            for (var i=0; i<leakPlacesNb; i++) {
-              noleakat[i] = true;
-            }
-            crossSize = 0;
-	  } 
-	  res.json({
-	    tapControl: faucetcontrol,
-	    wrenchMode: wrenchmode,
-            noLeakAt: noleakat,
-            brokenContainer: brokenContainer,
-            crossSize: crossSize
-	  });
-	}
-	else{
-		res.status(201).json("You're not playing !");
-	}
-}
-else{
-	res.status(201).json("You're not authenticated !");
-}
+  console.log(req.body);
+  var repeater;
+  if(req.body.token) {
+    var decoded = jwt.decode(req.body.token, secret);
+    console.log(decoded);
+    if(decoded.auth){
+      if(req.body.button == 'plusT') {
+        if(faucetcontrol < 3) {
+	  faucetcontrol = faucetcontrol + 1;
+        }
+      } else if(req.body.button == 'minusT') {
+        if(faucetcontrol > -3) {
+          faucetcontrol = faucetcontrol - 1;
+        }
+      } else if(req.body.button == 'pushButton') { // WATER PUSH BUTTON
+        waterwidth = 7;
+        var callCount = 1;
+        clearInterval(repeater);
+        repeater = setInterval(function () {
+        if (callCount < 8) {
+          waterwidth = 7 - callCount;
+          callCount += 1;
+        } else {
+          clearInterval(repeater);
+        }
+      }, 1000);
+      } else if(req.body.button == 'wrenchButton') { // WRENCH 
+        wrenchmode = !wrenchmode;
+      } else if(req.body.button == 'clickLeak') { // CLICK AT LEAK
+        if(wrenchmode) {
+          noleakat[req.body.leakid] = true;
+          wrenchmode = false;
+        }
+      } else if(req.body.button == 'newContainer') { // AND FINALLY "NEW CONTAINER"
+        brokenContainer = false;
+        for (var i=0; i<leakPlacesNb; i++) {
+          noleakat[i] = true;
+        }
+        crossSize = 0;
+      }
+      res.json({
+        tapControl: faucetcontrol,
+        wrenchMode: wrenchmode,
+        noLeakAt: noleakat,
+        brokenContainer: brokenContainer,
+        crossSize: crossSize
+      });
+    }
+    else{
+      res.status(401).json("Invalid token");
+    }
+  }
+  else{
+    res.status(401).json("No token given");
+  }
 });
 
 // give tap position, valve opening and water level of the container to client
@@ -716,105 +713,101 @@ router.get('/time', function(req, res) {
 });
 
 export function launchgame(req, res) {
-
-  //=====================================================
-  // tree burning randomization 
-  //=====================================================
-  var alea1 = -1;
-  var alea2 = -1;
-  var treenumber = -1;
-  var onfire = false;
-  var timerStart = 0;
-  treeBurningInterval = setInterval(function() {
-  // wait 15secs to be sure to send information to morse correctly
-    /*if(timerStart < 14) {
-      timerStart += 3;
-    } else {*/
-    alea1 = Math.random();
-    alea2 = Math.random();
-    treenumber = Math.floor(alea1 * treeslocations.length);
-    onfire = false;
-    if(alea2 < 0.33333) {
-      onfire = true;
-    }
-    if(onfire && (treenumber != -1) && !firesStatesOfTrees[treenumber]) {
-      firesStatesOfTrees[treenumber] = true;
-      // update states of fires to show them on the map
-      var indexTree = treenumber + 1;
-      var command1 = 'echo \'' + treeslocations[treenumber].x.toString() + ' ' + treeslocations[treenumber].y.toString() + ' -0.1\' | yarp write /data/out /morse/treeonfire' + indexTree.toString() + '/teleporttf' + indexTree.toString() + '/in';
-      var command2 = 'echo \'' + treeslocations[treenumber].x.toString() + ' ' + treeslocations[treenumber].y.toString() + ' -10\' | yarp write /data/out /morse/tree' + indexTree.toString() + '/teleport' + indexTree.toString() + '/in';
-      var command = command2 + ' && ' + command1;
-      console.log(command);
-      exec(command, puts);
-    }
-    console.log('new fire ? ' + treenumber + ' ' + onfire);
-  //  }
-  }, 3000);
-
-
-  //=====================================================
-  // water management part: 
-  //=====================================================
-  var pivalue = 3.1415;
-  var valveopening = 1;
-  var widthwaterflow = 10 - Math.abs(vlvop);
-  var coeffspeed = 25;
-  var coeffspeedopening = 0.1;
-  var faucetxaxis = 2 * 10 / 40;
-  waterManagementInterval = setInterval(function() {
-    if((xrobinet <= 80) && (xrobinet >= 0)) {
-      xrobinet = xrobinet + coeffspeed * (pivalue / 80) * Math.sin(pivalue * xrobinet / 40 - pivalue) + faucetcontrol;
-    } else if(xrobinet > 80) {
-      xrobinet = 80;
-    } else if(xrobinet < 0) {
-        xrobinet = 0;
-    }
-    var fxa = (xrobinet - 40) * 10 / 40;
-    faucetxaxis = fxa.toPrecision(1);
-    if((vlvop <= 10) && (vlvop >= 0)) {
-      vlvop = vlvop + coeffspeedopening * (pivalue / 10) * Math.sin(pivalue * vlvop / 5 - pivalue) + coeffspeedopening * openingcontrol;
-      var tempvar = vlvop.toPrecision(1);
-    } else if(vlvop > 10) {
-      vlvop = 10;
-    } else if(vlvop < 0) {
-      vlvop = 0;
-    }
-    var temp = (vlvop - 5) * 10 / 5;
-    valveopening = temp.toPrecision(1);
-    widthwaterflow = 10 - Math.abs(temp);
-      //console.log($scope.widthwaterflow);
-  }, 200);
+  console.log("!! CONTROL -- LAUNCHGAME !!")
+  if(req.body.token) {
+    var decoded = jwt.decode(req.body.token, secret);
+    console.log(decoded);
+    if(decoded.auth){
+      //=====================================================
+      // tree burning randomization 
+      //=====================================================
+      console.log("CONTROL: tree burning randomization");
+      var alea1 = -1;
+      var alea2 = -1;
+      var treenumber = -1;
+      var onfire = false;
+      var timerStart = 0;
+      treeBurningInterval = setInterval(function() {
+        alea1 = Math.random();
+        alea2 = Math.random();
+        treenumber = Math.floor(alea1 * treeslocations.length);
+        onfire = false;
+        if(alea2 < 0.33333) {
+          onfire = true;
+        }
+        if(onfire && (treenumber != -1) && !firesStatesOfTrees[treenumber]) {
+          firesStatesOfTrees[treenumber] = true;
+          // update states of fires to show them on the map
+          var indexTree = treenumber + 1;
+          var command1 = 'echo \'' + treeslocations[treenumber].x.toString() + ' ' + treeslocations[treenumber].y.toString() + ' -0.1\' | yarp write /data/out /morse/treeonfire' + indexTree.toString() + '/teleporttf' + indexTree.toString() + '/in';
+          var command2 = 'echo \'' + treeslocations[treenumber].x.toString() + ' ' + treeslocations[treenumber].y.toString() + ' -10\' | yarp write /data/out /morse/tree' + indexTree.toString() + '/teleport' + indexTree.toString() + '/in';
+          var command = command2 + ' && ' + command1;
+          console.log(command);
+          exec(command, puts);
+        }
+        console.log('new fire ? ' + treenumber + ' ' + onfire);
+      }, 3000);
 
 
-  waterFlowInterval = setInterval(function() {
-/*  if(watlevelContainer < 94) {
-    watlevelContainer = watlevelContainer + 1;
-  }*/
-// ADD WATER
-    var leaksSum = 0;
-    for(var i = 0; i<leakPlacesNb; i++) {
-      if(!noleakat[i]){
-        leaksSum = leaksSum + 1;
-      }
-    }
-    if((faucetxaxis < 2) && (faucetxaxis > -2) && watlevelContainer < 99) {
-      watlevelContainer = watlevelContainer + waterwidth/7 - leaksSum/(2*leakPlacesNb); 
-    } else if (watlevelContainer > 1){
-      watlevelContainer = watlevelContainer - leaksSum/leakPlacesNb;
-    }
-  }, 200);
+      //=====================================================
+      // water management part: 
+      //=====================================================
+      console.log("CONTROL: water management part: ");
+      var pivalue = 3.1415;
+      var valveopening = 1;
+      var widthwaterflow = 10 - Math.abs(vlvop);
+      var coeffspeed = 25;
+      var coeffspeedopening = 0.1;
+      var faucetxaxis = 2 * 10 / 40;
+      waterManagementInterval = setInterval(function() {
+        if((xrobinet <= 80) && (xrobinet >= 0)) {
+          xrobinet = xrobinet + coeffspeed * (pivalue / 80) * Math.sin(pivalue * xrobinet / 40 - pivalue) + faucetcontrol;
+        } else if(xrobinet > 80) {
+          xrobinet = 80;
+        } else if(xrobinet < 0) {
+            xrobinet = 0;
+        }
+        var fxa = (xrobinet - 40) * 10 / 40;
+        faucetxaxis = fxa.toPrecision(1);
+        if((vlvop <= 10) && (vlvop >= 0)) {
+          vlvop = vlvop + coeffspeedopening * (pivalue / 10) * Math.sin(pivalue * vlvop / 5 - pivalue) + coeffspeedopening * openingcontrol;
+          var tempvar = vlvop.toPrecision(1);
+        } else if(vlvop > 10) {
+          vlvop = 10;
+        } else if(vlvop < 0) {
+          vlvop = 0;
+        }
+        var temp = (vlvop - 5) * 10 / 5;
+        valveopening = temp.toPrecision(1);
+        widthwaterflow = 10 - Math.abs(temp);
+      }, 200);
+
+
+      waterFlowInterval = setInterval(function() {
+        var leaksSum = 0;
+        for(var i = 0; i<leakPlacesNb; i++) {
+          if(!noleakat[i]){
+            leaksSum = leaksSum + 1;
+          }
+        }
+        if((faucetxaxis < 2) && (faucetxaxis > -2) && watlevelContainer < 99) {
+          watlevelContainer = watlevelContainer + waterwidth/7 - leaksSum/(2*leakPlacesNb); 
+        } else if (watlevelContainer > 1){
+          watlevelContainer = watlevelContainer - leaksSum/leakPlacesNb;
+        }
+      }, 200);
 
 
   //=====================================================
   // remaining time part
   //=====================================================
-
-  timeInterval = setInterval(function() {
-    if(remainingtime > 0) {
-      remainingtime = remainingtime - 1;
-    }
-  }, 1000);
-  // give remaining time to client
+      console.log("CONTROL: remaining time part");
+      timeInterval = setInterval(function() {
+        if(remainingtime > 0) {
+          remainingtime = remainingtime - 1;
+        }
+      }, 1000);
+      // give remaining time to client
   
 
 
@@ -822,12 +815,13 @@ export function launchgame(req, res) {
   // battery part 
   // TODO: discharging rate higher when moving/using water
   //=====================================================
-  batteryInterval = setInterval(function() {
-    if(batteryLevel > 0) {
-      batteryLevel = batteryLevel - 0.1;
-    }
-  }, 1000);
-  // give battery level to client
+      console.log("CONTROL: battery part ");
+      batteryInterval = setInterval(function() {
+        if(batteryLevel > 0) {
+          batteryLevel = batteryLevel - 0.1;
+        }
+      }, 1000);
+      // give battery level to client
   
 
   //=====================================================
@@ -836,23 +830,31 @@ export function launchgame(req, res) {
 
     
   // RANDOM LEAKS
-  leaksInterval = setInterval(function() {
-    var leaksNotEverywhere = false;
-    if(Math.random()<0.5) {
-      var myInt = Math.floor(Math.random()*leakPlacesNb);
-      noleakat[myInt] = false;
-      for(var i = 0; i<leakPlacesNb; i++){
-        leaksNotEverywhere = leaksNotEverywhere || noleakat[i];
-      }
-      if(!leaksNotEverywhere) {
-        brokenContainer = true;
-        crossSize = 25;
-      }
+      console.log("CONTROL: RANDOM LEAKS");
+      leaksInterval = setInterval(function() {
+        var leaksNotEverywhere = false;
+        if(Math.random()<0.5) {
+          var myInt = Math.floor(Math.random()*leakPlacesNb);
+          noleakat[myInt] = false;
+          for(var i = 0; i<leakPlacesNb; i++){
+            leaksNotEverywhere = leaksNotEverywhere || noleakat[i];
+          }
+          if(!leaksNotEverywhere) {
+            brokenContainer = true;
+            crossSize = 25;
+          }
+        }
+      }, 5000);
+
+
+      res.status(200).json("launched!")
+    } else{
+      res.status(401).json("Invalid token");
     }
-  }, 5000);
-
-
-  res.status(200).json("launched!")
+  }
+  else{
+    res.status(401).json("No token given");
+  }
 }
 
 

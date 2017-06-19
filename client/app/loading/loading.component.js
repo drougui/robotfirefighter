@@ -9,42 +9,74 @@ export class LoadingComponent {
   $http;
   socket;
   /*@ngInject*/
-  constructor($http, $scope, socket, $interval, $timeout, sharedProperties) {
+  constructor($http, $scope, socket, $interval, $timeout, sharedProperties, $rootScope) {
     'ngInject';
     $scope.playEnabled = false;
     this.$http = $http;
     this.socket = socket;
-    var newTokenTimeout;
-    var servercall = $interval(function() {
-      $http.get('/api/control/gameready').then(response => {
+    $scope.dot = 0;
+    var servercall = $interval(function() { 
+      $http.get('/api/auth/gameready').then(response => { // TODO POST TOKEN TO AVOID AN OTHER VISITOR TO GET THE INFORMATION (MAKING THE PLAYER UNABLE TO CLICK)
         if(response.status === 200) {
-          console.log(response.data);
+          //console.log(response.data);
           if(response.data) {
             $scope.playEnabled = true;
-            console.log('yooooooooooooooooooooooooooooooooooooooooooo!!!');
-             newTokenTimeout = $timeout(function() {
-               // TODO NEW TOKEN !!!!! place libre! EST-CE QUE CA SUFFIT QUE CA SOIT LE COTE CLIENT QUI DESACTIVE? 
-		//NON! le compteur sera dans "auth", et il continue tant qu'il ne reçoit rien
-		// avec une limite maximale de 11min
-               
-             }, 30000);
+            //console.log('server informs that game is ready!');
           }
         }
       });
+      $scope.dot = ($scope.dot + 1)%4;
     }, 1000);
+
+
     $scope.$on("$destroy", function() {
-        if (servercall) {
-            $interval.cancel(servercall);
-        }
+      if (servercall) {
+        console.log("SERVERCALL INTERVAL KILL:");
+        var cancelServerCall = $interval.cancel(servercall);
+        console.log(cancelServerCall);
+      }
     });
 
-    $scope.letsplay = function() {
-      $http.get('/api/control/launchgame').then(response => {
+    var myToken = $rootScope.token; // does nothing, usually $rootScope.token isn't filled yet.
+    console.log("LOADING!");
+    console.log("$rootScope.token:");
+    console.log($rootScope.token);
+    console.log("myToken:");
+    console.log(myToken);
+    
+    // LETS PLAY
+    $scope.letsplay = function() { 
+      myToken = $rootScope.token;
+      console.log("letsplay!");
+      console.log("myToken:");
+      console.log(myToken);
+      console.log("$rootScope.token:");
+      console.log($rootScope.token);
+      
+      // kill timeout TODO a mettre au début de main.component.js si ça se lance pas
+      console.log("post token to auth/killTimeout");
+      $http.post('/api/auth/killTimeout', {token: myToken}).then(response => {      
+        console.log("letsplay -- auth/killTimeout -- response: ");
         console.log(response);
         if(response.status === 200){
-		// TODO kill timeout
+          console.log("le token est ok, timeout annulé dans auth");
+        } else if(debug) {
+          console.log('nok');
         }
-      })
+      });
+      
+      // launch game TODO a mettre au début de main.component.js si ça se lance pas
+      console.log("post token to control/launchgame");
+      $http.post('/api/control/launchgame', {token: myToken}).then(response => {         
+        console.log("letsplay -- control/launchgame -- response: ");   
+        console.log(response);
+        if(response.status === 200){
+          console.log("le token est ok, la partie js du jeu est lancée");
+        } else if(debug) {
+          console.log('nok');
+        }
+      });
+
     }
   }
 

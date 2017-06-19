@@ -7,7 +7,7 @@ import routes from './welcome.routes';
 
 export class WelcomeComponent {
   /*@ngInject*/
-  constructor($http, $scope, socket, sharedProperties) {
+  constructor($http, $scope, socket, sharedProperties, $rootScope) {
     'ngInject';
     this.$http = $http;
     this.socket = socket;
@@ -21,7 +21,9 @@ export class WelcomeComponent {
     })
 
     // test authorization for playing
-    var token = "";
+//    var token = "";
+    $rootScope.token = "";
+    var myToken = $rootScope.token;
     $scope.play = function(){
       $http.get('/api/auth/play').then(response => {
         console.log("response!")
@@ -29,29 +31,35 @@ export class WelcomeComponent {
         if(response.status === 200){
           console.log("give token");
           // ok, I give a token to you
-          token=response.data;
-          sharedProperties.setProperty(token);
-          // and I launch the videogame
-          $http.get('/api/control/start').then(response => {
+          $rootScope.token = response.data;
+          myToken = $rootScope.token;
+          console.log("welcome - play() -- I JUST GOT A TOKEN: ");
+          console.log($rootScope.token);
+          console.log("welcome - play() -- myToken : ");
+          console.log(myToken);
+
+          // launch MORSE & co
+          $http.post('/api/control/start', {token: myToken}).then(response => {
+            console.log("control/start response:");
             console.log(response);
             if(response.status === 200){
               console.log("game launched!");
             }
             else{
-              console.log("game not started");
+              console.log("game not launched");
             }
-          })
+          });
         }
         else{
           // no token, display appropriate home
           $scope.emptySlot=false;
-          console.log("no token!")
+          console.log("no token available!")
         }
       })
-    }
+    }; // play
 
-  }
-}
+  } // constructor
+} // component
 
 export default angular.module('robotfirefighterApp.welcome', [uiRouter])
   .config(routes)
