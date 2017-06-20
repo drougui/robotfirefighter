@@ -212,19 +212,24 @@ export class MainController {
     // TODO ISPLAYING (with token) sent to control and auth every 10sec
     var isPlaying = false;
     var isPlayingInterval = $interval(function() {
+      console.log("IS PLAYING: ");
       console.log(isPlaying);
-      /*$http.post('/api/control/isplaying').then(response => {
+      $http.post('/api/auth/isplaying', {isplaying: isPlaying, token: myToken}).then(response => {
+        console.log("wait for response....");
         if(response.status === 200) {
-
+          console.log('isPlaying taken into account by auth');
+        } else{
+          console.log('isPlaying -- nok auth');
         }
       });
-        $http.post('/api/auth/isplaying').then(response => {
-        if(response.status === 200) {
+      isPlaying = false;
+    }, 10000);
 
-        }
-      });*/
-       isPlaying = false;
-     }, 10000);
+     $scope.$on("$destroy", function() {
+       if (isPlayingInterval) {
+         $interval.cancel(isPlayingInterval);
+       }
+     });
 
 
     var myToken = $rootScope.token;
@@ -338,7 +343,6 @@ export class MainController {
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
-            isPlaying = true;
             isPlaying = true;
           } else if(debug) {
             console.log('nok');

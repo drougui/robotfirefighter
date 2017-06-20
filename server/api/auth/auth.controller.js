@@ -63,92 +63,124 @@ function handleError(res, statusCode) {
   };
 }
 
-var emptySlot=true;
+// ========================
+// ========================
+//    ROBOT FIREFIGHTER
+// ========================
+// ========================
+
+// =============================================
+//  JSON Web Tokens, or JWTs (pronounced jots)
+// =============================================
 var jwt = require('jwt-simple');
-var payload = {auth:true};
+// to manage token expiration
+var moment = require('moment');
+// TODO 
+// GIVE THIS IN ARGUMENT WHEN LAUNCHING THE INTERNET SITE 
+// ??? app.set('jwtTokenSecret', 'YOUR_SECRET_STRING'); ???
 var secret = Buffer.from('fe1a1915a379f3be5394b64d14794932', 'hex');
+// INITIATIZATION
+// someone playing ?
+var emptySlot = true; // nobody is playing
+global.expires = moment().add('minutes', 11).valueOf(); // payload = [authorization, expiration]
+var payload = {auth: true,
+               exp: expires};
 
-
-
-// listen to the end of MORSE & co's loading
+// ===========================================
+//   GET LOADING STATE (loaded/loading)
+//   AND SEND IT TO CLIENT (loading page)
+// ===========================================
 var sys = require('sys');
 var exec = require('child_process').exec;
-global.isgameready = false;
+global.isgameready = false; // state of loading
 var net = require('net');
-var clickOnLetsPlayTimeout;
+var clickOnLetsPlayTimeout; // a timeout is defined when everything is loaded
+// listen to the end of MORSE & co's loading
 var server = net.createServer(function(socket) {
   socket.write('Echo server\r\n');
-  //socket.pipe(socket);
-  console.log("TCP SERVER: 'JE RECOIS!'");
+  console.log('Auth -- TCP SERVER: GAME LOADED');
   socket.on('data', function(data){
-    //console.log(data);
     var textChunk = data.toString('utf8');
+    console.log('message:')
     console.log(textChunk);
   });
   global.isgameready = true;
-  clickOnLetsPlayTimeout = setTimeout(function() {
-    console.log("TIMEOUT on LETSPLAY -> emptySlot=true!!!!")
-    emptySlot=true;
+  clickOnLetsPlayTimeout = setTimeout(function() { // the player has 30secs to click on letsplay
+    console.log('Auth -- TIMEOUT on LETSPLAY -> emptySlot=true')
+    emptySlot = true;
+    global.expires = moment().add('minutes', 11).valueOf();
+    payload = {auth: true,
+               exp: global.expires};
     global.token = jwt.encode(payload, secret);
-    console.log("the new token :");
+    console.log('Auth -- New token:');
     console.log(global.token);
-    console.log("kill game!");
+    console.log('Auth -- Kill game.');
     exec('bash ~/driving-human-robots-interaction/killAll.sh');
-
   }, 30000);
 });
-
-// call by LOADING letsplay
-export function killTimeout(req,res) {
-  if(req.body.token) {
-    var decoded = jwt.decode(req.body.token, secret);
-    if(decoded.auth){
-      console.log("clear Timeout!")
-      clearTimeout(clickOnLetsPlayTimeout);
-     } else{
-      res.status(401).json("Invalid token");
-    }
-  } else{
-    res.status(401).json("No token");
-  }
-
-}
-
 server.listen(50002, 'localhost');
-/*
-router.get('/gameready', function(req, res) {
-  res.json(global.isgameready);
-  global.isgameready = false;
-  console.log("server get GAME READY")
-});
-*/
+
+// send loading information to client
 export function gameReady(req, res) {
   res.json(global.isgameready);
   global.isgameready = false;
-  console.log("server get GAME READY")
+  console.log('Auth -- send loading information to client');
 }
 
+// function meant to clear previous timeout
+// called by letsplay in 'loading' component 
+export function killTimeout(req,res) {
+  if(req.body.token) {
+    var decoded = jwt.decode(req.body.token, secret);
+    if(decoded.auth && decoded.exp === global.expires){
+      console.log('Auth -- Clear timeout.');
+      clearTimeout(clickOnLetsPlayTimeout);
+      console.log('Auth -- Isplaying timeout creation.');
+      isPlayingTimeout = setTimeout(function() { // the player has 30secs to click on a button or press an control key
+          console.log('Auth -- TIMEOUT on isplaying -> emptySlot=true')
+          emptySlot = true;
+          global.expires = moment().add('minutes', 11).valueOf();
+          payload = {auth: true,
+                     exp: global.expires};
+          global.token = jwt.encode(payload, secret);
+          console.log('Auth -- New token:');
+          console.log(global.token);
+          console.log('Auth -- Kill game.');
+          global.stopGame();
+          exec('bash ~/driving-human-robots-interaction/killAll.sh');
+        }, 30000);
+     } else{
+      res.status(401).json('Auth -- Invalid token.');
+    }
+  } else{
+    res.status(401).json('Auth -- No token.');
+  }
+}
 
 // TODO: changer la valeur de emptySlot selon l'activité du mec (fin du jeu/30sec sans rien toucher => killall + emptySlot = true
 export function newtoken(req,res) {
-  console.log("FUNCTION NEWTOKEN");
+  console.log('Auth -- New token function:');
   console.log(req.body)
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
-    if(decoded.auth){
+    if(decoded.auth && decoded.exp === global.expires){
       console.log(decoded);
       emptySlot=true;
-      console.log("EMPTYSLOT AUTH: ");
+      console.log('Auth -- emptySlot:');
       console.log(emptySlot);
+      global.expires = moment().add('minutes', 11).valueOf();
+      payload = {auth: true,
+                 exp: global.expires};
       global.token = jwt.encode(payload, secret);
-      res.status(200).json("SLOT IS NOW EMPTY, with new token given to nobody");
+      res.status(200).json('Auth -- Slot is now empty, a new token is created (given to nobody).');
     } else{
-      res.status(401).json("NOK");
+      res.status(401).json('Auth -- Wrong token.');
     }
   } else{
-    res.status(401).json("NOK");
+    res.status(401).json('Auth -- No token.');
   }
 }
+
 
 // Gets a list of Auths
 export function status(req, res) {
@@ -158,16 +190,72 @@ export function status(req, res) {
 // BEGIN A PLAY SESSION
 export function play(req, res) {
   if(emptySlot){
+    global.expires = moment().add('minutes', 11).valueOf(); // payload = [authorization, expiration]
+    payload = { auth: true,
+                exp: global.expires };
     global.token = jwt.encode(payload, secret);
     res.status(200).json(global.token);
-    emptySlot=false;
-    console.log("I GIVE A NEW TOKEN:");
+    emptySlot = false;
+    console.log("Auth -- new token given:");
     console.log(global.token);
-    // TODO compte à rebour général pour rendre le slot empty au bout de 15min. Ce timeout doit etre killé si le slot est libéré d'une autre manière 
   }
   else{
-    res.status(401).json("NOK");
+    res.status(401).json('Auth -- Slot is not empty.');
   }
 }
+
+// check expiration of tokens every 3secs
+var checkExpiration = setInterval(function() {
+  if( global.expires <= Date.now() ) {
+    emptySlot = true;
+    console.log("Auth -- expiration of current token, creation of a new one. ")
+    global.expires = moment().add('minutes', 11).valueOf();
+    payload = { auth: true,
+              exp: global.expires };
+    global.token = jwt.encode(payload, secret);
+    console.log('Auth -- kill game.');
+    global.stopGame();
+//    exec('bash ~/driving-human-robots-interaction/killAll.sh');
+    //TODO reinit js part of the game
+  }
+}, 3000);
+
+var isPlayingTimeout;
+export function isplaying(req,res) {
+  console.log('Auth -- isplaying function:');
+  console.log(req.body)
+  if(req.body.token) {
+    var decoded = jwt.decode(req.body.token, secret);
+    if(decoded.auth && decoded.exp === global.expires){
+      if(req.body.isplaying){
+        console.log('Auth -- Clear isplaying timeout.')
+        clearTimeout(isPlayingTimeout);
+        console.log('Auth -- Create a new one.')
+        isPlayingTimeout = setTimeout(function() { // the player has 30secs to click on a button or press an control key
+          console.log('Auth -- TIMEOUT on isplaying -> emptySlot=true')
+          emptySlot = true;
+          global.expires = moment().add('minutes', 11).valueOf();
+          payload = {auth: true,
+                     exp: global.expires};
+          global.token = jwt.encode(payload, secret);
+          console.log('Auth -- New token:');
+          console.log(global.token);
+          console.log('Auth -- Kill game.');
+          global.stopGame();
+          exec('bash ~/driving-human-robots-interaction/killAll.sh');
+        }, 30000);
+      } else{
+        console.log("not playing!");
+      }
+      res.status(200).json('Auth -- isplaying received.');
+    } else{
+      res.status(401).json('Auth -- Wrong token.');
+    }
+  } else{
+    res.status(401).json('Auth -- No token.');
+  }
+}
+
+
 
 

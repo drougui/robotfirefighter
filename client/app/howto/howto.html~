@@ -1,1 +1,3 @@
-<div>This is the howto view.</div>
+<div> HOWTO? EVERYTHING IN CLIENT SIDE!!
+	<button ui-sref="welcome"> BACK </button>
+</div>

@@ -1,1 +1,4 @@
-<div>This is the train view.</div>
+<div>
+	TRAIN
+	<button ui-sref="welcome"> BACK </button>	
+</div>

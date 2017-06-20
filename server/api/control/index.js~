@@ -68,6 +68,7 @@ router.get('/zones', function(req, res) {
 
 
 
+// declare intervals
 var waterManagementInterval;
 var leaksInterval;
 var waterFlowInterval;
@@ -76,6 +77,8 @@ var batteryInterval;
 var treeBurningInterval;
 var fillWaterInterval;
 var fillBatteryInterval;
+
+// declare variables
 var xrobinet = 42;
 var mercurelevelfloat = 10;
 var mercurelevel = '0.1vw';
@@ -87,19 +90,7 @@ for(var i=0; i<treeslocations.length;i++) {
 var watlevel = 50;
 var robotTankEmpty = false;
 var isFillingWater = false;
-// stopFillingWater();
-// stopFillingBattery();
-/*
-var stopFillingWater = function() {
-  clearInterval(fillWaterInterval);
-  isFillingWater = false;
-};
-// give watlevel to client
-router.get('/robotwater', function(req, res) {
-  res.json([watlevel,robotTankEmpty]);
-});
-*/
-// INIT
+
 var crossSize = 0;
 var leakPlacesNb = 12;
 var leakPlaces = [];
@@ -116,11 +107,10 @@ var remainingtime = 600;
 var batteryLevel = 24;
 var numFightedFires = 0;
 
-//router.get('/killall',killall);
-router.post('/killall', killall);
 
-router.post('/start',start);
-router.post('/launchgame',launchgame);
+router.post('/killall', killall); // kill morse, + init js
+router.post('/start',start); // launch morse
+router.post('/launchgame',launchgame); // launch js
 
 var sys = require('sys');
 var exec = require('child_process').exec;
@@ -129,7 +119,7 @@ function killall(req, res) {
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
     console.log(decoded);
-    if(decoded.auth){
+    if(decoded.auth && decoded.exp === global.expires){
       exec('bash ~/driving-human-robots-interaction/killAll.sh');
       xrobinet = 42;
       mercurelevelfloat = 10;
@@ -142,18 +132,6 @@ function killall(req, res) {
       watlevel = 50;
       robotTankEmpty = false;
       isFillingWater = false;
-  // stopFillingWater();
-  // stopFillingBattery();
-  /*
-  var stopFillingWater = function() {
-    clearInterval(fillWaterInterval);
-    isFillingWater = false;
-  };
-    // give watlevel to client
-    router.get('/robotwater', function(req, res) {
-    res.json([watlevel,robotTankEmpty]);
-  });
-  */
       crossSize = 0;
       leakPlacesNb = 12;
       leakPlaces = [];
@@ -194,7 +172,8 @@ function start(req, res) {
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
     console.log(decoded);
-    if(decoded.auth){
+    if(decoded.auth && decoded.exp === global.expires){
+      exec('bash ~/driving-human-robots-interaction/killall.sh');
       exec('bash ~/driving-human-robots-interaction/restart.sh');
       res.status(200).json("restart");
     }
@@ -385,7 +364,7 @@ router.post('/', function(req, res/*, next*/) {
   console.log(req.body)
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
-    if(decoded.auth){
+    if(decoded.auth && decoded.exp === global.expires){
       console.log(decoded);
       if(req.body.key == 'front') {
         udpMess = speedToUdpMess(0.0, 0.6);
@@ -546,7 +525,7 @@ router.post('/watercontrol', function(req, res/*, next*/) {
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
     console.log(decoded);
-    if(decoded.auth){
+    if(decoded.auth && decoded.exp === global.expires){
       if(req.body.button == 'plusT') {
         if(faucetcontrol < 3) {
 	  faucetcontrol = faucetcontrol + 1;
@@ -713,10 +692,50 @@ router.get('/time', function(req, res) {
 });
 
 export function launchgame(req, res) {
+  console.log("!! CONTROL -- LAUNCHGAME !!")
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
     console.log(decoded);
-    if(decoded.auth){
+    if(decoded.auth && decoded.exp === global.expires ){
+
+      // make sure the initialization is correct 
+      xrobinet = 42;
+      mercurelevelfloat = 10;
+      mercurelevel = '0.1vw';
+      hotscreen = 0;
+      firesStatesOfTrees = [];
+      for(var i=0; i<treeslocations.length;i++) {
+        firesStatesOfTrees.push(false);
+      }
+      watlevel = 50;
+      robotTankEmpty = false;
+      isFillingWater = false;
+      crossSize = 0;
+      leakPlacesNb = 12;
+      leakPlaces = [];
+      noleakat = [];
+      leakCounter = 0;
+      for (var i=0; i<leakPlacesNb; i++) {
+        leakPlaces.push(leakCounter);
+        leakCounter++;
+        noleakat.push(true);
+      }
+      vlvop = 1;
+      watlevelContainer = 0;
+      remainingtime = 600;
+      batteryLevel = 24;
+      numFightedFires = 0;
+
+      // clear intervals 
+      clearInterval(waterManagementInterval);
+      clearInterval(leaksInterval);
+      clearInterval(waterFlowInterval);
+      clearInterval(timeInterval);
+      clearInterval(batteryInterval);
+      clearInterval(treeBurningInterval);
+      clearInterval(fillWaterInterval);
+      clearInterval(fillBatteryInterval);
+
       //=====================================================
       // tree burning randomization 
       //=====================================================
@@ -900,4 +919,64 @@ router.get('/robotwater', function(req, res) {
 
 
 
+global.stopGame = function() { 
+  exec('bash ~/driving-human-robots-interaction/killAll.sh');
+  xrobinet = 42;
+  mercurelevelfloat = 10;
+  mercurelevel = '0.1vw';
+  hotscreen = 0;
+  firesStatesOfTrees = [];
+  for(var i=0; i<treeslocations.length;i++) {
+    firesStatesOfTrees.push(false);
+  }
+  watlevel = 50;
+  robotTankEmpty = false;
+  isFillingWater = false;
+  crossSize = 0;
+  leakPlacesNb = 12;
+  leakPlaces = [];
+  noleakat = [];
+  leakCounter = 0;
+  for (var i=0; i<leakPlacesNb; i++) {
+    leakPlaces.push(leakCounter);
+    leakCounter++;
+    noleakat.push(true);
+  }
+  vlvop = 1;
+  watlevelContainer = 0;
+  remainingtime = 600;
+  batteryLevel = 24;
+  numFightedFires = 0;
+
+  // clear intervals 
+  clearInterval(waterManagementInterval);
+  clearInterval(leaksInterval);
+  clearInterval(waterFlowInterval);
+  clearInterval(timeInterval);
+  clearInterval(batteryInterval);
+  clearInterval(treeBurningInterval);
+  clearInterval(fillWaterInterval);
+  clearInterval(fillBatteryInterval);
+}
+// TODO TODO TODO
+// check expiration of tokens
+/*
+*/
+
+
+
+/*
+var checkExpiration = setInterval(function() {
+  if( global.expires <= Date.now() ) {
+    emptySlot = true;
+    console.log("Auth -- expiration of current token, creation of a new one. ")
+    global.expires = moment().add('minutes', 11).valueOf();
+    payload = { auth: true,
+              exp: global.expires };
+    global.token = jwt.encode(payload, secret);
+    console.log('Auth -- kill game.')
+    exec('bash ~/driving-human-robots-interaction/killAll.sh');
+  }
+}, 3000);
+*/
 module.exports = router;
