@@ -13,14 +13,21 @@ export class MainController {
   newThing = '';
 
   /*@ngInject*/
-  constructor($http, $scope, socket, hotkeys, $timeout, $interval, sharedProperties, $rootScope) {
+  constructor($http, $scope, socket, hotkeys, $timeout, $interval, sharedProperties, $rootScope, $window) {
 
+
+    $scope.address = "";
     // GET IP ADDRESS
     $scope.ipaddress = "";
     $http.get('/api/control/ipaddress').then(response => {
       console.log(response.data);
       $scope.ipaddress=response.data;
-    })
+      $scope.address = "http://" + $scope.ipaddress + ":8081/?action=stream";
+      //$scope.address = "http://localhost:8081/?action=stream";      
+    });
+
+
+
 
     // TODO overlays
     $scope.overlayOpen = false;
@@ -210,7 +217,8 @@ export class MainController {
 
 
     // TODO ISPLAYING (with token) sent to control and auth every 10sec
-    var isPlaying = false;
+    //var isPlaying = false;
+    var isPlaying = true;
     var isPlayingInterval = $interval(function() {
       console.log("IS PLAYING: ");
       console.log(isPlaying);
@@ -218,11 +226,12 @@ export class MainController {
         console.log("wait for response....");
         if(response.status === 200) {
           console.log('isPlaying taken into account by auth');
+          //isPlaying = false;
         } else{
           console.log('isPlaying -- nok auth');
         }
       });
-      isPlaying = false;
+      //isPlaying = false;
     }, 10000);
 
      $scope.$on("$destroy", function() {
@@ -231,7 +240,11 @@ export class MainController {
        }
      });
 
-
+    $scope.gohome = function(){
+       $timeout(function() {
+         $window.location.reload();
+        }, 100);
+    }
     var myToken = $rootScope.token;
     $scope.killall = function(){
       myToken = $rootScope.token;
@@ -243,7 +256,7 @@ export class MainController {
           if(response.status === 200) {
             $http.post('/api/auth/newtoken', {token: myToken}).then(response => { // TODO maybe after $http.post('/api/control/killall' ?
               if(response.status === 200) {
-            
+                $window.location.reload();
               } else if(debug) {
                 console.log('nok auth');
               }

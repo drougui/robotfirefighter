@@ -222,11 +222,14 @@ leaks/wrench/etc in server files-->
 						<button ng-click="play()">Jouer</button>
 					</div>
 					<button ng-click="killall()" ui-sref="welcome">Kill all!</button>
+					<button ng-click="gohome()" ui-sref="welcome">GO HOME!</button>
 <!--					<button ng-click="start()">Start!</button> -->
 				</div>
 				<div class="streamcamera">
-					<img class="imagecam" src="http://localhost:8081/?action=stream"   scrolling="no" frameBorder="0">
-<!--					<img class="imagecam" src="http://{{ipaddress}}:8080/?action=stream" scrolling="no" frameBorder="0"> -->
+
+					<img class="imagecam" ng-src={{address}} scrolling="no" frameBorder="0">
+<!--					<img class="imagecam" ng-src="http://localhost:8081/?action=stream"   scrolling="no" frameBorder="0">
+					<img class="imagecam" src="http://{{ipaddress}}:8080/?action=stream" scrolling="no" frameBorder="0"> -->
 					<div class="splatchContainer">
 				        	<div class="splatch" ng-class="{visiblesplatch: waterize}">
 				        	</div>

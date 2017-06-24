@@ -2,33 +2,6 @@
 var express = require('express');
 var router = express.Router();
 
-
-// TODO TO BE RESET
-// mercurelevelfloat
-// firesStatesOfTrees
-// watlevel
-// robotTankEmpty
-/*
-var leakCounter = 0;
-for (var i=0; i<leakPlacesNb; i++) {
-  leakPlaces.push(leakCounter);
-  leakCounter++;
-  noleakat.push(true);
-}
-    var vlvop = 1;
-xrobinet
-var watlevelContainer = 0;
-
-var hotscreen = 0;
-var mercurelevel = '0.1vw';
-
-var remainingtime = 600;
-
-var batteryLevel = 24;
-
-var numFightedFires = 0;
-*/
-
 // GET LOCAL IP ADDRESS FOR STREAMING
 var IPaddress =""; 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -77,6 +50,8 @@ var batteryInterval;
 var treeBurningInterval;
 var fillWaterInterval;
 var fillBatteryInterval;
+
+var autonomyInterval;
 
 // declare variables
 var xrobinet = 42;
@@ -157,6 +132,9 @@ function killall(req, res) {
       clearInterval(treeBurningInterval);
       clearInterval(fillWaterInterval);
       clearInterval(fillBatteryInterval);
+
+      clearInterval(autonomyInterval);
+
       res.status(200).json("everything killed")
     }
     else{
@@ -205,6 +183,8 @@ serverGet.on('listening', function() {
 var robotx = 0.0;
 var roboty = 0.0;
 var roboto = 0.0;
+var counter = 0;
+//var thecounter = 0;
 var currentAutoMvt = false;
 serverGet.on('message', function(message, remote) {
 
@@ -238,6 +218,17 @@ serverGet.on('message', function(message, remote) {
   robotx = posX;
   roboty = posY;
   roboto = orientation;
+
+  // TODO ici, si autonomousRobot==1 (déjà, keys inactives)
+  // checker si c'est dans la zone d'un arbre
+  // si oui, avec la position précédente, calculer le vecteur vitesse
+  // calculer le vecteur robot -> arbre
+  // calculer prodvec(arbre,robot)
+  // si negatif, lancer une commande à gauche
+  // si positif, lancer une commande à droite
+  // TODO prévoir à l'avance le temps que prendra une commande (battery, eau, relacher un goto à temps=ne pas donner l'objectif mais un point précédent dans le chemin)
+  // TODO aller chercher l'arbre le plus proche plutot que arbitrairement
+  // TODO un seul lancé d'eau !! (côté client?, perte d'eau?)
   if(noMvt==1) {
     currentAutoMvt = false;
   } else{
@@ -272,7 +263,7 @@ serverGet.on('message', function(message, remote) {
         minDistance = Math.min(minDistance, distance);
       }
     }
-    var heatIncrement = (equilibriumDist - minDistance)*0.01 / equilibriumDist;
+    var heatIncrement = (equilibriumDist - minDistance)*10 / equilibriumDist;
     mercurelevelfloat = mercurelevelfloat + heatIncrement;
     if(mercurelevelfloat > 300) {
       mercurelevelfloat = 300;
@@ -284,11 +275,16 @@ serverGet.on('message', function(message, remote) {
     hotscreen = mercurelevelfloat/300;
     counter = 0;
   }
-  //console.log(counter);
+/*
+  console.log("=====================");
+  console.log(" OBS RTTLUA COUNTER:  ");
+  console.log(thecounter);
+  console.log("=====================");
+*/
   counter++;
+//  thecounter++;
 });
 serverGet.bind(PORTGET, HOST);
-var counter = 0;
 
 
 //=====================================================
@@ -488,7 +484,7 @@ function positionToUdpMess(x, y) {
     floats[l] = 0.0;
   }
   var floatsBytes = new Int8Array(floats.buffer);
-  var integers = new Int16Array(50);
+  var integers = new Int16Array(NB_INTS);
   for(var m = 0; m < NB_INTS; m++) {
     if(m==IND_MODE) {
       integers[m] = autonomousRobot;
@@ -629,52 +625,8 @@ sinon: go arbre en feu
 */
 var ixe = zoneslocations[0].x;
 var igrec = zoneslocations[0].y;
-var firstTime = true;
+var firstTime = false;
 var tempxy = 1.0;
-// TODO mettre ca dans le launch/kill vvv
-setInterval(function() {
-  if(false &&(!currentAutoMvt || firstTime)){
-    firstTime = false;
-    throwWater();
-    console.log("!!!!!!!!!!!! I THROW WATER !!!!!!!!!!!!")
-    var gotoX = zoneslocations[1].x;
-    var gotoY =  zoneslocations[1].y;
-    for (var i=0;i<firesStatesOfTrees.length;i++){
-      if (firesStatesOfTrees[i]){
-        var gotoX = treeslocations[i].x;
-        var gotoY = treeslocations[i].y;
-      }
-    }
-    var vecteurX = gotoX -robotx[0];
-    var vecteurY = gotoY -roboty[0];
-    var normDirection = Math.sqrt(Math.pow(vecteurX, 2) + Math.pow(vecteurY, 2));
-    vecteurX = vecteurX/normDirection;
-    vecteurY = vecteurY/normDirection;
-    ixe = gotoX -vecteurX;
-    igrec = gotoY -vecteurY;
-/*    var tempixe = ixe;
-    ixe = igrec;
-    igrec = tempixe;
-    tempxy = -tempxy;*/
-    ixe = gotoX;
-    igrec = gotoY;
-/*    ixe = parseFloat(ixe) + tempxy;
-    igrec = parseFloat(igrec) + tempxy;
-    console.log("------ X,Y : ");
-    console.log(ixe);
-    console.log(igrec);*/
-    udpMess = positionToUdpMess(ixe,igrec);
-    buffer = new Buffer(udpMess);
-    client = dgram.createSocket('udp4');
-    console.log("!!!!!!!!!!!! I GO TO GOAL !!!!!!!!!!!!")
-    client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-      if(err) throw err;
-      console.log('position to reach sent to ' + HOST +':'+ PORT);
-      client.close();
-    });
-  }
-}, 1000);
-
 
 
 
@@ -735,6 +687,71 @@ export function launchgame(req, res) {
       clearInterval(treeBurningInterval);
       clearInterval(fillWaterInterval);
       clearInterval(fillBatteryInterval);
+
+      clearInterval(autonomyInterval);
+      firstTime = false;
+
+      setTimeout(function() {
+          firstTime = true;
+      }, 5000);
+
+
+
+
+      //=====================================================
+      // Robot Autonomy
+      //=====================================================
+      var sens = 1;
+      autonomyInterval = setInterval(function() {
+        console.log("currentAutoMvt: ");
+        console.log(currentAutoMvt);
+        if( (autonomousRobot==1) && (!currentAutoMvt || firstTime)){
+          firstTime = false;
+          throwWater(); // TODO why two throws sometimes?
+          console.log("!!!!!!!!!!!! I THROW WATER !!!!!!!!!!!!");
+          
+          // var gotoX = zoneslocations[1].x;
+          // var gotoY =  zoneslocations[1].y;
+          var gotoX = robotx[0];
+          var gotoY = roboty[0];
+// define arrival as a tree on fire
+
+          for(var i=0;i<firesStatesOfTrees.length;i++) {
+            if (firesStatesOfTrees[i]){
+              var gotoX = treeslocations[i].x;
+              var gotoY = treeslocations[i].y;
+            }
+          }
+
+
+// vector departure -> arrival computation
+          var vecteurX = gotoX - robotx[0];
+          var vecteurY = gotoY - roboty[0];
+          var normDirection = Math.sqrt(Math.pow(vecteurX, 2) + Math.pow(vecteurY, 2));
+          vecteurX = vecteurX/normDirection;
+          vecteurY = vecteurY/normDirection;
+
+          ixe = gotoX - vecteurX;
+          igrec = gotoY - vecteurY;
+
+
+
+          udpMess = positionToUdpMess(ixe,igrec);
+          buffer = new Buffer(udpMess);
+          client = dgram.createSocket('udp4');
+
+          console.log("!!!!!!!!!!!! send GOTO to robot !!!!!!!!!!!!");
+          console.log("======= " + ixe + "======= " + igrec );
+          client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+            if(err) throw err;
+            console.log('position to reach sent to ' + HOST +':'+ PORT);
+            client.close();
+          });
+        }
+      }, 2000);
+
+
+
 
       //=====================================================
       // tree burning randomization 
@@ -824,6 +841,9 @@ export function launchgame(req, res) {
         if(remainingtime > 0) {
           remainingtime = remainingtime - 1;
         }
+        console.log("oooooooooooooooooooooooooooooooooo");
+        console.log('  REMAINING TIME: ' + remainingtime);
+        console.log("oooooooooooooooooooooooooooooooooo");
       }, 1000);
       // give remaining time to client
   
@@ -865,7 +885,7 @@ export function launchgame(req, res) {
       }, 5000);
 
 
-      res.status(200).json("launched!")
+      res.status(200).json("launched!");
     } else{
       res.status(401).json("Invalid token");
     }
@@ -918,7 +938,7 @@ router.get('/robotwater', function(req, res) {
 });
 
 
-
+// used in auth
 global.stopGame = function() { 
   exec('bash ~/driving-human-robots-interaction/killAll.sh');
   xrobinet = 42;
@@ -957,14 +977,11 @@ global.stopGame = function() {
   clearInterval(treeBurningInterval);
   clearInterval(fillWaterInterval);
   clearInterval(fillBatteryInterval);
+
+  clearInterval(autonomyInterval);
 }
-// TODO TODO TODO
+// TODO TODO TODO a remettre
 // check expiration of tokens
-/*
-*/
-
-
-
 /*
 var checkExpiration = setInterval(function() {
   if( global.expires <= Date.now() ) {

@@ -7,3 +7,4 @@ node dist/server/app.js
 
 ### dev/debug mode
 export NODE_ENV=""
+gulp serve

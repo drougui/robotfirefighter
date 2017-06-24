@@ -1,6 +1,7 @@
 <div class="loading">
-	<span> LOADING <span ng-if="dot>0">.</span><span ng-if="dot>1">.</span><span ng-if="dot>2">.</span></span>
-	
+	<div class="loadpart">
+		<span> LOADING <span ng-if="dot>0">.</span><span ng-if="dot>1">.</span><span ng-if="dot>2">.</span></span>
+	</div>
 	<button ui-sref="game" ng-if="playEnabled" ng-click="letsplay()"> play </button>
 	<span class="advice"> Press F11 for a better experience </span>
 </div>

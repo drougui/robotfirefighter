@@ -7,7 +7,7 @@ import routes from './welcome.routes';
 
 export class WelcomeComponent {
   /*@ngInject*/
-  constructor($http, $scope, socket, sharedProperties, $rootScope) {
+  constructor($http, $scope, socket, sharedProperties, $rootScope, $state) {
     'ngInject';
     this.$http = $http;
     this.socket = socket;
@@ -38,6 +38,7 @@ export class WelcomeComponent {
           console.log("welcome - play() -- myToken : ");
           console.log(myToken);
 
+          // launch MORSE & co
           $http.post('/api/control/start', {token: myToken}).then(response => {
             console.log("control/start response:");
             console.log(response);

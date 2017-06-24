@@ -101,12 +101,12 @@ var server = net.createServer(function(socket) {
   console.log('Auth -- TCP SERVER: GAME LOADED');
   socket.on('data', function(data){
     var textChunk = data.toString('utf8');
-    console.log('message:')
+    console.log('message:');
     console.log(textChunk);
   });
   global.isgameready = true;
   clickOnLetsPlayTimeout = setTimeout(function() { // the player has 30secs to click on letsplay
-    console.log('Auth -- TIMEOUT on LETSPLAY -> emptySlot=true')
+    console.log('Auth -- TIMEOUT on LETSPLAY -> emptySlot=true');
     emptySlot = true;
     global.expires = moment().add('minutes', 11).valueOf();
     payload = {auth: true,
@@ -126,29 +126,41 @@ export function gameReady(req, res) {
   global.isgameready = false;
   console.log('Auth -- send loading information to client');
 }
-
+var mycounter = 1;
+var mycounter2 = 1;
 // function meant to clear previous timeout
 // called by letsplay in 'loading' component 
+
+
+
+// bug = res.status zapé
 export function killTimeout(req,res) {
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
     if(decoded.auth && decoded.exp === global.expires){
+      console.log("==========================================");
+      console.log(" FIRST COUNTER TIMEOUT: " + mycounter);
+      console.log("==========================================");
       console.log('Auth -- Clear timeout.');
       clearTimeout(clickOnLetsPlayTimeout);
       console.log('Auth -- Isplaying timeout creation.');
-      isPlayingTimeout = setTimeout(function() { // the player has 30secs to click on a button or press an control key
-          console.log('Auth -- TIMEOUT on isplaying -> emptySlot=true')
+      global.isPlayingTimeout = setTimeout(function() { // the player has 30secs to click on a button or press a control key
+          exec('bash ~/driving-human-robots-interaction/killAll.sh');
+          global.stopGame();
+          console.log("==========================================");
+          console.log(" SECOND COUNTER TIMEOUT: " + mycounter2);
+          console.log("==========================================");
+          console.log('Auth -- FIRST TIMEOUT on isplaying -> emptySlot=true');
           emptySlot = true;
           global.expires = moment().add('minutes', 11).valueOf();
           payload = {auth: true,
                      exp: global.expires};
           global.token = jwt.encode(payload, secret);
-          console.log('Auth -- New token:');
+          console.log('Auth -- FIRST New token:');
           console.log(global.token);
-          console.log('Auth -- Kill game.');
-          global.stopGame();
-          exec('bash ~/driving-human-robots-interaction/killAll.sh');
+          console.log('Auth -- FIRST Kill game.');
         }, 30000);
+        res.status(200).json('Auth -- clickOnLetsPlayTimeout cleared, isPlayingTimeout defined');
      } else{
       res.status(401).json('Auth -- Invalid token.');
     }
@@ -172,6 +184,7 @@ export function newtoken(req,res) {
       payload = {auth: true,
                  exp: global.expires};
       global.token = jwt.encode(payload, secret);
+      clearTimeout(global.isPlayingTimeout);
       res.status(200).json('Auth -- Slot is now empty, a new token is created (given to nobody).');
     } else{
       res.status(401).json('Auth -- Wrong token.');
@@ -208,31 +221,40 @@ export function play(req, res) {
 var checkExpiration = setInterval(function() {
   if( global.expires <= Date.now() ) {
     emptySlot = true;
-    console.log("Auth -- expiration of current token, creation of a new one. ")
+    console.log("Auth -- expiration of current token, creation of a new one. ");
     global.expires = moment().add('minutes', 11).valueOf();
     payload = { auth: true,
               exp: global.expires };
     global.token = jwt.encode(payload, secret);
     console.log('Auth -- kill game.');
+    // reinit js part of the game
     global.stopGame();
 //    exec('bash ~/driving-human-robots-interaction/killAll.sh');
-    //TODO reinit js part of the game
+
   }
 }, 3000);
 
-var isPlayingTimeout;
+global.isPlayingTimeout;
 export function isplaying(req,res) {
   console.log('Auth -- isplaying function:');
-  console.log(req.body)
+  console.log(req.body);
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
     if(decoded.auth && decoded.exp === global.expires){
       if(req.body.isplaying){
-        console.log('Auth -- Clear isplaying timeout.')
-        clearTimeout(isPlayingTimeout);
-        console.log('Auth -- Create a new one.')
-        isPlayingTimeout = setTimeout(function() { // the player has 30secs to click on a button or press an control key
-          console.log('Auth -- TIMEOUT on isplaying -> emptySlot=true')
+        mycounter = mycounter + 1;
+        console.log("======================================");
+        console.log(" FIRST COUNTER TIMEOUT: " + mycounter);
+        console.log("======================================");
+        console.log('Auth -- Clear isplaying timeout.');
+        clearTimeout(global.isPlayingTimeout);
+        mycounter2 = mycounter2 + 1;
+        console.log('Auth -- Create a new one.');
+        global.isPlayingTimeout = setTimeout(function() { // the player has 30secs to click on a button or press an control key
+          console.log("==========================================");
+          console.log(" SECOND COUNTER TIMEOUT: " + mycounter2);
+          console.log("==========================================");
+          console.log('Auth -- TIMEOUT on isplaying -> emptySlot=true');
           emptySlot = true;
           global.expires = moment().add('minutes', 11).valueOf();
           payload = {auth: true,

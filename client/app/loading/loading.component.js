@@ -53,17 +53,6 @@ export class LoadingComponent {
       console.log("$rootScope.token:");
       console.log($rootScope.token);
       
-      // kill timeout TODO a mettre au début de main.component.js si ça se lance pas
-      console.log("post token to auth/killTimeout");
-      $http.post('/api/auth/killTimeout', {token: myToken}).then(response => {      
-        console.log("letsplay -- auth/killTimeout -- response: ");
-        console.log(response);
-        if(response.status === 200){
-          console.log("le token est ok, timeout annulé dans auth");
-        } else if(debug) {
-          console.log('nok');
-        }
-      });
       
       // launch game TODO a mettre au début de main.component.js si ça se lance pas
       console.log("post token to control/launchgame");
@@ -72,7 +61,18 @@ export class LoadingComponent {
         console.log(response);
         if(response.status === 200){
           console.log("le token est ok, la partie js du jeu est lancée");
-        } else if(debug) {
+          // kill timeout TODO a mettre au début de main.component.js si ça se lance pas
+          console.log("post token to auth/killTimeout");
+          $http.post('/api/auth/killtimeout', {token: myToken}).then(response => {      
+            console.log("letsplay -- auth/killTimeout -- response: ");
+            console.log(response);
+            if(response.status === 200){
+              console.log("le token est ok, timeout annulé dans auth");
+            } else{
+              console.log('nok');
+            }
+          });
+        } else{
           console.log('nok');
         }
       });
