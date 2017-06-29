@@ -19,7 +19,8 @@ router.get('/ipaddress', function(req, res) {
 // define trees locations using treeslocs.json
 //=====================================================
 var fs = require('fs');
-var chaine = fs.readFileSync('/home/drougard/driving-human-robots-interaction/treeslocs.json', 'UTF-8');
+//var chaine = fs.readFileSync('/home/drougard/driving-human-robots-interaction/treeslocs.json', 'UTF-8');
+var chaine = fs.readFileSync('../driving-human-robots-interaction/treeslocs.json', 'UTF-8');
 var treeslocations = JSON.parse(chaine);
 console.log('TREES LOCATIONS');
 console.log(treeslocations[0].x);
@@ -30,7 +31,8 @@ router.get('/', function(req, res) {
 //=====================================================
 // define zones locations using zones.json
 //=====================================================
-var chaine2 = fs.readFileSync('/home/drougard/driving-human-robots-interaction/zones.json', 'UTF-8');
+//var chaine2 = fs.readFileSync('/home/drougard/driving-human-robots-interaction/zones.json', 'UTF-8');
+var chaine2 = fs.readFileSync('../driving-human-robots-interaction/zones.json', 'UTF-8');
 var zoneslocations = JSON.parse(chaine2);
 console.log('ZONES LOCATIONS');
 console.log(zoneslocations[0].x);
@@ -173,7 +175,7 @@ function start(req, res) {
 
 var PORT = 9000;
 var PORTGET = 9010;
-var HOST = 'localhost';
+var HOST = 'localhost'; // TODO real address
 var dgram = require('dgram');
 var serverGet = dgram.createSocket('udp4');
 serverGet.on('listening', function() {
@@ -183,10 +185,16 @@ serverGet.on('listening', function() {
 var robotx = 0.0;
 var roboty = 0.0;
 var roboto = 0.0;
+var pastRobotx = 0.0;
+var pastRoboty = 0.0;
 var counter = 0;
 //var thecounter = 0;
 var currentAutoMvt = false;
+
 serverGet.on('message', function(message, remote) {
+
+  pastRobotx = robotx;
+  pastRoboty = roboty;
 
   var byteArray = new Int8Array(4);
   for(var i = 0; i < 4; i++) {
@@ -218,6 +226,103 @@ serverGet.on('message', function(message, remote) {
   robotx = posX;
   roboty = posY;
   roboto = orientation;
+
+  
+/*
+  console.log("==========================================================");
+  console.log("==========================================================");
+  console.log("  NEXT ROBOT VECTOR X: " + nextRobotoXaxis + ", Y: " + nextRobotoYaxis);  
+  console.log("==========================================================");
+  console.log("==========================================================");
+  */
+  // AVOIDTREES
+  if(autonomousRobot==1) {
+
+    var vectorRobotX = Math.cos(roboto);
+    var vectorRobotY = Math.sin(roboto);
+    var nextRobotoXaxis = [];
+    var nextRobotoYaxis = [];
+    nextRobotoXaxis[0] = parseFloat(robotx) + Math.cos(roboto);
+    nextRobotoYaxis[0] = parseFloat(roboty) + Math.sin(roboto);
+    nextRobotoXaxis[1] = parseFloat(robotx) + Math.cos(roboto) * 1.2;
+    nextRobotoYaxis[1] = parseFloat(roboty) + Math.sin(roboto) * 1.2;
+    nextRobotoXaxis[2] = parseFloat(robotx) + Math.cos(roboto) * 1.4;
+    nextRobotoYaxis[2] = parseFloat(roboty) + Math.sin(roboto) * 1.4;
+/*
+    console.log("==========================================================");
+    console.log("==========================================================");
+    console.log("vectorRobotX: " + vectorRobotX);
+    console.log("vectorRobotY: " + vectorRobotY);
+    console.log("robotx: " + robotx);
+    console.log("roboty: " + roboty);
+    console.log("nextRobotoXaxis: " + nextRobotoXaxis);
+    console.log("nextRobotoYaxis: " + nextRobotoYaxis);
+    console.log("==========================================================");
+    console.log("==========================================================");
+*/
+    var movingForward = (Math.sqrt( Math.pow(pastRobotx - robotx, 2) + Math.pow(pastRoboty - roboty, 2) ) > 0.1);
+    console.log("movingForward");
+    console.log(movingForward);
+
+    var infLimitDistance = 0.4;
+    var manoeuvre = false;
+    for(var q = 0; q < treeslocations.length; q++) {
+      var nextDistance = 2;
+      for(var d = 0; d<nextRobotoXaxis.length; d++) { 
+        nextDistance = Math.min( Math.sqrt( Math.pow(treeslocations[q].x - nextRobotoXaxis[0], 2) + Math.pow(treeslocations[q].y - nextRobotoYaxis[0], 2) ) , nextDistance);
+      }
+
+// TODO !!MANOEUVRE!! METTRE UN TIMEOUT A LA PLACE!, sinon ça se lance trop tot! TODO TODO
+// ou planifier si la droite passe par un arbre, goto gauche arbre (si un autre arbre, on recommence) goto arbre initial
+      if(manoeuvre) {
+        console.log("MANOEUVRE!!!");
+        udpMess = speedToUdpMess(0.0, 0.6);
+          buffer = new Buffer(udpMess);
+          client = dgram.createSocket('udp4');
+          client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+            if(err) throw err;
+            //console.log('UDP message sent to ' + HOST +':'+ PORT);
+            client.close();
+          });
+          console.log("TODORECTO!");
+          manoeuvre = false;
+      }
+      if( (nextDistance < infLimitDistance) && !manoeuvre && movingForward) { 
+        console.log("TOO CLOSE !!!!!");
+        var robotTreeX = treeslocations[q].x - robotx;
+        var robotTreeY = treeslocations[q].y - roboty;
+        var prodVect = robotTreeX * vectorRobotY - robotTreeY * vectorRobotX;
+        console.log("prodvect:");
+        console.log(prodVect);
+        if(prodVect<0) {
+          udpMess = speedToUdpMess(0.3, 0.0);
+          buffer = new Buffer(udpMess);
+          client = dgram.createSocket('udp4');
+          client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+            if(err) throw err;
+            //console.log('UDP message sent to ' + HOST +':'+ PORT);
+            client.close();
+          });
+          console.log("GAUCHE!");
+        } else{
+          manoeuvre = true;
+          udpMess = speedToUdpMess(-0.4, 0.0);
+          buffer = new Buffer(udpMess);
+          client = dgram.createSocket('udp4');
+          client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+            if(err) throw err;
+            //console.log('UDP message sent to ' + HOST +':'+ PORT);
+            client.close();
+          });
+          console.log("DROITE!");
+        }
+        
+        /*
+          si
+        */
+      }
+    }
+  }
 
   // TODO ici, si autonomousRobot==1 (déjà, keys inactives)
   // checker si c'est dans la zone d'un arbre
@@ -715,8 +820,8 @@ export function launchgame(req, res) {
           
           // var gotoX = zoneslocations[1].x;
           // var gotoY =  zoneslocations[1].y;
-          var gotoX = robotx[0];
-          var gotoY = roboty[0];
+          var gotoX = robotx[0] + 1; // TODO gérer le premier cas! (+1 pour éviter division par zero)
+          var gotoY = roboty[0] + 1;
 // define arrival as a tree on fire
 
           for(var i=0;i<firesStatesOfTrees.length;i++) {
@@ -734,8 +839,8 @@ export function launchgame(req, res) {
           vecteurX = vecteurX/normDirection;
           vecteurY = vecteurY/normDirection;
 
-          ixe = gotoX - vecteurX;
-          igrec = gotoY - vecteurY;
+          ixe = gotoX - vecteurX*1.5;
+          igrec = gotoY - vecteurY*1.5;
 
 
 
@@ -983,7 +1088,7 @@ global.stopGame = function() {
 
   clearInterval(autonomyInterval);
 }
-// TODO TODO TODO a remettre
+// déja dans auth
 // check expiration of tokens
 /*
 var checkExpiration = setInterval(function() {
