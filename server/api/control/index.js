@@ -236,6 +236,7 @@ serverGet.on('message', function(message, remote) {
   console.log("==========================================================");
   */
   // AVOIDTREES
+// TODO REMOVE ALL THIS DIRTY WORK
   if(autonomousRobot==1) {
 
     var vectorRobotX = Math.cos(roboto);
@@ -267,14 +268,26 @@ serverGet.on('message', function(message, remote) {
     var infLimitDistance = 0.4;
     var manoeuvre = false;
     for(var q = 0; q < treeslocations.length; q++) {
+      if(  Math.sqrt( Math.pow(treeslocations[q].x - nextRobotoXaxis[0], 2) + Math.pow(treeslocations[q].y - nextRobotoYaxis[0], 2) ) < 0.5  ){
+        udpMess = abortMoveToUdpMess();
+        buffer = new Buffer(udpMess);
+        client = dgram.createSocket('udp4');
+        console.log("!!!!!!!!!!!! send abort to robot !!!!!!!!!!!!");
+        client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+        if(err) throw err;
+          console.log('abort send to ' + HOST +':'+ PORT);
+          client.close();
+	});
+      }
       var nextDistance = 2;
-      for(var d = 0; d<nextRobotoXaxis.length; d++) { 
+/*      for(var d = 0; d<nextRobotoXaxis.length; d++) { 
         nextDistance = Math.min( Math.sqrt( Math.pow(treeslocations[q].x - nextRobotoXaxis[0], 2) + Math.pow(treeslocations[q].y - nextRobotoYaxis[0], 2) ) , nextDistance);
       }
+*/
 
 // TODO !!MANOEUVRE!! METTRE UN TIMEOUT A LA PLACE!, sinon ça se lance trop tot! TODO TODO
 // ou planifier si la droite passe par un arbre, goto gauche arbre (si un autre arbre, on recommence) goto arbre initial
-      if(manoeuvre) {
+/*      if(manoeuvre) {
         console.log("MANOEUVRE!!!");
         udpMess = speedToUdpMess(0.0, 0.6);
           buffer = new Buffer(udpMess);
@@ -316,11 +329,8 @@ serverGet.on('message', function(message, remote) {
           });
           console.log("DROITE!");
         }
-        
-        /*
-          si
-        */
-      }
+
+      }*/
     }
   }
 
@@ -615,6 +625,37 @@ function positionToUdpMess(x, y) {
 }
 
 
+function abortMoveToUdpMess() {
+  var NB_INTS = 50;
+  var NB_FLOATS = 50;
+  //var LGTH_BYTES = 8 + NB_FLOATS * 4 + NB_INTS * 2;
+  var timestamp = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+  var floats = new Float32Array(NB_FLOATS);
+  for(var l = 0; l < NB_FLOATS; l++) {
+    floats[l] = 0.0;
+  }
+  var floatsBytes = new Int8Array(floats.buffer);
+  var integers = new Int16Array(NB_INTS);
+  for(var m = 0; m < NB_INTS; m++) {
+    if(m==IND_MODE) {
+      integers[m] = autonomousRobot;
+    } else if(m==IND_ABORTMOVE){
+      integers[m] = 1;
+    }
+  }
+  var integersBytes = new Int8Array(integers.buffer);
+  var udpMess = new Int8Array(8 + 4*NB_FLOATS + 2*NB_INTS);
+  for(var n = 0; n < 8; n++) {
+    udpMess[n] = timestamp[n];
+  }
+  for(var o = 0; o < 4*NB_FLOATS; o++) {
+    udpMess[o + 8] = floatsBytes[o];
+  }
+  for(var p = 0; p < 2*NB_INTS; p++) {
+    udpMess[p + 8 + 4*NB_FLOATS] = integersBytes[p];
+  }
+  return udpMess;
+}
 
 
 
@@ -723,7 +764,7 @@ var autonomousRobot = 1; 	// toutes les minutes, on tire au sort si autonome ou 
 // UDP indexes
 var IND_MODE = 1
 var IND_ENDGOTO = 2
-
+var IND_ABORTMOVE = 3
 /*
 si batterie=temps pour go batery -> go battery
 sinon si trop chaud -> s'écarter des arbres
@@ -805,15 +846,31 @@ export function launchgame(req, res) {
 
 
 
-
       //=====================================================
       // Robot Autonomy
       //=====================================================
       var sens = 1;
+      var tempCounter = 0;
       autonomyInterval = setInterval(function() {
         console.log("currentAutoMvt: ");
         console.log(currentAutoMvt);
-        if( (autonomousRobot==1) && (!currentAutoMvt || firstTime)){
+/*
+        if( (autonomousRobot==1) ){
+          tempCounter = tempCounter + 1;
+          if(tempCounter==10){
+            udpMess = abortMoveToUdpMess();
+            buffer = new Buffer(udpMess);
+            client = dgram.createSocket('udp4');
+            console.log("!!!!!!!!!!!! send abort to robot !!!!!!!!!!!!");
+            client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+            if(err) throw err;
+              console.log('abort send to ' + HOST +':'+ PORT);
+              client.close();
+	    });
+          }
+        }
+*/
+        if( (autonomousRobot==1) && (!currentAutoMvt || firstTime) ){
           firstTime = false;
           throwWater(); // TODO why two throws sometimes?
           console.log("!!!!!!!!!!!! I THROW WATER !!!!!!!!!!!!");
@@ -858,7 +915,21 @@ export function launchgame(req, res) {
         }
       }, 2000);
 
+/* TODO TODO TODO TODO TODO TODO TODO create function abortMoveToUdpMess() 
+	with IND_ABORTMOVE equals to 1
+	in order to launch abortMove() in deployer_simu.lua
 
+	udpMess = abortMoveToUdpMess();
+	buffer = new Buffer(udpMess);
+	client = dgram.createSocket('udp4');
+	console.log("!!!!!!!!!!!! send abort to robot !!!!!!!!!!!!");
+	console.log("======= " + ixe + "======= " + igrec );
+	client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+		if(err) throw err;
+		console.log('abort send to ' + HOST +':'+ PORT);
+		client.close();
+	});
+*/
 
 
       //=====================================================

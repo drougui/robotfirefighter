@@ -22,8 +22,11 @@ export class MainController {
     $http.get('/api/control/ipaddress').then(response => {
       console.log(response.data);
       $scope.ipaddress=response.data;
-      $scope.address = "http://" + $scope.ipaddress + ":8081/?action=stream";
-      //$scope.address = "http://localhost:8081/?action=stream";      
+      // for online version
+      //$scope.address = "http://dev.humanrobotinteraction.fr:8081/?action=stream";
+//NOT!      $scope.address = "http://" + $scope.ipaddress + ":8081/?action=stream";
+      // for local version
+      $scope.address = "http://localhost:8081/?action=stream";      
     });
 
 
