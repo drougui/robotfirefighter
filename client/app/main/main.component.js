@@ -23,10 +23,11 @@ export class MainController {
       console.log(response.data);
       $scope.ipaddress=response.data;
       // for online version
+      $scope.address = "http://dev.humanrobotinteraction.fr/test";
       //$scope.address = "http://dev.humanrobotinteraction.fr:8081/?action=stream";
 //NOT!      $scope.address = "http://" + $scope.ipaddress + ":8081/?action=stream";
       // for local version
-      $scope.address = "http://localhost:8081/?action=stream";      
+      //$scope.address = "http://localhost:8081/?action=stream";      
     });
 
 

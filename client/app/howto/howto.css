@@ -1,4 +1,22 @@
-.howto{
+*.howto{
 	height: 96vh;
 	font-size: 2vw;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.titlehowto{
+	font-weight: bold;
+}
+
+.rowhowto{
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+}
+
+.rightpartrow{
+	width: 90%;
 }

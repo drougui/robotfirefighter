@@ -1,10 +1,78 @@
-<div> 
-<span> Context: a firefighter robot is present in a small area with few trees which have a poor tendency to catch fire for some unknown reason. </span>
-<span> You get the position of the robot, as well as the video from its camera. </span>
-<span> The battery charge level of the robot decreases with time: when the robot is on the red square, the battery recharges. </span> 
-<span> The volume of water contained by the robot is not unlimited: to recharge in water the robot has to be on the blue square and the ground tank has to contain enough water.
-For that, you have to fill the ground tank using the buttons on the left. </span>
-<span> Goal: With the help of this robot, your mission is to fight as much fires as you can. </span>
-<span> The robot is can become autonomous at any time. Pay attention to the temperature! </span>
+<div class="howto"> 
+	<span class="titlehowto"> Context: </span> 
+	<div class="rowhowto">
+		<div class="leftpartrow">
+			<i class="fa fa-android" aria-hidden="true"></i>
+		</div>
+		<div class="rightpartrow">
+			<span> A firefighter robot is present in a small area </span>
+		</div>
+	</div>
+	<div class="rowhowto">
+		<div class="leftpartrow">
+			<i class="fa fa-tree" aria-hidden="true"></i>
+		</div>
+		<div class="rightpartrow">
+			<span>  with few trees  </span>
+		</div>
+	</div>
+	<div class="rowhowto">
+		<div class="leftpartrow">
+			<i class="fa fa-fire" aria-hidden="true"></i>
+		</div>
+		<div class="rightpartrow">
+			<span>  which have a poor tendency to catch fire for some unknown reason... </span>
+		</div>
+	</div>
+	<div class="rowhowto">
+		<div class="leftpartrow">
+			<i class="fa fa-location-arrow" aria-hidden="true"></i>
+		</div>
+		<div class="rightpartrow">
+			<span> Through your graphical interface, you get the position of the robot, </span>
+		</div>
+	</div>
+	<div class="rowhowto">
+		<div class="leftpartrow">
+			<i class="fa fa-video-camera" aria-hidden="true"></i>
+		</div>
+		<div class="rightpartrow">
+			<span> as well as the video from its camera. </span>
+		</div>
+	</div>
+	<div class="rowhowto">
+		<div class="leftpartrow">
+			<i class="fa fa-battery-three-quarters" aria-hidden="true"></i>
+		</div>
+		<div class="rightpartrow">
+			<span> The battery charge level of the robot decreases with time: when the robot is on the red square, the battery recharges. </span> 
+		</div>
+	</div>
+	<div class="rowhowto">
+		<div class="leftpartrow">
+			<i class="fa fa-tint" aria-hidden="true"></i>
+		</div>
+		<div class="rightpartrow">
+			<span> The volume of water contained by the robot is not unlimited: to recharge in water, the robot has to be on the blue square and the ground tank has to contain enough water. For that, you have to fill the ground tank using the buttons on the left-side of the interface. </span>
+		</div>
+	</div>
+	<span class="titlehowto"> Goal: </span>
+	<div class="rowhowto">
+		<div class="leftpartrow">
+			<i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+		</div>
+		<div class="rightpartrow">
+			<span> With the help of this robot, your mission is to fight as much fires as you can. </span>
+		</div>
+	</div>
+	<div class="rowhowto">
+		<div class="leftpartrow">
+			<i class="fa fa-thermometer-three-quarters" aria-hidden="true"></i>
+		</div>
+		<div class="rightpartrow">
+		<span> The robot can become autonomous at any time. Pay attention to the robot's temperature when too close of flames! </span>
+		</div>
+	</div>
+	
 	<button ui-sref="welcome"> BACK </button>
 </div>
