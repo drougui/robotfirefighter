@@ -417,7 +417,7 @@ router.post('/', function(req, res/*, next*/) {
           client.close();
         });
       } else if(req.body.key == 'left') {
-        udpMess = speedToUdpMess(0.3, 0.0);
+        udpMess = speedToUdpMess(0.1, 0.0);
         buffer = new Buffer(udpMess);
         client = dgram.createSocket('udp4');
         client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
@@ -426,7 +426,7 @@ router.post('/', function(req, res/*, next*/) {
           client.close();
         });
       } else if(req.body.key == 'right') {
-        udpMess = speedToUdpMess(-0.3, 0.0);
+        udpMess = speedToUdpMess(-0.1, 0.0);
         buffer = new Buffer(udpMess);
         client = dgram.createSocket('udp4');
         client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
@@ -686,7 +686,7 @@ var stopFillingBattery = function() {
 
 // MODE (AUTONOMOUS/MANUAL)
 
-var autonomousRobot = 1; 	// toutes les minutes, on tire au sort si autonome ou pas
+var autonomousRobot = 0; 	// toutes les minutes, on tire au sort si autonome ou pas
 				// + dans une zone bien définie, c'est toujours manuel
 // UDP indexes
 var IND_MODE = 1
