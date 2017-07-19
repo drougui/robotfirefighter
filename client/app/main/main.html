@@ -34,9 +34,14 @@
 
 <div class="screen" ng-class="{screenWrench: wrenchMode}" ng-keypress="myFunct($event)">
 	<div ng-class="{overlayOpen: overlayOpen}" class="overlay">
-		<div class="loadGif">
-			<!--<md-progress-circular md-mode="indeterminate"></md-progress-circular>-->
-		</div>
+<!--		<div class="loadGif">
+		</div> 
+		<md-progress-circular md-mode="indeterminate"></md-progress-circular> -->
+		<div class="gameover"> GAME OVER ! </div>
+		<div class="whyover" ng-if="cause==0"> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <div class="textcause"> Battery empty </div> <i class="fa fa-battery-empty" aria-hidden="true"></i> </div>
+		<div class="whyover" ng-if="cause==1"> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <div class="textcause"> Overheat </div> <i class="fa fa-thermometer-full" aria-hidden="true"></i> </div>
+		<div class="numextfires"> <div class="fireicon"> </div> {{numextfires}} extinguished fires <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> </div>
+		<div ng-click="gohome()" ui-sref="welcome" class="gohome"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>	
 	</div>
 	<div class="leftPart">  
 		<div class="missionBlock">
@@ -47,13 +52,19 @@
 				<div class="gametitle">
 					Firefighter Human-Robot Team <div class="fireicon"> </div>
 				</div>
-				<div class="missioninfo">
-					<div class="numbersinfo"> 
-						<!-- <i class="fa fa-star-o" aria-hidden="true"></i> -->
-						<i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
-						{{nbfighted}} 
-					</div> 
-					<div  class="numbersinfo"> <i class="fa fa-clock-o" aria-hidden="true"></i>   {{remainingtime}} </div>
+				<div class="infonoff">	
+					<div class="missioninfo">
+						<div class="numbersinfo"> 
+							<!-- <i class="fa fa-star-o" aria-hidden="true"></i> -->
+							<i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+							{{nbfighted}} 
+						</div> 
+						<div  class="numbersinfo"> <i class="fa fa-clock-o" aria-hidden="true"></i>   {{remainingtime}} </div>
+							<!--<button ng-click="killall()" ui-sref="welcome">Kill all!</button>-->
+					</div>
+					<div class="onoff">						
+						<i ng-click="killall()" ui-sref="welcome" class="fa fa-power-off" aria-hidden="true"></i>	
+					</div>
 				</div>
 			</div>
 		</div>
@@ -82,7 +93,10 @@
 					</div>
 					<div class="tankcontainer">	
 						<div class="tankcontainerwaterpart">
-							<div class="tankcontainerwater" ng-style="{height: 100 - watlevelContainer + '%'}"> 
+							<div class="tankcontainerwaterviz">
+								<div class="graduations"> </div>
+								<div class="tankcontainerwater" ng-style="{height: watlevelContainer + '%'}"> 
+								</div>
 							</div>
 <!-- TODO manage water level w.r.t leaks and pushbutton and tap position
 leaks/wrench/etc in server files-->
@@ -172,59 +186,12 @@ leaks/wrench/etc in server files-->
 	</div>
 	<div class="rightPart"> 
 		<div class="videoBlock"> 
-			<div class="maincontainer">
-				<div class="iconCircle">
+			<div class="maincontainercam">
+<!--				<div class="iconCircle"> 
 					<i class="fa fa-video-camera" aria-hidden="true"></i>
 				</div>
-				<!-- <iframe class="streamcamera" src="http://localhost:8080/?action=stream"   scrolling="no" frameBorder="0" style="height: 30%; width: 20%">		 	
-				</iframe> -->
-				<div class="robotControl">
-					<div class="headerrobotcontrol">
-						<i class="fa fa-gamepad" aria-hidden="true"></i>
-					</div>
-					<div class="explainkeys">
-						<div class="littlesplatch">
-						</div>
-						<div class="spaceKey">
-							<div> SPACE </div>					
-						</div>
-					</div>
-					<div class="explainkeys">
-						<div class="arrowFor">
-						</div>
-						<div class="anykey">
-							<div> <i class="fa fa-arrow-up" aria-hidden="true"></i> </div>					
-						</div>
-					</div>
-					<div class="explainkeys">
-						<div class="arrowBack">
-						</div>
-						<div class="anykey">
-							<div> <i class="fa fa-arrow-down" aria-hidden="true"></i> </div>					
-						</div>
-					</div>
-					<div class="explainkeys">
-						<div class="arrowLeft">
-						</div>
-						<div class="anykey">
-							<div> <i class="fa fa-arrow-left" aria-hidden="true"></i> </div>					
-						</div>
-					</div>
-					<div class="explainkeys">
-						<div class="arrowRight">
-						</div>
-						<div class="anykey">
-							<div> <i class="fa fa-arrow-right" aria-hidden="true"></i> </div>					
-						</div>
-					</div>
-					<div ng-if="emptySlot">
-						Slot libre
-						<button ng-click="play()">Jouer</button>
-					</div>
-					<button ng-click="killall()" ui-sref="welcome">Kill all!</button>
-					<button ng-click="gohome()" ui-sref="welcome">GO HOME!</button>
-<!--					<button ng-click="start()">Start!</button> -->
-				</div>
+				
+-->
 				<div class="streamcamera">
 
 					<img class="imagecam" ng-src={{address}} scrolling="no" frameBorder="0">

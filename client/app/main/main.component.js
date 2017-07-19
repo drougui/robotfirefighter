@@ -23,16 +23,18 @@ export class MainController {
       console.log(response.data);
       $scope.ipaddress=response.data;
       // for online version
-      $scope.address = "http://dev.humanrobotinteraction.fr/test";
+      //$scope.address = "http://dev.humanrobotinteraction.fr/test";
       //$scope.address = "http://dev.humanrobotinteraction.fr:8081/?action=stream";
 //NOT!      $scope.address = "http://" + $scope.ipaddress + ":8081/?action=stream";
       // for local version
-      //$scope.address = "http://localhost:8081/?action=stream";      
+      $scope.address = "http://localhost:8081/?action=stream";      
     });
 
-
-
-
+    // le serveur doit envoyer quand c'est gameover avec la cause
+    // bouton accueil
+    $scope.cause=0;
+    $scope.cause=1;
+    $scope.numextfires = 10;
     // TODO overlays
     $scope.overlayOpen = false;
     $scope.nbfighted = 0;

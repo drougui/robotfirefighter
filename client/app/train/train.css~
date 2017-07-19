@@ -10,6 +10,7 @@
 
 .watermngttrain{
 	width: 50vw;
+	background-color: blue;
 }
 
 .twoparts{

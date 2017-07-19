@@ -1,4 +1,48 @@
-<div>
-	TRAIN
+<div class="train">
+	TRAIN ON WATERMANAGEMENT PART:  EVERYTHING IN CLIENT SIDE!!
+	<div class="robotControl">
+		<div class="headerrobotcontrol">
+			<i class="fa fa-gamepad" aria-hidden="true"></i>
+		</div>
+		<div class="explainkeys">
+			<div class="littlesplatch">
+			</div>
+			<div class="spaceKey">
+				<div> SPACE </div>					
+			</div>
+		</div>
+		<div class="explainkeys">
+			<div class="arrowFor">
+			</div>
+			<div class="anykey">
+				<div> <i class="fa fa-arrow-up" aria-hidden="true"></i> </div>					
+			</div>
+		</div>
+		<div class="explainkeys">
+			<div class="arrowBack">
+			</div>
+			<div class="anykey">
+				<div> <i class="fa fa-arrow-down" aria-hidden="true"></i> </div>					
+			</div>
+		</div>
+		<div class="explainkeys">
+			<div class="arrowLeft">
+			</div>
+			<div class="anykey">
+				<div> <i class="fa fa-arrow-left" aria-hidden="true"></i> </div>					
+			</div>
+		</div>
+		<div class="explainkeys">
+			<div class="arrowRight">
+			</div>
+			<div class="anykey">
+				<div> <i class="fa fa-arrow-right" aria-hidden="true"></i> </div>					
+			</div>
+		</div>
+		<!--<div ng-if="emptySlot">
+			Slot libre
+			<button ng-click="play()">Jouer</button>
+		</div>-->
+	</div>
 	<button ui-sref="welcome"> BACK </button>	
 </div>
