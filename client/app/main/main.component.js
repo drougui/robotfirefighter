@@ -30,7 +30,7 @@ export class MainController {
       $scope.address = "http://localhost:8081/?action=stream";      
     });
 
-    // le serveur doit envoyer quand c'est gameover avec la cause
+    // TODO TODO  le serveur doit envoyer quand c'est gameover avec la cause
     // bouton accueil
     $scope.cause=0;
     $scope.cause=1;

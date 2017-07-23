@@ -30,13 +30,13 @@ export class MainController {
       $scope.address = "http://localhost:8081/?action=stream";      
     });
 
-    // le serveur doit envoyer quand c'est gameover avec la cause
+    // TODO TODO TODO le serveur doit envoyer quand c'est gameover avec la cause
     // bouton accueil
     $scope.cause=0;
     $scope.cause=1;
     $scope.numextfires = 10;
     // TODO overlays
-    $scope.overlayOpen = true;
+    $scope.overlayOpen = false;
     $scope.nbfighted = 0;
     this.$http = $http;
     this.socket = socket;

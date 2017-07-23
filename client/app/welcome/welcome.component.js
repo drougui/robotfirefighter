@@ -11,6 +11,7 @@ export class WelcomeComponent {
     'ngInject';
     this.$http = $http;
     this.socket = socket;
+    //this.$scope = $scope;
 
     // display the appropriate interface?
     $http.get('/api/auth').then(response => {
@@ -57,11 +58,10 @@ export class WelcomeComponent {
         }
       })
     }; // play
-
   } // constructor
 } // component
 
-export default angular.module('robotfirefighterApp.welcome', [uiRouter])
+export default angular.module('videogameApp.welcome', [uiRouter])
   .config(routes)
   .component('welcome', {
     template: require('./welcome.html'),

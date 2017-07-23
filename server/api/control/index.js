@@ -611,13 +611,13 @@ router.post('/watercontrol', function(req, res/*, next*/) {
         var callCount = 1;
         clearInterval(repeater);
         repeater = setInterval(function () {
-        if (callCount < 8) {
-          waterwidth = 7 - callCount;
-          callCount += 1;
-        } else {
-          clearInterval(repeater);
-        }
-      }, 1000);
+          if (callCount < 8) {
+            waterwidth = 7 - callCount;
+            callCount += 1;
+          } else {
+            clearInterval(repeater);
+          }
+        }, 1000);
       } else if(req.body.button == 'wrenchButton') { // WRENCH 
         wrenchmode = !wrenchmode;
       } else if(req.body.button == 'clickLeak') { // CLICK AT LEAK

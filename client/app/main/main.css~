@@ -348,19 +348,19 @@
 	max-width: 100%;
 }
 
-.robotControl{
-	/*width: 10%;*/
-	min-width: 15%;
-	height: 70%;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-around;
-}
+
 
 .headerrobotcontrol{
 	width: 100%;
 	display: flex;
 	justify-content: center;	
+}
+
+.littlesplatch{
+	height: 5vw;
+	width: 5vw;
+	background-size: 5vw 5vw;
+	background-image: url("/assets/images/littlesplatch.png");
 }
 
 .explainkeys{
@@ -373,33 +373,30 @@
 	background-color: white;
 	border-radius: 0.5vw;
 	border: solid #333 0.2vw;
-	font-size: 1vw;
+	font-size: 2vw;
 	display: flex;
 	justify-content: center;
-	width: 70%;
+	width: 60%;
 }
 
 .anykey{
 	background-color: white;
 	border-radius: 0.5vw;
 	border: solid #333 0.2vw;
-	font-size: 1vw;
+	font-size: 2vw;
 	display: flex;
 	justify-content: center;
-	padding-left: 0.4vw;
-	padding-right: 0.4vw;
-	padding-bottom: 0.2vw;
+	padding-left: 1.2vw;
+	padding-right: 1.2vw;
+	padding-bottom: 0.4vw;
 	margin-right: 2vw;
 }
 
 .anykey i{
-	font-size: 1vw;
+	font-size: 2vw;
 }
 
-.robotcontrol .fa{
-	display: flex;
-	self-align: center;
-}
+
 
 .infoBlock{
 /*	background-color: purple;*/
@@ -479,12 +476,7 @@
 /*	background-color: red;*/
 }
 
-.littlesplatch{
-	height: 2.5vw;
-	width: 2.5vw;
-	background-size: 2.5vw 2.5vw;
-	background-image: url("/assets/images/littlesplatch.png");
-}
+
 
 .littlesplatchwhite{
 	height: 2.5vw;
@@ -529,31 +521,31 @@
 }
 
 .arrowFor{
-	height: 2vw;
-	width: 2vw;
-	background-size: 2vw 2vw;
+	height: 4vw;
+	width: 4vw;
+	background-size: 4vw 4vw;
 	background-image: url("/assets/images/arrowFor.png");
 }
 
 .arrowBack{
-	height: 2vw;
-	width: 2vw;
-	background-size: 2vw 2vw;
+	height: 4vw;
+	width: 4vw;
+	background-size: 4vw 4vw;
 	background-image: url("/assets/images/arrowBack.png");
 }
 
 .arrowRight{
-	height: 2vw;
-	width: 1.5vw;
-	background-size: 1.5vw 2vw;
+	height: 4vw;
+	width: 3vw;
+	background-size: 3vw 4vw;
 	background-image: url("/assets/images/arrowRight.png");
 	margin-left: 0.25vw;
 }
 
 .arrowLeft{
-	height: 2vw;
-	width: 1.5vw;
-	background-size: 1.5vw 2vw;
+	height: 4vw;
+	width: 3vw;
+	background-size: 3vw 4vw;
 	background-image: url("/assets/images/arrowLeft.png");
 	margin-left: 0.25vw;
 }
@@ -1622,7 +1614,7 @@
 	width: 0.5vw;
 	height: 100%;
 	background-color: red;
-	background: repeating-linear-gradient(black, black 0.3vw, #B8B8B8 0.3vw, #B8B8B8 1.5vw);
+	background: repeating-linear-gradient(black, black 0.3vw, transparent 0.3vw, transparent 1.5vw);
 }
 
 .tankcontainerwater{

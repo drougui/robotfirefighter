@@ -12,9 +12,6 @@ export class TrainComponent {
 // TODO TODO TODO TODO setInterval-> $interval
 // clear intervals
 // rotation roue, push button, fix leaks
-// autonomy
-// display
-// game over
     'ngInject';
    
     // water management

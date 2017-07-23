@@ -7,10 +7,11 @@ import routes from './welcome.routes';
 
 export class WelcomeComponent {
   /*@ngInject*/
-  constructor($http, $scope, socket, sharedProperties, $rootScope, $state) {
+  constructor($http, $scope, socket, sharedProperties, $rootScope) {
     'ngInject';
     this.$http = $http;
     this.socket = socket;
+    //this.$scope = $scope;
 
     // display the appropriate interface?
     $http.get('/api/auth').then(response => {
@@ -19,6 +20,35 @@ export class WelcomeComponent {
       console.log("emptySlot:")
       console.log(response.data);
     })
+
+
+
+
+
+
+
+// TEST!!!! TO BE REMOVED
+$scope.monCompteur = 0;
+var blabla = setInterval(function() {
+  if ($scope.monCompteur <50 )
+  {
+    $scope.$apply(function () {
+      $scope.monCompteur = $scope.monCompteur+1;
+    });
+  }
+  else{
+    $scope.monCompteur = 0;
+  }
+  console.log($scope.monCompteur);
+}, 200);
+// END TEST TO BE REMOVED
+
+
+
+
+
+
+
 
     // test authorization for playing
 //    var token = "";
@@ -57,11 +87,10 @@ export class WelcomeComponent {
         }
       })
     }; // play
-
   } // constructor
 } // component
 
-export default angular.module('robotfirefighterApp.welcome', [uiRouter])
+export default angular.module('videogameApp.welcome', [uiRouter])
   .config(routes)
   .component('welcome', {
     template: require('./welcome.html'),

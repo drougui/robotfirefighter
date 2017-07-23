@@ -8,6 +8,14 @@
 	background-color: #bbbdf6;
 }
 
+.mainmsgs{
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
 .mainmsg{
 	font-size: 250%;
 }
@@ -17,6 +25,7 @@
 	display: flex;
 	justify-content: space-around;
 	height: 10%;
+/*	background-color: yellow;*/
 }
 
 .mainButton{
@@ -33,7 +42,7 @@
 
 
 .logos{
-	width: 80%;
+	width: 50%;
 	display: flex;
 	justify-content: space-around;
 	height: 20%;
@@ -41,14 +50,19 @@
 
 .dassault{
 	background-image: url("/assets/images/LOGO-SUPAERO.png");
-	width: 21.2%;
-	height: 100%;
+	/*
+	width: 16.45vw;
+	height: 10vw;*/
+	width: 11.515vw;
+	height: 7vw;
 	background-size: cover;
 }
 
 .supaero{
 	background-image: url("/assets/images/dassault.png");
-	width: 40%;
-	height: 100%;
+/*	width: 30.8vw;
+	height: 10vw;*/
+	width: 21.56vw;
+	height: 7vw;
 	background-size: cover;
 }
