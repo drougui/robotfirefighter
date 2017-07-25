@@ -383,7 +383,7 @@
 	background-color: white;
 	border-radius: 0.5vw;
 	border: solid #333 0.2vw;
-	font-size: 2vw;
+	font-size: 2.2vw;
 	display: flex;
 	justify-content: center;
 	padding-left: 1.2vw;
@@ -715,7 +715,7 @@
 
 
 .tree{
-	background-image: url("/assets/images/tree1.png");
+	background-image: url("/assets/images/tree7.png");
 	position: absolute;
 	top: 10%;
 	left: 30%;

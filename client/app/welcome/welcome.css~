@@ -42,7 +42,7 @@
 
 
 .logos{
-	width: 80%;
+	width: 50%;
 	display: flex;
 	justify-content: space-around;
 	height: 20%;
@@ -65,4 +65,8 @@
 	width: 21.56vw;
 	height: 7vw;
 	background-size: cover;
+}
+
+.thanks{
+	font-size: 0.5vw;
 }

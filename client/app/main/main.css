@@ -715,13 +715,13 @@
 
 
 .tree{
-	background-image: url("/assets/images/tree1.png");
+	background-image: url("/assets/images/tree6.png");
 	position: absolute;
 	top: 10%;
 	left: 30%;
 	width: 3vh;
-	height: 3vh;
-	background-size: 3vh 3vh;
+	height: 2.5vh;
+	background-size: 3vh 2.5vh;
 	z-index: 8;
 }
 
