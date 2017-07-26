@@ -279,5 +279,15 @@ export function isplaying(req,res) {
 }
 
 
-
+global.newtoken = function() {
+  console.log('New token function:');
+  emptySlot=true;
+  console.log('emptySlot:');
+  console.log(emptySlot);
+  global.expires = moment().add('minutes', 11).valueOf();
+  payload = {auth: true,
+             exp: global.expires};
+  global.token = jwt.encode(payload, secret);
+  clearTimeout(global.isPlayingTimeout);
+}
 

@@ -145,6 +145,8 @@ export function killTimeout(req,res) {
       clearTimeout(clickOnLetsPlayTimeout);
       console.log('Auth -- Isplaying timeout creation.');
       global.isPlayingTimeout = setTimeout(function() { // the player has 30secs to click on a button or press a control key
+          exec('bash ~/driving-human-robots-interaction/killAll.sh');
+          global.stopGame();
           console.log("==========================================");
           console.log(" SECOND COUNTER TIMEOUT: " + mycounter2);
           console.log("==========================================");
@@ -157,8 +159,6 @@ export function killTimeout(req,res) {
           console.log('Auth -- FIRST New token:');
           console.log(global.token);
           console.log('Auth -- FIRST Kill game.');
-          global.stopGame();
-          exec('bash ~/driving-human-robots-interaction/killAll.sh');
         }, 30000);
         res.status(200).json('Auth -- clickOnLetsPlayTimeout cleared, isPlayingTimeout defined');
      } else{
@@ -279,5 +279,16 @@ export function isplaying(req,res) {
 }
 
 
-
+global.newtoken = function() {
+  console.log('New token function:');
+  emptySlot=true;
+  console.log('emptySlot:');
+  console.log(emptySlot);
+  global.expires = moment().add('minutes', 11).valueOf();
+  payload = {auth: true,
+             exp: global.expires};
+  global.token = jwt.encode(payload, secret);
+  clearTimeout(global.isPlayingTimeout);
+  res.status(200).json('Auth -- Slot is now empty, a new token is created (given to nobody).');
+}
 

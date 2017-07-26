@@ -64,6 +64,11 @@
 	margin-left: 2vw;
 }
 
+.textthx{
+	font-size: 3vw;
+        color: white;
+}
+
 .numextfires{
 	margin-top: 5vw;
 	font-size: 3vw;
@@ -873,7 +878,7 @@
 }
 
 .robinet{
-	background-image: url("/assets/images/robinet.png");
+	background-image: url("/assets/images/robinetWHITE.png");
 	width: 5vw;
 	height: 5vw;
 	background-size: 5vw 5vw;

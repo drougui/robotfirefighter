@@ -37,10 +37,12 @@
 <!--		<div class="loadGif">
 		</div> 
 		<md-progress-circular md-mode="indeterminate"></md-progress-circular> -->
-		<div class="gameover"> GAME OVER ! </div>
-		<div class="whyover" ng-if="cause==0"> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <div class="textcause"> Battery empty </div> <i class="fa fa-battery-empty" aria-hidden="true"></i> </div>
-		<div class="whyover" ng-if="cause==1"> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <div class="textcause"> Overheat </div> <i class="fa fa-thermometer-full" aria-hidden="true"></i> </div>
-		<div class="numextfires"> <div class="fireicon"> </div> {{numextfires}} extinguished fires <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> </div>
+		<div class="gameover" ng-if="cause==1 || cause==2"> GAME OVER! </div>
+                <div class="gameover" ng-if="cause==0"> THE END </div>
+                <div class="textthx"> Mission terminated, thank you! </div>
+		<div class="whyover" ng-if="cause==1"> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <div class="textcause"> Battery empty </div> <i class="fa fa-battery-empty" aria-hidden="true"></i> </div>
+		<div class="whyover" ng-if="cause==2"> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <div class="textcause"> Overheat </div> <i class="fa fa-thermometer-full" aria-hidden="true"></i> </div>
+		<div class="numextfires"> <div class="fireicon"> </div> {{finalnumfires}} extinguished fires <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> </div>
 		<div ng-click="gohome()" ui-sref="welcome" class="gohome"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>	
 	</div>
 	<div class="leftPart">  

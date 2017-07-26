@@ -83,7 +83,10 @@ var watlevelContainer = 0;
 var remainingtime = 600;
 var batteryLevel = 24;
 var numFightedFires = 0;
+var finalNumFightedFires = 0;
 
+var overlayOpen = false;
+var cause = 0;
 
 router.post('/killall', killall); // kill morse, + init js
 router.post('/start',start); // launch morse
@@ -299,8 +302,8 @@ serverGet.on('message', function(message, remote) {
   }
   // heat simulation
   var equilibriumDist = 3.0;
-  var itNbBeforeChange = 1;
-  if(counter > itNbBeforeChange) {
+//  var itNbBeforeChange = 1;
+//  if(counter > itNbBeforeChange) {
     var minDistance = 3.5;
     for(var q = 0; q < treeslocations.length; q++) {
       if(firesStatesOfTrees[q]) {
@@ -308,18 +311,22 @@ serverGet.on('message', function(message, remote) {
         minDistance = Math.min(minDistance, distance);
       }
     }
-    var heatIncrement = (equilibriumDist - minDistance)*10 / equilibriumDist;
+    var heatIncrement = (equilibriumDist - minDistance)*20 / equilibriumDist;
     mercurelevelfloat = mercurelevelfloat + heatIncrement;
-    if(mercurelevelfloat > 300) {
-      mercurelevelfloat = 300;
+    if(mercurelevelfloat > 270) {
+      mercurelevelfloat = 270;
+      overlayOpen = true;
+      cause = 2;
+      global.newtoken();
+      global.stopGame();
     }
-    if(mercurelevelfloat < 10) {
-      mercurelevelfloat = 10;
+    if(mercurelevelfloat < 50) {
+      mercurelevelfloat = 50;
     }
     mercurelevel = mercurelevelfloat.toString()/70 + 'vw';
     hotscreen = mercurelevelfloat/300;
     counter = 0;
-  }
+//  }
 /*
   console.log("=====================");
   console.log(" OBS RTTLUA COUNTER:  ");
@@ -471,6 +478,10 @@ router.get('/robot', function(req, res) {
   res.json([robotx[0],roboty[0],roboto[0],currentsplatch]);
 });
 
+// give end/gameover state
+router.get('/finished', function(req, res) {
+  res.json([overlayOpen,cause,finalNumFightedFires]);
+});
 
 //=====================================================
 // SPLATCH
@@ -497,6 +508,7 @@ function throwWater() {
     if((normDiff < 3) && (scalprod > 0.9) && firesStatesOfTrees[i] && !robotTankEmpty) {
       console.log('USEFULL');
       numFightedFires++;
+      finalNumFightedFires++;
       var indexTree = i + 1;
       var command1 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -10\' | yarp write /data/out /morse/treeonfire' + indexTree.toString() + '/teleporttf' + indexTree.toString() + '/in';
       var command2 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -0.1\' | yarp write /data/out /morse/tree' + indexTree.toString() + '/teleport' + indexTree.toString() + '/in';
@@ -753,6 +765,10 @@ export function launchgame(req, res) {
       remainingtime = 600;
       batteryLevel = 24;
       numFightedFires = 0;
+      finalNumFightedFires = 0;
+
+      overlayOpen = false;
+      cause = 0;
 
       // clear intervals 
       clearInterval(waterManagementInterval);
@@ -919,6 +935,12 @@ export function launchgame(req, res) {
         if(remainingtime > 0) {
           remainingtime = remainingtime - 1;
         }
+        else{
+          overlayOpen = true;
+          cause = 0;
+          global.newtoken();
+          global.stopGame();
+        }
         console.log("oooooooooooooooooooooooooooooooooo");
         console.log('  REMAINING TIME: ' + remainingtime);
         console.log("oooooooooooooooooooooooooooooooooo");
@@ -935,6 +957,12 @@ export function launchgame(req, res) {
       batteryInterval = setInterval(function() {
         if(batteryLevel > 0) {
           batteryLevel = batteryLevel - 0.1;
+        }
+	else{
+	  overlayOpen = true;
+          cause = 1;
+          global.newtoken();
+          global.stopGame();
         }
       }, 1000);
       // give battery level to client

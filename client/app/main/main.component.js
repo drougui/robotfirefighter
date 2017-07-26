@@ -33,10 +33,9 @@ export class MainController {
     // TODO TODO  le serveur doit envoyer quand c'est gameover avec la cause
     // bouton accueil
     $scope.cause=0;
-    $scope.cause=1;
-    $scope.numextfires = 10;
     // TODO overlays
     $scope.overlayOpen = false;
+    $scope.finalnumfires = 0;
     $scope.nbfighted = 0;
     this.$http = $http;
     this.socket = socket;
@@ -180,7 +179,18 @@ export class MainController {
           $scope.waterize = response.data[3];
         }
       });
-    
+
+      $http.get('/api/control/finished').then(response => {
+        if(response.status === 200) {
+          $scope.overlayOpen = response.data[0];
+          $scope.cause = response.data[1];
+          $scope.finalnumfires = response.data[2];
+          console.log($scope.overlayOpen);
+          console.log($scope.cause);
+          console.log($scope.finalnumfires);
+        }
+      });
+    /*
       tictac = !tictac;
       if(tictac){
         $scope.widthTrashTapWater = 5;
@@ -192,6 +202,7 @@ export class MainController {
       } else {
         $scope.iconBatt = 0;
       }
+*/
     }, 500);
     $scope.$on("$destroy", function() {
         if (mainInterval) {
