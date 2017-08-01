@@ -1,10 +1,10 @@
 .loading{
-	height: 100vh;
+	height: 95vh;
 	width: 100vw;
 	font-size: 5vw;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: space-around;
 	align-items: center;
 }
 
@@ -14,5 +14,53 @@
 
 .loadpart{
 	display: flex;
-	width: 50vw;
+	width: 30vw;
+}
+
+.robotControlLoading{
+	width: 30vw;
+	height: 60vh;
+	font-size: 2vw;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around; 
+	border-radius: 10%;
+	border: solid #333 0.3vw;
+	padding-left: 1vw;
+	padding-right: 1vw;
+}
+
+.watermanagementLoading{
+	width: 30vw;
+	height: 60vh;
+	font-size: 2vw;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	border-radius: 10%;
+	border: solid #333 0.3vw;
+	padding-left: 1vw;
+	padding-right: 1vw;
+}
+
+.watermanagementLoading .mainbuttonR{
+	font-size: 3vw;
+}
+
+.watermanagementLoading .mainbuttonL{
+	font-size: 3vw;
+}
+
+.watermanagementLoading .wrenchButton{
+	font-size: 3vw;
+}
+
+.reminders{
+	display: flex;
+	width: 80vw;
+	justify-content: space-around;
+}
+
+.letsplaybutton{
+	background-color: #9893da;
 }
