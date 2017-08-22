@@ -22,11 +22,7 @@
 				<div> wheel turns right </div>
 			</div>
 			<div class="explainkeys">
-				<div class="pushButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="waterPushButton()">
-					<!--<div class="pbcircle">
-						<div class="pbcirclesmall">
-						</div>
-					</div>-->
+				<div class="pushButton">
 					<div class="buttonTap">
 					</div>
 				</div>
@@ -82,5 +78,5 @@
 			</div>-->
 		</div>
 	</div>
-	<button ui-sref="game"  ui-sref-opts="{reload: true}" ng-if="playEnabled" ng-click="letsplay()"> play </button>
+	<div class="letsplaybutton" ui-sref="game"  ui-sref-opts="{reload: true}" ng-if="playEnabled" ng-click="letsplay()"> Click here to play! </div>
 </div>

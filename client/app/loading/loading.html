@@ -1,6 +1,9 @@
 <div class="loading">
-	<div class="loadpart">
+	<div class="loadpart" ng-if="!playEnabled">
 		<span> LOADING <span ng-if="dot>0">.</span><span ng-if="dot>1">.</span><span ng-if="dot>2">.</span></span>
+	</div>
+        <div class="loadpart" ng-if="playEnabled">
+		<span> LOADED! </span>
 	</div>
 	<!-- <span class="advice"> Press F11 for a better experience </span> -->
 	<span class="advice"> Please do not refresh web pages from now! </span>
@@ -78,5 +81,5 @@
 			</div>-->
 		</div>
 	</div>
-	<div class="letsplaybutton" ui-sref="game"  ui-sref-opts="{reload: true}" ng-if="playEnabled" ng-click="letsplay()"> Let's play! </div>
+	<div class="letsplaybutton" ui-sref="game"  ui-sref-opts="{reload: true}" ng-if="playEnabled" ng-click="letsplay()"> Click here to play! </div>
 </div>

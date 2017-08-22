@@ -806,14 +806,17 @@
 	border: solid white 0.3vw;
 	width: 4vw;
 	height: 2vw;
-	float: left;
+	/*float: left;*/
 	display: flex;
+	align-items: center;
+	padding: 0.2vw;
 }
 
 .batlev {
 	height: 1vw;
-	margin: 0.24vw;
-	position: absolute;
+	/*margin-top: 0.24vw;
+	margin-bottom: 0.24vw;*/
+	/*position: absolute;*/
 	background-color: white;
 }
 
@@ -827,22 +830,29 @@
 .connectbat{
 	display: flex;
 	align-items: center;
+	/*background-color: red;*/
 }
 
 
-.waterlevel{
+.waterlevelbar{
 	background-color: white;
 	width: 100%;
 	height: 2vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
+.waterlevelcont{
+	width: 96%;
+	height: 80%;
+	display: flex;
+}
 
-.waterempty{
+.waterlevel{
 	z-index: 4;
 	background-color: #0066FF;
-        /*background-color: red;*/
-	height: 1.5vw;
-	margin: 0.25vw;
+	height: 100%;
 }
 
 /*

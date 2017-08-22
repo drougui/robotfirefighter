@@ -79,14 +79,25 @@ for (var i=0; i<leakPlacesNb; i++) {
   noleakat.push(true);
 }
 var vlvop = 1;
-var watlevelContainer = 0;
+var watlevelContainer = 50;
 var remainingtime = 600;
-var batteryLevel = 24;
+var batteryLevel = 100;
 var numFightedFires = 0;
 var finalNumFightedFires = 0;
 
 var overlayOpen = false;
 var cause = 0;
+
+var currentGoalTreeX = 0.0;
+var currentGoalTreeY = 0.0;
+var currentAvoidTree = false;
+var currentAvoidTreeSession = false;
+var currentGoalTreeI = -1;
+var goalIsATree = false;
+var batteryNeeded = false;
+var batteryNeededSession = false;
+var waterNeeded = false;
+var waterNeededSession = false;
 
 router.post('/killall', killall); // kill morse, + init js
 router.post('/start',start); // launch morse
@@ -101,6 +112,33 @@ function killall(req, res) {
     console.log(decoded);
     if(decoded.auth && decoded.exp === global.expires){
       exec('bash ~/driving-human-robots-interaction/killAll.sh');
+
+      // clear intervals 
+      clearInterval(waterManagementInterval);
+      clearInterval(leaksInterval);
+      clearInterval(waterFlowInterval);
+      clearInterval(timeInterval);
+      clearInterval(batteryInterval);
+      clearInterval(treeBurningInterval);
+      clearInterval(fillWaterInterval);
+      clearInterval(fillBatteryInterval);
+      clearInterval(autonomyInterval);
+
+      overlayOpen = false;
+      cause = 0;
+      abortSession = false;
+      firstTime = false;
+      currentGoalTreeX = 0.0;
+      currentGoalTreeY = 0.0;
+      currentGoalTreeI = -1;
+      currentAvoidTree = false;
+      currentAvoidTreeSession = false;
+      goalIsATree = false;
+      batteryNeeded = false;
+      batteryNeededSession = false;
+      waterNeeded = false;
+      waterNeededSession = false;
+
       xrobinet = 42;
       mercurelevelfloat = 10;
       mercurelevel = '0.1vw';
@@ -123,22 +161,10 @@ function killall(req, res) {
         noleakat.push(true);
       }
       vlvop = 1;
-      watlevelContainer = 0;
+      watlevelContainer = 50;
       remainingtime = 600;
-      batteryLevel = 24;
+      batteryLevel = 100;
       numFightedFires = 0;
-
-      // clear intervals 
-      clearInterval(waterManagementInterval);
-      clearInterval(leaksInterval);
-      clearInterval(waterFlowInterval);
-      clearInterval(timeInterval);
-      clearInterval(batteryInterval);
-      clearInterval(treeBurningInterval);
-      clearInterval(fillWaterInterval);
-      clearInterval(fillBatteryInterval);
-
-      clearInterval(autonomyInterval);
 
       res.status(200).json("everything killed")
     }
@@ -194,8 +220,9 @@ var counter = 0;
 //var thecounter = 0;
 var currentAutoMvt = false;
 
+var abortSession = false;
 serverGet.on('message', function(message, remote) {
-
+  console.log("I GET A MESSAGE FROM RTTLUA !");
   pastRobotx = robotx;
   pastRoboty = roboty;
 
@@ -230,13 +257,224 @@ serverGet.on('message', function(message, remote) {
   roboty = posY;
   roboto = orientation;
 
-  
+
+// LACK OF BATTERY
+//  if(autonomousRobot==1) {
+
+
+// AVOID TREES
+
+// TODO make it non buging (si le robot veut tourner sur place à droite, mais qu'il est du mauvais coté, il va tourner à gauche): avance ok ou tourne ko?
+// TODO IDEE 2, ON VA PAS VERS LES ARBRES POUR LESQUELS IL NY A PAS DARBRES SUR LE CHEMIN (pbm quand gotobatery en urgent!)
+// TODO IDEE 3, NOUVEL ABORT LORSQUE OBSTACLE , CONTOURNEMENT, ET RELANCE DU JOB (pbm throwWater?)
+// TODO insure no gototree just after an abort for batery
+ if(autonomousRobot==1) {
+    var concernedTree = -1;
+    for(var q = 0; q < treeslocations.length; q++) {
+      if( currentGoalTreeI != q && !currentAvoidTree){
+        for(var LL = 0; LL<4; LL=LL+0.1){
+          for(var ll = -0.2; ll<0.2; ll=ll+0.1 ){
+            if (!currentAvoidTree && Math.sqrt( Math.pow( parseFloat(robotx[0]) + LL*Math.cos(roboto) - ll*Math.sin(roboto)-parseFloat(treeslocations[q].x),2) + Math.pow(parseFloat(roboty[0]) + LL*Math.sin(roboto) + ll*Math.cos(roboto)-parseFloat(treeslocations[q].y) ,2) ) < 0.5 && Math.sqrt( Math.pow(parseFloat(pastRobotx[0])-parseFloat(robotx[0]),2) + Math.pow(parseFloat(pastRoboty[0])-parseFloat(roboty[0]),2) ) > 0.1 ){
+              concernedTree = q;
+              currentAvoidTree = true;
+              console.log("FACE A TREE !!!!");
+              console.log("FACE A TREE !!!!");
+              console.log("FACE A TREE !!!!");
+              console.log("FACE A TREE !!!!");
+              console.log("FACE A TREE !!!!");
+              console.log("FACE A TREE !!!!");
+              console.log("FACE A TREE !!!!");
+              
+              // ABORT + rot + forward + goto again
+            }
+          }
+        }
+      }
+    }
+    if (currentAvoidTree && !currentAvoidTreeSession){
+      currentAvoidTreeSession = true;
+      var udpMess = abortMoveToUdpMess();
+      var buffer = new Buffer(udpMess);
+      var client = dgram.createSocket('udp4');
+      console.log("!!!!!!!!!!!! send abort to robot AVOID TREE !!!!!!!!!!!!");
+      client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+        if(err) throw err;
+        console.log('abort sent to ' + HOST +':'+ PORT);
+        client.close();
+      });
+
+      var direction = 0.05;
+      if(Math.cos(roboto) * (parseFloat(treeslocations[concernedTree].y) - parseFloat(roboty[0])) - Math.sin(roboto) * (parseFloat(treeslocations[concernedTree].x) - parseFloat(robotx[0]))>0){
+        direction = -0.05;
+      }
+
+
+      setTimeout(function() {
+        var udpMess1 = speedToUdpMess(0.0, -0.6);
+        var buffer1 = new Buffer(udpMess1);
+        var client1 = dgram.createSocket('udp4');
+        client1.send(buffer1, 0, buffer1.length, PORT, HOST, function(err) {
+          if(err) throw err;
+          //console.log('UDP message sent to ' + HOST +':'+ PORT);
+          client1.close();
+          console.log("= CLIENT 1 =");
+        });
+      }, 500);
+       
+      setTimeout(function() {
+        var udpMess2 = speedToUdpMess(direction, 0.0);
+        var buffer2 = new Buffer(udpMess2);
+        var client2 = dgram.createSocket('udp4');
+        client2.send(buffer2, 0, buffer2.length, PORT, HOST, function(err) {
+          if(err) throw err;
+          //console.log('UDP message sent to ' + HOST +':'+ PORT);
+          client2.close();
+          console.log("= CLIENT 2 =");
+        });
+      }, 1000);
+      
+      setTimeout(function() {
+        var udpMess3 = speedToUdpMess(direction, 0.6);
+        var buffer3 = new Buffer(udpMess3);
+        var client3 = dgram.createSocket('udp4');
+        client3.send(buffer3, 0, buffer3.length, PORT, HOST, function(err) {
+          if(err) throw err;
+          //console.log('UDP message sent to ' + HOST +':'+ PORT);
+          client3.close();
+          console.log("= CLIENT 3 =");
+        });
+        currentAvoidTreeSession=false
+        currentAvoidTree=false;
+      }, 1500);
+
+    }
+
+
+
+
+ 
+
+/*
+      if( currentGoalTreeI != q && Math.sqrt( Math.pow(parseFloat(pastRobotx[0])-parseFloat(robotx[0]),2) + Math.pow(parseFloat(pastRoboty[0])-parseFloat(roboty[0]),2) ) > 0.1 ){
+        if ( Math.sqrt( Math.pow( parseFloat(robotx[0]) + 1.3*Math.cos(roboto) - parseFloat(treeslocations[q].x)  ,2) + Math.pow( parseFloat(roboty[0]) + 1.3*Math.sin(roboto) - parseFloat(treeslocations[q].y) ,2) ) < 1.7 && 0 <= Math.cos(roboto) * (parseFloat(treeslocations[q].y) - parseFloat(roboty[0])) - Math.sin(roboto) * (parseFloat(treeslocations[q].x) - parseFloat(robotx[0])) && Math.cos(roboto) * (parseFloat(treeslocations[q].y) - parseFloat(roboty[0])) - Math.sin(roboto) * (parseFloat(treeslocations[q].x) - parseFloat(robotx[0])) < 1 ){
+          console.log("=====!!!!!DROITE!!!!!=====");
+          console.log("=====!!!!!DROITE!!!!!=====");
+          console.log(Math.cos(roboto));
+          console.log(Math.sin(roboto));
+          console.log("=====!!!!!DROITE!!!!!=====");
+          console.log("=====!!!!!DROITE!!!!!=====");
+          if (!currentAvoidTree){
+            currentAvoidTree = true;
+            udpMess = speedToUdpMess(-0.05, 0.6);
+            buffer = new Buffer(udpMess);
+            client = dgram.createSocket('udp4');
+            client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+              if(err) throw err;
+              client.close();
+              setTimeout(function() {
+                client = dgram.createSocket('udp4');
+                client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+                  if(err) throw err;
+                  client.close();
+                  currentAvoidTree = false;
+                });
+              }, 500);
+            });
+          }
+        }
+        if ( Math.sqrt( Math.pow( parseFloat(robotx[0]) + 1.3*Math.cos(roboto) - parseFloat(treeslocations[q].x)  ,2) + Math.pow( parseFloat(roboty[0]) + 1.3*Math.sin(roboto) - parseFloat(treeslocations[q].y) ,2) ) < 1.7 && 0 > Math.cos(roboto) * (parseFloat(treeslocations[q].y) - parseFloat(roboty[0])) - Math.sin(roboto) * (parseFloat(treeslocations[q].x) - parseFloat(robotx[0])) && Math.cos(roboto) * (parseFloat(treeslocations[q].y) - parseFloat(roboty[0])) - Math.sin(roboto) * (parseFloat(treeslocations[q].x) - parseFloat(robotx[0])) > -1 ){
+          console.log("=====!!!!!GAUCHE!!!!!=====");
+          console.log("=====!!!!!GAUCHE!!!!!=====");
+          console.log(Math.cos(roboto));
+          console.log(Math.sin(roboto));
+          console.log("=====!!!!!GAUCHE!!!!!=====");
+          console.log("=====!!!!!GAUCHE!!!!!=====");
+          if (!currentAvoidTree){
+            currentAvoidTree = true;
+            udpMess = speedToUdpMess(0.05, 0.6);
+            buffer = new Buffer(udpMess);
+            client = dgram.createSocket('udp4');
+            client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+              if(err) throw err;
+              client.close();
+              setTimeout(function() {
+                client = dgram.createSocket('udp4');
+                client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+                  if(err) throw err;
+                  client.close();
+                  currentAvoidTree = false;
+                });
+              }, 500);
+            });
+          }
+        }
+      }*/
+
+
+// temps pour y aller > temps de battery + marge
+    if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*1.1 && !batteryNeeded){
+      batteryNeeded = true;
+      //console.log(Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) ));
+      //console.log(batteryLevel);
+    }
+    if(batteryNeeded && batteryLevel>=99){
+      batteryNeeded = false;
+      batteryNeededSession = false;
+      waterNeeded = false;
+      waterNeededSession = false;
+    }
+
+
+    if(watlevel==0 && !waterNeeded && !batteryNeeded){
+      waterNeeded = true;
+      console.log("waterNeeded!");
+      console.log("waterNeeded!");
+      console.log("waterNeeded!");
+      console.log("waterNeeded!");
+      console.log("waterNeeded!"); // TODO bug avec la battery parfois (regarder la synchro avec main autonomy interval)
+      console.log("waterNeeded!");
+      console.log("waterNeeded!");
+      console.log("waterNeeded!");
+      console.log("waterNeeded!");
+      console.log("waterNeeded!");
+      console.log("waterNeeded!");
+      console.log("waterNeeded!");
+      console.log("waterNeeded!");
+    }
+    if(watlevel>50 && waterNeeded){
+      waterNeeded = false;
+      waterNeededSession = false;
+    }
+  }
+
 // AVOIDTREES // TODO may put it in "autonomous robot" part (interval)
 // TODO en tout cas signaler quand abort pour continuer le process autonome
-  if(autonomousRobot==1) {
+  console.log("~~~~~~~~~~~~ééééé~~~~~~~~~~~~");
+  console.log("goalIsATree:");
+  console.log(goalIsATree);
+  console.log("abortSession:");
+  console.log(abortSession);
+  console.log("currentGoalTreeX:");
+  console.log(currentGoalTreeX);
+  console.log("currentGoalTreeY:");
+  console.log(currentGoalTreeY);
+  console.log("batteryNeeded:");
+  console.log(batteryNeeded);
+  console.log("batteryNeededSession");
+  console.log(batteryNeededSession);
+  console.log("waterNeeded:");
+  console.log(waterNeeded);
+  console.log("waterNeededSession:");
+  console.log(waterNeededSession);
+  console.log("batteryLevel:");
+  console.log(batteryLevel);
 
-    var vectorRobotX = Math.cos(roboto);
-    var vectorRobotY = Math.sin(roboto);
+  console.log("~~~~~~~~~~~~ééééé~~~~~~~~~~~~");
+
+  if(autonomousRobot==1 && goalIsATree) {
+    //var vectorRobotX = Math.cos(roboto);
+    //var vectorRobotY = Math.sin(roboto);
+/*
     var nextRobotoXaxis = [];
     var nextRobotoYaxis = [];
     nextRobotoXaxis[0] = parseFloat(robotx) + Math.cos(roboto);
@@ -245,21 +483,68 @@ serverGet.on('message', function(message, remote) {
     nextRobotoYaxis[1] = parseFloat(roboty) + Math.sin(roboto) * 1.2;
     nextRobotoXaxis[2] = parseFloat(robotx) + Math.cos(roboto) * 1.4;
     nextRobotoYaxis[2] = parseFloat(roboty) + Math.sin(roboto) * 1.4;
+*/
+    //var manoeuvre = false;
 
-    var manoeuvre = false;
-    for(var q = 0; q < treeslocations.length; q++) {
-      if( Math.sqrt( Math.pow(treeslocations[q].x - nextRobotoXaxis[0], 2) + Math.pow(treeslocations[q].y - nextRobotoYaxis[0], 2) ) < 0.5 ){
-        udpMess = abortMoveToUdpMess();
-        buffer = new Buffer(udpMess);
-        client = dgram.createSocket('udp4');
-        console.log("!!!!!!!!!!!! send abort to robot !!!!!!!!!!!!");
-        client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-        if(err) throw err;
-          console.log('abort send to ' + HOST +':'+ PORT);
-          client.close();
-	});
+// var close = false;
+//    for(var q = 0; q < treeslocations.length; q++) {
+      if( Math.sqrt( Math.pow(/*treeslocations[q].x*/ currentGoalTreeX - (parseFloat(robotx)+2*Math.cos(roboto)) , 2) 
++ Math.pow( /*treeslocations[q].y*/ currentGoalTreeY- (parseFloat(roboty)+2*Math.sin(roboto)), 2) ) < 1.0 ){
+        console.log("+++++++++++++++++++++++++++++++++++++++++");
+        console.log("+++++++++++++++++++++++++++++++++++++++++");
+        console.log("+++++++++++++++++++++++++++++++++++++++++");
+        console.log("CLOSE TO TREE");
+        console.log("+++++++++++++++++++++++++++++++++++++++++");
+        console.log("+++++++++++++++++++++++++++++++++++++++++"); 
+        console.log("+++++++++++++++++++++++++++++++++++++++++");
+        console.log("+++++++++++++++++++++++++++++++++++++++++");
+        console.log(parseFloat(robotx));
+        console.log(Math.cos(roboto));
+        console.log(parseFloat(roboty));
+        console.log(Math.sin(roboto));
+        if(!abortSession) {
+          udpMess = abortMoveToUdpMess();
+          buffer = new Buffer(udpMess);
+          client = dgram.createSocket('udp4');
+          console.log("!!!!!!!!!!!! send abort to robot !!!!!!!!!!!!");
+          client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+            if(err) throw err;
+            console.log('abort sent to ' + HOST +':'+ PORT);
+            client.close();
+          });
+          abortSession = true; // TODO lancer quelquechose directement (avec data.integers[IND_ABORTMOVE]==0)
+                           // dans la partie robot autonome, faire qqch de special quand abortSession
+                           // TODO ne pas oublier isAborted coté rttlua
+          throwWater(); // TODO why two throws sometimes? p-e pcq on passe deux fois par là (currentAutoMvt n'est pas encore vrai ...)
+          console.log("!!!!!!!!!!!! I THROW WATER !!!!!!!!!!!!");
+
+
+          setTimeout(function() {
+            var udpMess1 = speedToUdpMess(0.0, -0.6);
+            var buffer1 = new Buffer(udpMess1);
+            var client1 = dgram.createSocket('udp4');
+            client1.send(buffer1, 0, buffer1.length, PORT, HOST, function(err) {
+              if(err) throw err;
+              client1.close();
+            });
+          }, 1000);
+          setTimeout(function() {
+            var udpMess1 = speedToUdpMess(0.0, -0.6);
+            var buffer1 = new Buffer(udpMess1);
+            var client1 = dgram.createSocket('udp4');
+            client1.send(buffer1, 0, buffer1.length, PORT, HOST, function(err) {
+              if(err) throw err;
+              client1.close();
+            });
+          }, 1500);
+
+        }
       }
-    }
+
+
+
+
+  //  }
   }
 
 // TODO TODO TODO TODO IDEE: mettre les valeurs de position en global, 
@@ -285,6 +570,7 @@ serverGet.on('message', function(message, remote) {
 //  console.log("currentAutoMvt " + currentAutoMvt);
 //  console.log("noMvt " + noMvt);
   // use fill/stop fill water functions
+
   if((roboty[0] < parseFloat(zoneslocations[0].y)+1) && (roboty[0] > parseFloat(zoneslocations[0].y)-1) && (robotx[0] < parseFloat(zoneslocations[0].x) + 1) && (robotx[0] > parseFloat(zoneslocations[0].x)-1)) {
     if(!isFillingWater) {
       fillingWater();
@@ -327,12 +613,12 @@ serverGet.on('message', function(message, remote) {
     hotscreen = mercurelevelfloat/300;
     counter = 0;
 //  }
-/*
+
   console.log("=====================");
   console.log(" OBS RTTLUA COUNTER:  ");
-  console.log(thecounter);
+  console.log(counter);
   console.log("=====================");
-*/
+
   counter++;
 //  thecounter++;
 });
@@ -487,8 +773,8 @@ router.get('/finished', function(req, res) {
 // SPLATCH
 //=====================================================
 function throwWater() {
-  if(watlevel > 4) {
-    watlevel = watlevel - 3;
+  if(watlevel >= 10) {
+    watlevel = watlevel - 10;
     currentsplatch = true;
   } else {
     watlevel = 0;
@@ -512,14 +798,16 @@ function throwWater() {
       var indexTree = i + 1;
       var command1 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -10\' | yarp write /data/out /morse/treeonfire' + indexTree.toString() + '/teleporttf' + indexTree.toString() + '/in';
       var command2 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -0.1\' | yarp write /data/out /morse/tree' + indexTree.toString() + '/teleport' + indexTree.toString() + '/in';
-      console.log(command1 + ' && ' + command2);
-      exec(command1 + ' && ' + command2, puts);
+      setTimeout(function() {
+         console.log(command1 + ' && ' + command2);
+         exec(command1 + ' && ' + command2, puts);
+      }, 750);
       firesStatesOfTrees[i] = false;
     }
   }
   setTimeout(function() {
-          currentsplatch = false;
-  }, 500);
+          currentsplatch = false; // TODO ca doit etre pour ca le double splatch
+  }, 500); // enfin ça ;) -- update: maybe no bug anymore
 }
 
 
@@ -677,8 +965,10 @@ var fillingBattery = function() {
   isFillingBattery = true;
   clearInterval(fillBatteryInterval);
   fillBatteryInterval = setInterval(function() {
-    if(batteryLevel < 24) {
-      batteryLevel = batteryLevel + 0.5;
+    if(batteryLevel <= 95) {
+      batteryLevel = batteryLevel + 5;
+    } else if(batteryLevel<100){
+      batteryLevel = 100;
     }
   }, 500);
 };
@@ -698,7 +988,7 @@ var stopFillingBattery = function() {
 
 // MODE (AUTONOMOUS/MANUAL)
 
-var autonomousRobot = 0; 	// toutes les minutes, on tire au sort si autonome ou pas
+var autonomousRobot = 1; 	// toutes les minutes (5secs?), on tire au sort si autonome ou pas
 				// + dans une zone bien définie, c'est toujours manuel
 // UDP indexes
 var IND_MODE = 1
@@ -738,7 +1028,33 @@ export function launchgame(req, res) {
     console.log(decoded);
     if(decoded.auth && decoded.exp === global.expires ){
 
+      // clear intervals 
+      clearInterval(waterManagementInterval);
+      clearInterval(leaksInterval);
+      clearInterval(waterFlowInterval);
+      clearInterval(timeInterval);
+      clearInterval(batteryInterval);
+      clearInterval(treeBurningInterval);
+      clearInterval(fillWaterInterval);
+      clearInterval(fillBatteryInterval);
+      clearInterval(autonomyInterval);
+
       // make sure the initialization is correct 
+      abortSession = false;
+      firstTime = false;
+      currentGoalTreeX = 0.0;
+      currentGoalTreeY = 0.0;
+      currentGoalTreeI = -1;
+      currentAvoidTree = false;
+      currentAvoidTreeSession = false;
+      goalIsATree = false;
+      batteryNeeded = false;
+      batteryNeededSession = false;
+      waterNeeded = false;
+      
+      overlayOpen = false;
+      cause = 0;
+
       xrobinet = 42;
       mercurelevelfloat = 10;
       mercurelevel = '0.1vw';
@@ -761,58 +1077,147 @@ export function launchgame(req, res) {
         noleakat.push(true);
       }
       vlvop = 1;
-      watlevelContainer = 0;
+      watlevelContainer = 50;
       remainingtime = 600;
-      batteryLevel = 24;
+      batteryLevel = 100;
       numFightedFires = 0;
       finalNumFightedFires = 0;
-
-      overlayOpen = false;
-      cause = 0;
-
-      // clear intervals 
-      clearInterval(waterManagementInterval);
-      clearInterval(leaksInterval);
-      clearInterval(waterFlowInterval);
-      clearInterval(timeInterval);
-      clearInterval(batteryInterval);
-      clearInterval(treeBurningInterval);
-      clearInterval(fillWaterInterval);
-      clearInterval(fillBatteryInterval);
-
-      clearInterval(autonomyInterval);
-      firstTime = false;
 
       setTimeout(function() {
           firstTime = true;
       }, 5000);
 
 
-
+      // TODO TODO TODO TODO TODO TODO TODO
+      // TODO TODO TODO TODO TODO TODO TODO
+      // TODO TODO TODO TODO TODO TODO TODO
+      // TODO TODO TODO TODO TODO TODO TODO
+      // TODO TODO TODO TODO TODO TODO TODO
+      // declarer globalement (i.e. avec une reinitialisation un peu partout -- > pas obligé puisqu'on change le goal à chaque goto...)
+      // TODO: var currentGoalX = 0.0;
+      //       var currentGoalY = 0.0;
+      //   le but courant = les coordonnees d'un arbre/une zone
+      //   abortEnd (arrivee au but: + lauchWater si arbre)
+      //   abortAvoidTree (enclenche une manoeuvre d'evitement + meme goto)
+      //   SINON LE ROBOT SARRETE TOUT LE TEMPS QUIL EST A COTE DUN !!!
+      //   voir si tout est ok coté rttlua (isAborted avec isFinished) notamment dans robotObservations() DONE!
+      //      car on continue à envoyer à nodejs que le mouvement d'est pas fini alors qu'il a été aborted... 
+      //      et vice-versa, on continue à envoyer à rttlua qu'il faut aborter car on est dans abortSession
       //=====================================================
       // Robot Autonomy
       //=====================================================
-      var sens = 1;
-      var tempCounter = 0;
-      autonomyInterval = setInterval(function() {
+      autonomyInterval = setInterval(function() { // TODO "goto waterzone" management + moins d'eau sinon on ne recharge qu'une fois 
+        console.log("Robot Autonomy -- MAIN INTERVAL");
         console.log("currentAutoMvt: ");
         console.log(currentAutoMvt);
-        if( (autonomousRobot==1) && (!currentAutoMvt || firstTime) ){
-          firstTime = false;
-          throwWater(); // TODO why two throws sometimes?
-          console.log("!!!!!!!!!!!! I THROW WATER !!!!!!!!!!!!");
-         
-          // TODO gérer le premier cas! 
-          // (+1 pour éviter division par zero)
-          var gotoX = robotx[0] + 1; 
-          var gotoY = roboty[0] + 1;
 
-          // define arrival as a tree on fire
-          // TODO select the closest one
-          for(var i=0;i<firesStatesOfTrees.length;i++) {
-            if (firesStatesOfTrees[i]){
-              var gotoX = treeslocations[i].x;
-              var gotoY = treeslocations[i].y;
+        if( (autonomousRobot==1) && batteryNeeded && !batteryNeededSession){  // TODO peut etre un TIMEOUT ici aussi pour etre sur que ca ne se superpose pas avec un goto tree classique
+          waterNeeded = false;
+          waterNeededSession = false;
+          var udpMess1 = abortMoveToUdpMess();
+          var buffer1 = new Buffer(udpMess1);
+          var client1 = dgram.createSocket('udp4');
+          console.log("!!!!!!!!!!!! send abort to robot !!!!!!!!!!!!");
+          client1.send(buffer1, 0, buffer1.length, PORT, HOST, function(err) {
+            if(err) throw err;
+            console.log('abort sent to ' + HOST +':'+ PORT);
+            client1.close();
+       
+            setTimeout(function() {
+              var client1 = dgram.createSocket('udp4');
+              console.log("!!!!!!!!!!!! send abort to robot 2 !!!!!!!!!!!!");
+              client1.send(buffer1, 0, buffer1.length, PORT, HOST, function(err) {
+                if(err) throw err;
+                console.log('abort sent to ' + HOST +':'+ PORT);
+                client1.close();
+              });
+            }, 500);
+      
+            setTimeout(function() {
+              var client1 = dgram.createSocket('udp4');
+              console.log("!!!!!!!!!!!! send abort to robot 3 !!!!!!!!!!!!");
+              client1.send(buffer1, 0, buffer1.length, PORT, HOST, function(err) {
+                if(err) throw err;
+                console.log('abort sent to ' + HOST +':'+ PORT);
+                client1.close();
+              });
+            }, 1000); 
+ 
+            setTimeout(function() {
+              var client1 = dgram.createSocket('udp4');
+              console.log("!!!!!!!!!!!! send abort to robot 4 !!!!!!!!!!!!");
+              client1.send(buffer1, 0, buffer1.length, PORT, HOST, function(err) {
+                if(err) throw err;
+                console.log('abort sent to ' + HOST +':'+ PORT);
+                client1.close();
+              });
+            }, 1500); 
+
+            setTimeout(function() {
+              var client1 = dgram.createSocket('udp4');
+              console.log("!!!!!!!!!!!! send abort to robot 5 !!!!!!!!!!!!");
+              client1.send(buffer1, 0, buffer1.length, PORT, HOST, function(err) {
+                if(err) throw err;
+                console.log('abort sent to ' + HOST +':'+ PORT);
+                client1.close();
+              });
+            }, 2000); 
+
+            setTimeout(function() {
+              var gotoX = zoneslocations[1].x;
+              var gotoY = zoneslocations[1].y;
+              goalIsATree = false;
+              var udpMess2 = positionToUdpMess(gotoX,gotoY);
+              var buffer2 = new Buffer(udpMess2);
+              var client2 = dgram.createSocket('udp4');
+              console.log("!!!!!!!!!!!! send GOTO BATTERY to robot !!!!!!!!!!!!");
+              client2.send(buffer2, 0, buffer2.length, PORT, HOST, function(err) {
+                if(err) throw err;
+                console.log('position to reach sent to ' + HOST +':'+ PORT);
+                client2.close();
+              });
+              currentGoalTreeX = gotoX;
+              currentGoalTreeY = gotoY;
+            }, 2500);            
+
+          });
+          batteryNeededSession = true;
+        }
+
+
+        if( (autonomousRobot==1) && (!currentAutoMvt || firstTime) && !batteryNeeded && !waterNeededSession && !currentAvoidTreeSession){
+          firstTime = false;
+
+          // TODO gérer le premier cas!
+          var gotoX = zoneslocations[1].x; 
+          var gotoY = zoneslocations[1].y;
+
+          if (waterNeeded){
+            var gotoX = zoneslocations[0].x; 
+            var gotoY = zoneslocations[0].y;
+            waterNeededSession = true;
+            goalIsATree = false;
+          }
+          else{
+            // define arrival as a tree on fire
+            // TODO select the closest one
+            goalIsATree = false;
+            var minDistance = 10000;
+            var gotoI = -1;
+            for(var i=0;i<firesStatesOfTrees.length;i++) {
+              if (firesStatesOfTrees[i]){
+                var distanceFromTree = Math.sqrt(Math.pow(treeslocations[i].x - robotx[0], 2) + Math.pow(treeslocations[i].y - roboty[0], 2));
+                var prevMinDistance = minDistance;
+                minDistance = Math.min(minDistance, distanceFromTree)
+                if(prevMinDistance > minDistance){
+                  gotoI = i;
+                }
+              }
+            }
+            if(gotoI!=-1){
+              gotoX = treeslocations[gotoI].x;
+              gotoY = treeslocations[gotoI].y;
+              goalIsATree = true;
             }
           }
 	  // TODO les destinations sont parfois les zones de recharge
@@ -826,11 +1231,9 @@ export function launchgame(req, res) {
           vecteurX = vecteurX/normDirection;
           vecteurY = vecteurY/normDirection;
 
-          // TODO a revoir parceque le robot tire légèrement à coté
-          // maybe plutot un abort avant d'arriver
           // + rotation pour bien cadrer?
-          ixe = gotoX- vecteurX*1.5;
-          igrec = gotoY- vecteurY*1.5;
+          ixe = gotoX; //- vecteurX*1.5;
+          igrec = gotoY; //- vecteurY*1.5;
 
           udpMess = positionToUdpMess(ixe,igrec);
           buffer = new Buffer(udpMess);
@@ -843,7 +1246,23 @@ export function launchgame(req, res) {
             console.log('position to reach sent to ' + HOST +':'+ PORT);
             client.close();
           });
+          currentGoalTreeX = ixe;
+          currentGoalTreeY = igrec;
+          currentGoalTreeI = gotoI;
+          abortSession = false;
         }
+
+
+
+
+
+
+
+
+
+
+
+
       }, 2000);
 
 
@@ -919,10 +1338,16 @@ export function launchgame(req, res) {
             leaksSum = leaksSum + 1;
           }
         }
-        if((faucetxaxis < 2) && (faucetxaxis > -2) && watlevelContainer < 99) {
+        if((faucetxaxis < 2) && (faucetxaxis > -2) && watlevelContainer < 100) {
           watlevelContainer = watlevelContainer + waterwidth/7 - leaksSum/(2*leakPlacesNb); 
         } else if (watlevelContainer > 1){
           watlevelContainer = watlevelContainer - leaksSum/leakPlacesNb;
+        }
+        if (watlevelContainer<0){
+          watlevelContainer = 0;
+        }
+        if (watlevelContainer>100){
+          watlevelContainer = 100;
         }
       }, 200);
 
@@ -956,7 +1381,7 @@ export function launchgame(req, res) {
       console.log("CONTROL: battery part ");
       batteryInterval = setInterval(function() {
         if(batteryLevel > 0) {
-          batteryLevel = batteryLevel - 0.1;
+          batteryLevel = batteryLevel - 1;
         }
 	else{
 	  overlayOpen = true;
@@ -1003,20 +1428,6 @@ export function launchgame(req, res) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //=====================================================
 // robot tank
 //=====================================================
@@ -1028,9 +1439,12 @@ var fillingWater = function() {
   isFillingWater = true;
   clearInterval(fillWaterInterval);
   fillWaterInterval = setInterval(function() {
-    if( (watlevel < 100) && (watlevelContainer > 11) ) {
+    if( (watlevel < 100) && (watlevelContainer >= 10) ) {
       watlevel = watlevel + 10;
       watlevelContainer = watlevelContainer - 10;
+      if(watlevel>100){
+        watlevel = 100;
+      }
     }
   }, 500);
 };
@@ -1047,6 +1461,33 @@ router.get('/robotwater', function(req, res) {
 // used in auth
 global.stopGame = function() { 
   exec('bash ~/driving-human-robots-interaction/killAll.sh');
+
+  // clear intervals 
+  clearInterval(waterManagementInterval);
+  clearInterval(leaksInterval);
+  clearInterval(waterFlowInterval);
+  clearInterval(timeInterval);
+  clearInterval(batteryInterval);
+  clearInterval(treeBurningInterval);
+  clearInterval(fillWaterInterval);
+  clearInterval(fillBatteryInterval);
+  clearInterval(autonomyInterval);
+
+  /*overlayOpen = false;
+  cause = 0;*/
+  abortSession = false;
+  firstTime = false;
+  currentGoalTreeX = 0.0;
+  currentGoalTreeY = 0.0;
+  currentGoalTreeI = -1;
+  currentAvoidTree = false;
+  currentAvoidTreeSession = false;
+  goalIsATree = false;
+  batteryNeeded = false;
+  batteryNeededSession = false;
+  waterNeeded = false;
+  waterNeededSession = false;
+
   xrobinet = 42;
   mercurelevelfloat = 10;
   mercurelevel = '0.1vw';
@@ -1069,22 +1510,11 @@ global.stopGame = function() {
     noleakat.push(true);
   }
   vlvop = 1;
-  watlevelContainer = 0;
+  watlevelContainer = 50;
   remainingtime = 600;
-  batteryLevel = 24;
+  batteryLevel = 100;
   numFightedFires = 0;
 
-  // clear intervals 
-  clearInterval(waterManagementInterval);
-  clearInterval(leaksInterval);
-  clearInterval(waterFlowInterval);
-  clearInterval(timeInterval);
-  clearInterval(batteryInterval);
-  clearInterval(treeBurningInterval);
-  clearInterval(fillWaterInterval);
-  clearInterval(fillBatteryInterval);
-
-  clearInterval(autonomyInterval);
 }
 // déja dans auth
 // check expiration of tokens

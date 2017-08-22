@@ -33,7 +33,6 @@ export class MainController {
     // TODO TODO  le serveur doit envoyer quand c'est gameover avec la cause
     // bouton accueil
     $scope.cause=0;
-    $scope.cause=1;
     // TODO overlays
     $scope.overlayOpen = false;
     $scope.finalnumfires = 0;
@@ -139,6 +138,7 @@ export class MainController {
       $http.get('/api/control/robotwater').then(response => {
         if(response.status === 200) {
           $scope.watlevel = response.data[0];
+          $scope.watlevel = 100;
           robotTankEmpty = response.data[1];
         }
       });
@@ -446,7 +446,7 @@ export class MainController {
     $scope.xrobinet = 42;
     var decal = 4;
     var vlvop = 1;
-    $scope.watlevelContainer = 10;
+    $scope.watlevelContainer = 50;
 
     var pendingButtons = false;
     $scope.faucetcontrol = 0;

@@ -445,7 +445,7 @@ export class MainController {
     $scope.xrobinet = 42;
     var decal = 4;
     var vlvop = 1;
-    $scope.watlevelContainer = 10;
+    $scope.watlevelContainer = 50;
 
     var pendingButtons = false;
     $scope.faucetcontrol = 0;
