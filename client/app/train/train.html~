@@ -1,134 +1,138 @@
-<div class="train">
-	<div class="twoparts">
-		<div class="watermngttrain">
-			<div class="waterBlocktrain">
-				<div class="maincontainer">
-					<div class="iconCircle">
-						<i class="fa fa-tint" aria-hidden="true"></i>
-					</div>
-					<div class="robinetcontainer">
-						<div class="robinet" ng-style="{left: xrobinet+2+'%', bottom: yrobinet/1.8 + 46 +'%'}"> 
+<div class="train"  ng-class="{'screenWrenchTrain': wrenchmodeTrain}">
+	<div class="screenTrain">
+		<div class="twoparts">
+			<div class="watermngttrain">
+				<div class="waterBlocktrain">
+					<div class="maincontainer">
+						<div class="iconCircle">
+							<i class="fa fa-tint" aria-hidden="true"></i>
 						</div>
-						<div class="wheel" ng-if="direction!=0" ng-class="{wheelinverse: direction<0}"  ng-style="{left: xrobinet+7.9+'%', bottom: yrobinet/1.8+60+'%', 'animation-duration': animtime + 's'}"> 
-						</div>
-						<div class="wheel" ng-if="direction==0" ng-style="{left: xrobinet+7.9+'%', bottom: yrobinet/1.8+60+'%'}"> 
-						</div>
-						<div class="string" ng-style="{left: xrobinet+11.5+'%', bottom: yrobinet/1.8+54+'%'}"> 
-						</div>
-						<div class="robinetwaterContainer" ng-style="{left: xrobinetwater-0.6+'%', bottom: yrobinet/1.8 + 41 +'%'}">
-							<div class="robinetwater" ng-style="{width: waterwidth + 'vw', 'background-size': waterwidth + 'vw 1vw'}">
-					
+						<div class="robinetcontainer">
+							<div class="robinet" ng-style="{left: xrobinet+2+'%', bottom: yrobinet/1.8 + 46 +'%'}"> 
 							</div>
-						</div>
-						<div class="montainAxis"> 
-						</div>
-						<div class="neckcontainer">
-						</div>
-						<div class="tankcontainer">	
-							<div class="tankcontainerwaterpart">
-								<div class="tankcontainerwaterviz">
-									<div class="graduations"> </div>
-									<div class="tankcontainerwater" ng-style="{height: watlevelContainer + '%'}"> 
+							<div class="wheel" ng-if="direction!=0" ng-class="{wheelinverse: direction<0}"  ng-style="{left: xrobinet+7.9+'%', bottom: yrobinet/1.8+60+'%', 'animation-duration': animtime + 's'}"> 
+							</div>
+							<div class="wheel" ng-if="direction==0" ng-style="{left: xrobinet+7.9+'%', bottom: yrobinet/1.8+60+'%'}"> 
+							</div>
+							<div class="string" ng-style="{left: xrobinet+11.5+'%', bottom: yrobinet/1.8+54+'%'}"> 
+							</div>
+							<div class="robinetwaterContainer" ng-style="{left: xrobinetwater-0.6+'%', bottom: yrobinet/1.8 + 41 +'%'}">
+								<div class="robinetwater" ng-style="{width: waterwidth + 'vw', 'background-size': waterwidth + 'vw 1vw'}">				
+								</div>
+							</div>
+							<div class="montainAxis"> 
+							</div>
+							<div class="neckcontainer">
+							</div>
+							<div class="tankcontainer">	
+								<div class="tankcontainerwaterpart">
+									<div class="tankcontainerwaterviz">
+										<div class="graduations"> </div>
+										<div class="tankcontainerwater" ng-style="{height: watlevelContainer + '%'}"> 
+										</div>
+									</div>
+								</div>    
+								<div class="tankcontainerleakspart">
+									<div class="wrapLeaks">
+									<div class="leakContainer" ng-repeat="(key, value) in leakPlaces">
+										<div class="leak" ng-class="{nonvisible: noleakat[key]}" ng-style="{'transform': 'scale(' + leaksReverse[key] + ', 1)', 'left': leftValues[key] + '%'}"  ng-click="clickLeak(key)">
+										</div>
 									</div>
 								</div>
-							</div>    
-							<div class="tankcontainerleakspart">
-								<div class="bigCross" ng-class="{nonvisible: !brokenContainer}">
-									<i class="fa fa-times" aria-hidden="true" ng-style="{'font-size': crossSize + 'vw'}"></i>
 								</div>
-								<div class="wrapLeaks">
-									<div class="leak" ng-repeat="(key, value) in leakPlaces" ng-class="{nonvisible: noleakat[key]}" ng-click="clickLeak(key)">
+								<div class="legsContainer">
+									<div class="legs">
+									</div>                           	
+								</div>
+							</div>
+							<div class="wmbuttons">
+								<i class="fa fa-mouse-pointer" aria-hidden="true"></i>
+								<div class="speed">  
+									<div class="wheelsmall2"> </div> 
+									<div> speed: {{faucetcontrolShow}} </div>
+								</div>
+								<div class="buttonWheel">
+									<div class="buttonChar">
+										<div class="mainbuttonL" ng-class="{'cursorPointer': !wrenchmodeTrain}" ng-click="faucetctrlfctminus()"> 
+											<i class="fa fa-undo" aria-hidden="true"></i>
+											<div class="wheelsmall"> </div>
+										</div>
+										<div class="char"> s </div>
+									</div>
+									<div class="buttonletterChar">
+										<div class="mainbuttonR" ng-class="{'cursorPointer': !wrenchmodeTrain}" ng-click="faucetctrlfctplus()"> 
+											<i class="fa fa-undo" aria-hidden="true"></i>
+											<div class="wheelsmall"> </div>
+										</div>
+										<div class="char"> d </div>
 									</div>
 								</div>
-							</div>
-							<div class="legsContainer">
-								<div class="legs">
-								</div>                           	
-							</div>
-						</div>
-						<div class="wmbuttons">
-							<i class="fa fa-mouse-pointer" aria-hidden="true"></i>
-							<div class="speed">  
-								<div class="wheelsmall2"> </div> 
-								<div> speed: {{faucetcontrol}} </div>
-							</div>
-							<div class="buttonWheel">
-								<div class="mainbuttonL" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctminus()"> 
-									<i class="fa fa-undo" aria-hidden="true"></i>
-									<div class="wheelsmall"> </div>
+								<div class="buttonletterChar">
+									<div class="pushButton" ng-class="{'cursorPointer': !wrenchmodeTrain}" ng-click="waterPushButton()">
+										<div class="buttonTap">
+										</div>
+									</div>
+									<div class="char"> a </div>
 								</div>
-								<div class="mainbuttonR" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctplus()"> 
-									<i class="fa fa-undo" aria-hidden="true"></i>
-									<div class="wheelsmall"> </div>
+								<div class="buttonletterChar">
+									<div class="wrenchButton" ng-class="{'cursorPointer': !wrenchmodeTrain}" ng-click="wrenchOnOff()">
+										<i class="fa fa-wrench" aria-hidden="true"></i>
+									</div>
+									<div class="char"> e </div>
 								</div>
 							</div>
-							<div class="pushButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="waterPushButton()">
-								<div class="buttonTap">
-								</div>
-							</div>
-							<div class="wrenchButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="wrenchOnOff()">
-								<i class="fa fa-wrench" aria-hidden="true"></i>
-							</div>					
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="robotcommandstrain">
-			<div class="robotblocktrain">
-				<div class="maincontainer">
-					<div class="iconCircle">
-						<i class="fa fa-tint" aria-hidden="true"></i>
-					</div>
-					<div class="robotControl">
-									<div> {{monCompteur}} </div>
-						<div class="headerrobotcontrol">
+			<div class="robotcommandstrain">
+				<div class="robotblocktrain">
+					<div class="maincontainer">
+						<div class="iconCircle">
 							<i class="fa fa-gamepad" aria-hidden="true"></i>
 						</div>
-						<div class="explainkeys">
-							<div class="littlesplatch">
+						<div class="robotControl">
+							<div class="explainkeys">
+								<div class="littlesplatch">
+								</div>
+								<div class="spaceKey">
+									<div> SPACE </div>					
+								</div>
 							</div>
-							<div class="spaceKey">
-								<div> SPACE </div>					
+							<div class="explainkeys">
+								<div class="arrowFor">
+								</div>
+								<div class="anykey">
+									<div> <i class="fa fa-arrow-up" aria-hidden="true"></i> </div>					
+								</div>
+							</div>
+							<div class="explainkeys">
+								<div class="arrowBack">
+								</div>
+								<div class="anykey">
+									<div> <i class="fa fa-arrow-down" aria-hidden="true"></i> </div>					
+								</div>
+							</div>
+							<div class="explainkeys">
+								<div class="arrowLeft">
+								</div>
+								<div class="anykey">
+									<div> <i class="fa fa-arrow-left" aria-hidden="true"></i> </div>					
+								</div>
+							</div>
+							<div class="explainkeys">
+								<div class="arrowRight">
+								</div>
+								<div class="anykey">
+									<div> <i class="fa fa-arrow-right" aria-hidden="true"></i> </div>					
+								</div>
 							</div>
 						</div>
-						<div class="explainkeys">
-							<div class="arrowFor">
-							</div>
-							<div class="anykey">
-								<div> <i class="fa fa-arrow-up" aria-hidden="true"></i> </div>					
-							</div>
-						</div>
-						<div class="explainkeys">
-							<div class="arrowBack">
-							</div>
-							<div class="anykey">
-								<div> <i class="fa fa-arrow-down" aria-hidden="true"></i> </div>					
-							</div>
-						</div>
-						<div class="explainkeys">
-							<div class="arrowLeft">
-							</div>
-							<div class="anykey">
-								<div> <i class="fa fa-arrow-left" aria-hidden="true"></i> </div>					
-							</div>
-						</div>
-						<div class="explainkeys">
-							<div class="arrowRight">
-							</div>
-							<div class="anykey">
-								<div> <i class="fa fa-arrow-right" aria-hidden="true"></i> </div>					
-							</div>
-						</div>
-						<!--<div ng-if="emptySlot">
-							Slot libre
-							<button ng-click="play()">Jouer</button>
-						</div>-->
 					</div>
 				</div>
 			</div>
+			<div ui-sref="welcome" class="gohome"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>	
+			<!--<button ui-sref="welcome"> BACK </button>-->	
 		</div>
-		<button ui-sref="welcome"> BACK </button>	
 	</div>
-	
 </div>

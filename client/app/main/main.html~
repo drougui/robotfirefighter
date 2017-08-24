@@ -39,7 +39,7 @@
 		<md-progress-circular md-mode="indeterminate"></md-progress-circular> -->
 		<div class="gameover" ng-if="cause==1 || cause==2"> GAME OVER! </div>
                 <div class="gameover" ng-if="cause==0"> THE END </div>
-                <div class="textthx" ng-if="cause==0"> Mission completed, thank you! </div>
+                <div class="textthx" ng-if="cause==0"> Mission completed, CONGRATULATION! </div>
 		<div class="whyover" ng-if="cause==1"> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <div class="textcause"> Battery empty </div> <i class="fa fa-battery-empty" aria-hidden="true"></i> </div>
 		<div class="whyover" ng-if="cause==2"> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <div class="textcause"> Overheat </div> <i class="fa fa-thermometer-full" aria-hidden="true"></i> </div>
 		<div class="numextfires"> <div class="fireicon"> </div> {{finalnumfires}} extinguished fires <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> </div>
@@ -104,11 +104,14 @@
 leaks/wrench/etc in server files-->
 						</div>    
 						<div class="tankcontainerleakspart">
-							<div class="bigCross" ng-class="{nonvisible: !brokenContainer}">
+							<!--<div class="bigCross" ng-class="{nonvisible: !brokenContainer}">
 								<i class="fa fa-times" aria-hidden="true" ng-style="{'font-size': crossSize + 'vw'}"></i>
-							</div>
+							</div>-->
+<!--  -->
 							<div class="wrapLeaks">
-								<div class="leak" ng-repeat="(key, value) in leakPlaces" ng-class="{nonvisible: noleakat[key]}" ng-click="clickLeak(key)">
+								<div class="leakContainer" ng-repeat="(key, value) in leakPlaces">
+									<div class="leak" ng-class="{nonvisible: noleakat[key]}" ng-style="{'transform': 'scale(' + leaksReverse[key] + ', 1)', 'left': leftValues[key] + '%'}"  ng-click="clickLeak(key)">
+									</div>
 								</div>
 							</div>
 <!--							<div class="topleaks">
@@ -157,30 +160,43 @@ leaks/wrench/etc in server files-->
 							<div> speed: {{faucetcontrol}} </div>
 						</div>
 						<div class="buttonWheel">
-							<div class="mainbuttonL" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctminus()"> 
-								<i class="fa fa-undo" aria-hidden="true"></i>
-								<div class="wheelsmall"> </div>
-							</div>
-							<div class="mainbuttonR" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctplus()"> 
-								<i class="fa fa-undo" aria-hidden="true"></i>
-								<div class="wheelsmall"> </div>
-							</div>
-						</div>
-						<div class="pushButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="waterPushButton()">
-							<!--<div class="pbcircle">
-								<div class="pbcirclesmall">
+							<div class="buttonChar">
+								<div class="mainbuttonL" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctminus()"> 
+									<i class="fa fa-undo" aria-hidden="true"></i>
+									<div class="wheelsmall"> </div>
 								</div>
-							</div>-->
-							<div class="buttonTap">
+								<div class="char"> s </div>
+							</div>
+							<div class="buttonletterChar">
+								<div class="mainbuttonR" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctplus()"> 
+									<i class="fa fa-undo" aria-hidden="true"></i>
+									<div class="wheelsmall"> </div>
+								</div>
+								<div class="char"> d </div>
 							</div>
 						</div>
-						<div class="wrenchButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="wrenchOnOff()">
-							<i class="fa fa-wrench" aria-hidden="true"></i>
+						<div class="buttonletterChar">
+							<div class="pushButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="waterPushButton()">
+								<!--<div class="pbcircle">
+									<div class="pbcirclesmall">
+									</div>
+								</div>-->
+								<div class="buttonTap">
+								</div>
+							</div>
+							<div class="char"> a </div>
 						</div>
+						<div class="buttonletterChar">
+							<div class="wrenchButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="wrenchOnOff()">
+								<i class="fa fa-wrench" aria-hidden="true"></i>
+							</div>
+							<div class="char"> e </div>
+						</div>
+<!--
 						<div class="newContainerButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="newContainer()">
 							<div class="containerIcon">
 							</div>
-						</div>					
+						</div>-->					
 					</div>
 				</div>				
 			</div>

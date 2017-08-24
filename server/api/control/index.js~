@@ -68,8 +68,8 @@ var watlevel = 50;
 var robotTankEmpty = false;
 var isFillingWater = false;
 
-var crossSize = 0;
-var leakPlacesNb = 12;
+//var crossSize = 0;
+var leakPlacesNb = 9;
 var leakPlaces = [];
 var noleakat = [];
 var leakCounter = 0;
@@ -150,8 +150,8 @@ function killall(req, res) {
       watlevel = 50;
       robotTankEmpty = false;
       isFillingWater = false;
-      crossSize = 0;
-      leakPlacesNb = 12;
+      //crossSize = 0;
+      leakPlacesNb = 9;
       leakPlaces = [];
       noleakat = [];
       leakCounter = 0;
@@ -310,7 +310,7 @@ serverGet.on('message', function(message, remote) {
 
 
       setTimeout(function() {
-        var udpMess1 = speedToUdpMess(0.0, -0.3);
+        var udpMess1 = speedToUdpMess(0.0, -0.6);
         var buffer1 = new Buffer(udpMess1);
         var client1 = dgram.createSocket('udp4');
         client1.send(buffer1, 0, buffer1.length, PORT, HOST, function(err) {
@@ -345,6 +345,8 @@ serverGet.on('message', function(message, remote) {
         });
         currentAvoidTreeSession=false
         currentAvoidTree=false;
+        waterNeeded = false;
+        waterNeededSession = false;
       }, 1500);
 
     }
@@ -520,7 +522,7 @@ serverGet.on('message', function(message, remote) {
 
 
           setTimeout(function() {
-            var udpMess1 = speedToUdpMess(0.0, -0.6);
+            var udpMess1 = speedToUdpMess(0.0, -0.5);
             var buffer1 = new Buffer(udpMess1);
             var client1 = dgram.createSocket('udp4');
             client1.send(buffer1, 0, buffer1.length, PORT, HOST, function(err) {
@@ -529,7 +531,7 @@ serverGet.on('message', function(message, remote) {
             });
           }, 1000);
           setTimeout(function() {
-            var udpMess1 = speedToUdpMess(0.0, -0.6);
+            var udpMess1 = speedToUdpMess(0.0, -0.5);
             var buffer1 = new Buffer(udpMess1);
             var client1 = dgram.createSocket('udp4');
             client1.send(buffer1, 0, buffer1.length, PORT, HOST, function(err) {
@@ -925,19 +927,20 @@ router.post('/watercontrol', function(req, res/*, next*/) {
           noleakat[req.body.leakid] = true;
           wrenchmode = false;
         }
-      } else if(req.body.button == 'newContainer') { // AND FINALLY "NEW CONTAINER"
+      } 
+/*else if(req.body.button == 'newContainer') { // AND FINALLY "NEW CONTAINER"
         brokenContainer = false;
         for (var i=0; i<leakPlacesNb; i++) {
           noleakat[i] = true;
         }
         crossSize = 0;
-      }
+      }*/
       res.json({
         tapControl: faucetcontrol,
         wrenchMode: wrenchmode,
-        noLeakAt: noleakat,
+        noLeakAt: noleakat/*,
         brokenContainer: brokenContainer,
-        crossSize: crossSize
+        crossSize: crossSize*/
       });
     }
     else{
@@ -988,7 +991,7 @@ var stopFillingBattery = function() {
 
 // MODE (AUTONOMOUS/MANUAL)
 
-var autonomousRobot = 1; 	// toutes les minutes (5secs?), on tire au sort si autonome ou pas
+var autonomousRobot = 0; 	// toutes les minutes (5secs?), on tire au sort si autonome ou pas
 				// + dans une zone bien définie, c'est toujours manuel
 // UDP indexes
 var IND_MODE = 1
@@ -1010,9 +1013,9 @@ var tempxy = 1.0;
 
 
 
-var brokenContainer = false;
+//var brokenContainer = false;
 router.get('/leaks', function(req, res) {
-  res.json([leakPlaces,noleakat,brokenContainer,crossSize]);
+  res.json([leakPlaces,noleakat/*,brokenContainer,crossSize*/]);
 });
 router.get('/battery', function(req, res) {
   res.json(batteryLevel);
@@ -1066,8 +1069,8 @@ export function launchgame(req, res) {
       watlevel = 50;
       robotTankEmpty = false;
       isFillingWater = false;
-      crossSize = 0;
-      leakPlacesNb = 12;
+//      crossSize = 0;
+      leakPlacesNb = 9;
       leakPlaces = [];
       noleakat = [];
       leakCounter = 0;
@@ -1401,17 +1404,17 @@ export function launchgame(req, res) {
   // RANDOM LEAKS
       console.log("CONTROL: RANDOM LEAKS");
       leaksInterval = setInterval(function() {
-        var leaksNotEverywhere = false;
+        //var leaksNotEverywhere = false;
         if(Math.random()<0.5) {
           var myInt = Math.floor(Math.random()*leakPlacesNb);
           noleakat[myInt] = false;
-          for(var i = 0; i<leakPlacesNb; i++){
+/*          for(var i = 0; i<leakPlacesNb; i++){
             leaksNotEverywhere = leaksNotEverywhere || noleakat[i];
           }
           if(!leaksNotEverywhere) {
             brokenContainer = true;
             crossSize = 25;
-          }
+          }*/
         }
       }, 5000);
 
@@ -1499,8 +1502,8 @@ global.stopGame = function() {
   watlevel = 50;
   robotTankEmpty = false;
   isFillingWater = false;
-  crossSize = 0;
-  leakPlacesNb = 12;
+  //crossSize = 0;
+  leakPlacesNb = 9;
   leakPlaces = [];
   noleakat = [];
   leakCounter = 0;

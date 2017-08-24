@@ -15,7 +15,7 @@ export class MainController {
   /*@ngInject*/
   constructor($http, $scope, socket, hotkeys, $timeout, $interval, sharedProperties, $rootScope, $window) {
 
-
+    
     $scope.address = "";
     // GET IP ADDRESS
     $scope.ipaddress = "";
@@ -210,14 +210,33 @@ export class MainController {
         }
     });
 
+
+
+    // TODO $scope.leakPlaces ne défini que les endroits 3x3 ou il faut cliquer, randomiser la position de la fuite dans cet endroit avec $scope.leaksAbsPos
+    $scope.leaksReverse = [];
+    $scope.leftValues = [0,0,0,0,0,0,0,0,0];
+    var previousNoleakat = [true,true,true,true,true,true,true,true,true]; 
+    //var triche = [false,false,false,false,false,false,false,false,false];
     var leaksInterval = $interval(function() {
       $http.get('/api/control/leaks').then(response => {
         if(response.status === 200) {
           /* res.json([leakPlaces,noleakat,brokenContainer,crossSize]); */
           $scope.leakPlaces = response.data[0];
           $scope.noleakat = response.data[1];
-          $scope.brokenContainer = response.data[2];
-          $scope.crossSize = response.data[3];
+          for (var i=0;i<$scope.leakPlaces.length; i++){
+            if (!$scope.noleakat[i] && previousNoleakat[i]){
+              if (Math.random()>0.5){
+                $scope.leaksReverse[i] = -1;
+              } else{
+                $scope.leaksReverse[i] = 1;
+              }
+              $scope.leftValues[i] = Math.random()*30;
+            }
+          }
+          previousNoleakat = $scope.noleakat;
+          
+/*          $scope.brokenContainer = response.data[2];
+          $scope.crossSize = response.data[3];*/
         }
       });
      }, 500);
@@ -560,7 +579,7 @@ export class MainController {
         });
       }
     };
-
+/*
     $scope.newContainer = function() {
       myToken = $rootScope.token;
       if(!pendingButtons) {
@@ -577,7 +596,7 @@ export class MainController {
           }
         });
       }
-    };
+    };*/
 
 
     hotkeys.add('left', 'totheleft', $scope.totheleft);
@@ -586,12 +605,20 @@ export class MainController {
     hotkeys.add('up', 'forward', $scope.forward);
     hotkeys.add('space', 'water', $scope.water);
 // TODO s d a z e
+//  SD A E
+    hotkeys.add('s', 'tapleft', $scope.faucetctrlfctminus);
+    hotkeys.add('d', 'tapright', $scope.faucetctrlfctplus);
+    hotkeys.add('a', 'pushbutton', $scope.waterPushButton);
+    hotkeys.add('e', 'wrench', $scope.wrenchOnOff);
+
+/*
     hotkeys.add('0', 'tozero', $scope.tozero);
     hotkeys.add('1', 'toone', $scope.toone);
     hotkeys.add('2', 'totwo', $scope.totwo);
     hotkeys.add('3', 'tothree', $scope.tothree);
     hotkeys.add('4', 'tofour', $scope.tofour);
     hotkeys.add('5', 'tofive', $scope.tofive);
+*/
   }
 
 

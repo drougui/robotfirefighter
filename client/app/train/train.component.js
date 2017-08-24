@@ -7,16 +7,55 @@ import routes from './train.routes';
 
 export class TrainComponent {
   /*@ngInject*/
-  constructor($http, $scope, socket, sharedProperties, $rootScope, $interval) {
+  constructor($http, $scope, hotkeys, $interval) {
 
 // TODO TODO TODO TODO setInterval-> $interval
 // clear intervals
-// rotation roue, push button, fix leaks
+// rotation roue
 // autonomy
 // display
-// game over
+
     'ngInject';
-   
+    
+
+    //hotkeys.add('s', 'tapleft', $scope.faucetctrlfctminus);
+    //hotkeys.add('d', 'tapright', $scope.faucetctrlfctplus);
+    //hotkeys.add('a', 'pushbutton', $scope.waterPushButton);
+    //hotkeys.add('e', 'wrench', $scope.wrenchOnOff);
+
+    hotkeys.add({
+      combo: 's',
+      description: 'tapleft',
+      callback: function() {
+        $scope.faucetctrlfctminus();
+      }
+    });
+
+    hotkeys.add({
+      combo: 'd',
+      description: 'tapright',
+      callback: function() {
+        $scope.faucetctrlfctplus();
+      }
+    });
+
+    hotkeys.add({
+      combo: 'a',
+      description: 'pushbutton',
+      callback: function() {
+        $scope.waterPushButton();
+      }
+    });
+
+    hotkeys.add({
+      combo: 'e',
+      description: 'wrench',
+      callback: function() {
+        $scope.wrenchOnOff();
+      }
+    });
+
+
     // water management
     $scope.xrobinet = 42;
     $scope.watlevelContainer = 80; // pourquoi revient-il a zero?
@@ -26,11 +65,9 @@ export class TrainComponent {
     var constXrob = 50;
     // control of x axis
     $scope.faucetcontrol = 0;
-    // cross
-    $scope.crossSize = 0;
     
     // leaks
-    var leakPlacesNb = 12;
+    var leakPlacesNb = 9;
     $scope.leakPlaces = [];
     $scope.noleakat = [];
     var leakCounter = 0;
@@ -73,8 +110,8 @@ export class TrainComponent {
           leaksSum = leaksSum + 1;
         }
       }
-      if((faucetxaxis < 2) && (faucetxaxis > -2) && $scope.watlevelContainer < 99) {
-        $scope.watlevelContainer = $scope.watlevelContainer + $scope.waterwidth/7 - leaksSum/(2*leakPlacesNb); 
+      if((faucetxaxis < 2) && (faucetxaxis > -2) && $scope.watlevelContainer <= 100) {
+        $scope.watlevelContainer = $scope.watlevelContainer + $scope.waterwidth*10/7 - leaksSum/(2*leakPlacesNb); 
       } else if ($scope.watlevelContainer > 1){
         $scope.watlevelContainer = $scope.watlevelContainer - leaksSum/leakPlacesNb;
       }
@@ -83,18 +120,26 @@ export class TrainComponent {
 
 
 
-
+    $scope.leaksReverse = [];
+    $scope.leftValues = [0,0,0,0,0,0,0,0,0];
+    var previousNoleakat = [true,true,true,true,true,true,true,true,true]; 
     var leaksInterval = $interval(function() {
-      var leaksNotEverywhere = false;
       if(Math.random()<0.5) {
         var myInt = Math.floor(Math.random()*leakPlacesNb);
         $scope.noleakat[myInt] = false;
-        for(var i = 0; i<leakPlacesNb; i++){
-          leaksNotEverywhere = leaksNotEverywhere || $scope.noleakat[i];
-        }
-        if(!leaksNotEverywhere) {
-          $scope.brokenContainer = true;
-          $scope.crossSize = 25;
+      }
+//      console.log(previousNoleakat + " -- " + $scope.noleakat);
+      for (var i=0;i<$scope.leakPlaces.length; i++){
+//        console.log($scope.noleakat[i] + " -- " + previousNoleakat[i])
+        if (!$scope.noleakat[i] && previousNoleakat[i]){
+//          console.log("different!");
+          if (Math.random()>0.5){
+            $scope.leaksReverse[i] = -1;
+          } else{
+            $scope.leaksReverse[i] = 1;
+          }
+          $scope.leftValues[i] = Math.random()*30;
+          previousNoleakat[i] = $scope.noleakat[i];
         }
       }
     }, 5000);
@@ -102,53 +147,74 @@ export class TrainComponent {
 
 
    // control
-$scope.faucetctrlfctplus = function(){
-  if($scope.faucetcontrol < 3) {
-    $scope.faucetcontrol = $scope.faucetcontrol + 1;
-  }
-}
-$scope.faucetctrlfctminus = function(){
-  if($scope.faucetcontrol > -3) {
-    $scope.faucetcontrol = $scope.faucetcontrol - 1;
-  }
-}
-
-$scope.waterPushButton = function(){
-  $scope.waterwidth = 7;
-  var callCount = 1;
-  clearInterval(repeater);
-  repeater = setInterval(function () {
-    if (callCount < 8) {
-      $scope.waterwidth = 7 - callCount;
-      callCount += 1;
-    } else {
-      clearInterval(repeater);
-    }
-  }, 1000);
-}
-
-$scope.wrenchOnOff = function(){
-  $scope.wrenchmode = !$scope.wrenchmode;
-}
-
-$scope.newContainer = function(){
-
-}
-
-
-/*else if(req.body.button == 'clickLeak') { // CLICK AT LEAK
-        if(wrenchmode) {
-          noleakat[req.body.leakid] = true;
-          wrenchmode = false;
+    $scope.faucetcontrolShow = 0;
+    $scope.direction = 0;
+    $scope.animtime = 0;
+    $scope.faucetctrlfctplus = function(){
+      if($scope.faucetcontrol < 3) {
+        $scope.faucetcontrol = $scope.faucetcontrol + 1;
+        $scope.faucetcontrolShow = $scope.faucetcontrol;
+	if ($scope.faucetcontrol>0){
+          $scope.faucetcontrolShow = '+' + $scope.faucetcontrol;
         }
-      } else if(req.body.button == 'newContainer') { // AND FINALLY "NEW CONTAINER"
-        brokenContainer = false;
-        for (var i=0; i<leakPlacesNb; i++) {
-          noleakat[i] = true;
+        if($scope.faucetcontrol>0){
+          $scope.direction = 1;
+        } else if($scope.faucetcontrol<0) {
+          $scope.direction = -1;
+        } else {
+          $scope.direction = 0;
         }
-        crossSize = 0;
+        $scope.animtime = 7 - Math.abs($scope.faucetcontrol)*2;
       }
-*/
+    }
+
+    $scope.faucetctrlfctminus = function(){
+      if($scope.faucetcontrol > -3) {
+        $scope.faucetcontrol = $scope.faucetcontrol - 1;
+        $scope.faucetcontrolShow = $scope.faucetcontrol;
+	if ($scope.faucetcontrol>0){
+          $scope.faucetcontrolShow = '+' + $scope.faucetcontrol;
+        }
+        if($scope.faucetcontrol>0){
+          $scope.direction = 1;
+        } else if($scope.faucetcontrol<0) {
+          $scope.direction = -1;
+        } else {
+          $scope.direction = 0;
+        }
+        $scope.animtime = 10 - Math.abs($scope.faucetcontrol)*3;
+      }
+    }
+
+    var repeater;
+    $scope.waterwidth = 0;
+    $scope.waterPushButton = function(){
+      $scope.waterwidth = 7/10;
+      var callCount = 1;
+      clearInterval(repeater);
+      repeater = setInterval(function () {
+        if (callCount < 8) {
+          $scope.waterwidth = (7 - callCount)/10;
+          callCount += 1;
+        } else {
+          clearInterval(repeater);
+        }
+      }, 1000);
+    }
+    
+    $scope.wrenchmodeTrain = false;
+    $scope.wrenchOnOff = function(){
+      $scope.wrenchmodeTrain = !$scope.wrenchmodeTrain;
+      console.log($scope.wrenchmodeTrain);
+    }
+
+    $scope.clickLeak = function(leakId) {
+      if($scope.wrenchmodeTrain) {
+        $scope.noleakat[leakId] = true;
+        $scope.wrenchmodeTrain = false;
+      }
+    };
+
   }
 }
 

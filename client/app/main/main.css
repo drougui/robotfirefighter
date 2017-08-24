@@ -1041,6 +1041,24 @@
 	background-image: url("/assets/images/tapWaterBlack.png");
 }
 
+.char{
+	color: white;
+	border-radius: 100%;
+	background-color: #333;
+	width: 1.4vw;
+	height: 1.4vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 0.9vw;
+}
+
+.buttonletterChar{
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
 .pbcircle{
 	border-radius: 100%;
 	width: 2.5vw;
@@ -1137,11 +1155,20 @@
 	justify-content: space-between;
 }
 
+.leakContainer{
+  	height: 33%;
+	width: 33%;
+	position: relative;
+}
+
 .leak{
-	height: 33%;
+	position: absolute;
+	height: 100%;
 	width: 5vw;
 	background-size: 5vw 100%;
 	background-image: url("/assets/images/crackblue.gif");
+/*	margin-left: 0.8333vw;
+	margin-right: 0.8333vw;*/
 }
 
 .leaktop{
@@ -1733,4 +1760,8 @@
 	height: 1.3vw;
 	/*background-color: #4F849E;*/
 	background-color: red;
+}
+
+.screenWrenchTrain{
+	cursor: url("/assets/images/wrench.png"), pointer;
 }
