@@ -7,7 +7,7 @@ import routes from './train.routes';
 
 export class TrainComponent {
   /*@ngInject*/
-  constructor($http, $scope, hotkeys, $interval) {
+  constructor($http, $scope, socket, hotkeys, $interval) {
 
 // TODO TODO TODO TODO setInterval-> $interval
 // clear intervals
@@ -144,7 +144,21 @@ export class TrainComponent {
       }
     }, 5000);
 
+    $scope.$on("$destroy", function() {
+        if (leaksInterval) {
+          $interval.cancel(leaksInterval);
+        }
+        if (waterFlowInterval) {
+          $interval.cancel(waterFlowInterval);
+        }
+        if (waterManagementInterval) {
+          $interval.cancel(waterManagementInterval);
+        }
 
+            
+
+        
+    });
 
    // control
     $scope.faucetcontrolShow = 0;
@@ -185,6 +199,7 @@ export class TrainComponent {
         $scope.animtime = 10 - Math.abs($scope.faucetcontrol)*3;
       }
     }
+
 
     var repeater;
     $scope.waterwidth = 0;

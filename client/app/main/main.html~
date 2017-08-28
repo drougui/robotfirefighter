@@ -32,19 +32,42 @@
 
 
 
-<div class="screen" ng-class="{screenWrench: wrenchMode}" ng-keypress="myFunct($event)">
+<div class="screen" ng-class="{screenWrench: wrenchMode}">
 	<div ng-class="{overlayOpen: overlayOpen}" class="overlay">
-<!--		<div class="loadGif">
+                <!-- <div class="loadGif">
 		</div> 
 		<md-progress-circular md-mode="indeterminate"></md-progress-circular> -->
 		<div class="gameover" ng-if="cause==1 || cause==2"> GAME OVER! </div>
                 <div class="gameover" ng-if="cause==0"> THE END </div>
                 <div class="textthx" ng-if="cause==0"> Mission completed, CONGRATULATION! </div>
-		<div class="whyover" ng-if="cause==1"> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <div class="textcause"> Battery empty </div> <i class="fa fa-battery-empty" aria-hidden="true"></i> </div>
-		<div class="whyover" ng-if="cause==2"> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <div class="textcause"> Overheat </div> <i class="fa fa-thermometer-full" aria-hidden="true"></i> </div>
-		<div class="numextfires"> <div class="fireicon"> </div> {{finalnumfires}} extinguished fires <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> </div>
-		<div ng-click="gohome()" ui-sref="welcome" class="gohome"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>	
+		<div class="whyover" ng-if="cause==1"> 
+			<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
+			<div class="textcause"> Battery empty </div> 
+			<i class="fa fa-battery-empty" aria-hidden="true"></i> 
+		</div>
+		<div class="whyover" ng-if="cause==2"> 
+			<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
+			<div class="textcause"> Overheat </div> 
+			<i class="fa fa-thermometer-full" aria-hidden="true"></i> 
+		</div>
+		<div class="numextfires"> 
+			<div class="fireicon"> </div> 
+			<span> {{finalnumfires}} extinguished fires </span> 
+			<i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 
+		</div>
+		<div ng-click="gohome()" ui-sref="welcome" class="gohome"> 
+			<i class="fa fa-reply" aria-hidden="true"></i> 
+			<span> back to main menu </span> 
+		</div>	
 	</div>
+
+
+	<div ng-class="{overlayOpen: alarmOverlayOpen}" class="alarmOverlay">
+		<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
+		<span> {{alarmText[alarmCause]}} ! </span>
+		<div class="alarmButton" ng-click="removeAlarm()"> I got it </div>	
+	</div>
+
 	<div class="leftPart">  
 		<div class="missionBlock">
 			<div class="maincontainermission">
@@ -222,6 +245,10 @@ leaks/wrench/etc in server files-->
 					<div class="redhotContainer">
 				        	<div class="redhot" ng-style="{opacity: hotscreen}">
 				        	</div>
+					</div>
+					<div class="automanual">
+						<span ng-if="autonomous"> AUTONOMOUS </span>
+						<span ng-if="!autonomous"> MANUAL </span>
 					</div>
 				</div>
 			</div>		

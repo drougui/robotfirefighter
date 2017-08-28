@@ -15,7 +15,6 @@ export class MainController {
   /*@ngInject*/
   constructor($http, $scope, socket, hotkeys, $timeout, $interval, sharedProperties, $rootScope, $window) {
 
-    
     $scope.address = "";
     // GET IP ADDRESS
     $scope.ipaddress = "";
@@ -35,6 +34,29 @@ export class MainController {
     $scope.cause=0;
     // TODO overlays
     $scope.overlayOpen = false;
+
+    $scope.alarmOverlayOpen = false;
+    $scope.alarmCause = 0;
+    $scope.alarmText = ["low battery", "too-high temperature", "60 seconds before the end of the mission", "robot's tank will soon be empty (2 shoots left)", "robot is in autonomous mode", "robot is in manual mode"];
+    $scope.removeAlarm = function(){
+      $scope.alarmOverlayOpen = false;
+      $http.get('/api/control/removealarm').then(response => {
+        if(response.status === 200) {
+        }
+      });
+    }
+/*
+- un feu vient de se déclarer
+- n feux en cours
+- battery faible
+- température trop importante
+- fin de la session dans ...
+- rupture gps
+- réservoir robot faible (3,2,1 tir possible)
+- fuite de la réserve courante
+- mode manuel
+- mode automatique
+*/
     $scope.finalnumfires = 0;
     $scope.nbfighted = 0;
     this.$http = $http;
@@ -177,6 +199,7 @@ export class MainController {
           $scope.propFromTop = $scope.realToCssPoseY(response.data[1]);
           $scope.rotindeg = 180 - (response.data[2]+  3.14) * 360 / (2 * 3.14);
           $scope.waterize = response.data[3];
+          $scope.autonomous = response.data[4];
         }
       });
 
@@ -190,6 +213,14 @@ export class MainController {
           console.log($scope.finalnumfires);
         }
       });
+
+      $http.get('/api/control/alarms').then(response => {
+        if(response.status === 200) {
+          $scope.alarmOverlayOpen = response.data[0];
+          $scope.alarmCause = response.data[1];
+        }
+      });
+
     /*
       tictac = !tictac;
       if(tictac){
@@ -313,13 +344,52 @@ export class MainController {
     var pressedKeys = [];
     window.onkeyup = function(e) {pressedKeys[e.keyCode]=false;}
     window.onkeydown = function(e) {pressedKeys[e.keyCode]=true;}
+/*
+left arrow 	37
+up arrow 	38
+right arrow 	39
+down arrow 	40 
+(space) 	32 
+*/
 
 
+
+
+
+    var keysInterval = $interval(function() {
+      if(pressedKeys[38] && !pressedKeys[37] && !pressedKeys[39]) {
+              $scope.forward();
+      }
+      if(pressedKeys[40] && !pressedKeys[37] && !pressedKeys[39]) {
+              $scope.backward();
+      }
+      if(pressedKeys[37] && !pressedKeys[38] && !pressedKeys[40]) {
+              $scope.totheleft();
+      }
+      if(pressedKeys[39] && !pressedKeys[38] && !pressedKeys[40]) {
+              $scope.totheright();
+      }
+    }, 300);
+
+    $scope.$on("$destroy", function() {
+       if (keysInterval) {
+         $interval.cancel(keysInterval);
+       }
+     });
+
+
+    // __    
+    // | |       
+    // | |
+    // | |____  
+    // |______| 
     var pending = false;
     $scope.totheleft = function() {
       myToken = $rootScope.token;
       if(debug) {
         console.log('totheleft');
+        console.log("pending:");
+        console.log(pending);
       }
       if(!pending) {
         pending = true;
@@ -334,9 +404,10 @@ export class MainController {
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
-            if (pressedKeys[38] && !pressedKeys[37]) {
+/*            if (pressedKeys[38] && !pressedKeys[37]) {
               $scope.forward();
-            }
+              console.log("CONTINUE TOUT DROIT!");
+            }*/
             isPlaying = true;
           } else if(debug) {
             console.log('nok');
@@ -345,10 +416,18 @@ export class MainController {
       }
     };
 
+
+    // _______    
+    // | ___  |  
+    // | __  _|
+    // | | | |
+    // |_|  |_| 
     $scope.totheright = function() {
       myToken = $rootScope.token;
       if(debug) {
         console.log('totheright');
+        console.log("pending:");
+        console.log(pending);
       }
       if(!pending) {
         pending = true;
@@ -363,9 +442,10 @@ export class MainController {
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
-            if (pressedKeys[38] && !pressedKeys[39]) {
+/*            if (pressedKeys[38] && !pressedKeys[39]) {
               $scope.forward();
-            }
+              console.log("CONTINUE TOUT DROIT!");
+            }*/
             isPlaying = true;
           } else if(debug) {
             console.log('nok');
@@ -374,10 +454,18 @@ export class MainController {
       }
     };
 
+
+    //  ______    
+    // | ___  |  
+    // |  ____|   
+    // | ___  |  
+    // |______|
     $scope.backward = function() {
       myToken = $rootScope.token;
       if(debug) {
         console.log('backward');
+        console.log("pending:");
+        console.log(pending);
       }
       if(!pending) {
         pending = true;
@@ -400,14 +488,22 @@ export class MainController {
       }
     };
 
+
+    // _______    
+    // | _____|  
+    // | ___|   
+    // | |  
+    // |_|
     $scope.forward = function() {
       myToken = $rootScope.token;
       if(debug) {
         console.log('forward');
+        console.log("pending:");
+        console.log(pending);
       }
       if(!pending) {
         pending = true;
-        $http.post('/api/control', {key: 'front',token: myToken}).then(response => {
+        $http.post('/api/control', {key: 'front', token: myToken}).then(response => {
           pending = false;
           if(response.status === 200) {
             $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
@@ -431,12 +527,14 @@ export class MainController {
       myToken = $rootScope.token;
       if(debug) {
         console.log('WATER');
+        console.log("pending:");
+        console.log(pending);
       }
       if(!robotTankEmpty) {
  //       $scope.waterize = true;
         if(!pending) {
           pending = true;
-          $http.post('/api/control', {key: 'space',token: myToken}).then(response => {
+          $http.post('/api/control', {key: 'space', token: myToken}).then(response => {
             pending = false;
             if(response.status === 200) {
               $scope.propFromTop = $scope.realToCssPoseY(response.data.posY[0]);
@@ -453,7 +551,7 @@ export class MainController {
             }
           });
         }
-/*        $timeout(function() {
+        /*$timeout(function() {
           $scope.waterize = false;
         }, 100);*/
       }
@@ -604,8 +702,8 @@ export class MainController {
     hotkeys.add('down', 'backward', $scope.backward);
     hotkeys.add('up', 'forward', $scope.forward);
     hotkeys.add('space', 'water', $scope.water);
-// TODO s d a z e
-//  SD A E
+
+//  WATER: SD A E
     hotkeys.add('s', 'tapleft', $scope.faucetctrlfctminus);
     hotkeys.add('d', 'tapright', $scope.faucetctrlfctplus);
     hotkeys.add('a', 'pushbutton', $scope.waterPushButton);
