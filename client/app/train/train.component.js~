@@ -145,11 +145,19 @@ export class TrainComponent {
     }, 5000);
 
     $scope.$on("$destroy", function() {
-        if (mainInterval) {
-            $interval.cancel(leaksInterval);
-            $interval.cancel(waterFlowInterval);
-            $interval.cancel(waterManagementInterval);
+        if (leaksInterval) {
+          $interval.cancel(leaksInterval);
         }
+        if (waterFlowInterval) {
+          $interval.cancel(waterFlowInterval);
+        }
+        if (waterManagementInterval) {
+          $interval.cancel(waterManagementInterval);
+        }
+
+            
+
+        
     });
 
    // control

@@ -54,10 +54,10 @@ var fillWaterInterval;
 var fillBatteryInterval;
 
 var autonomyInterval;
-
 var automanualInterval;
+var timeoutOnManualAlarm;
 
-
+var autonomousRobot = 0;
 // declare variables
 var xrobinet = 42;
 var mercurelevelfloat = 10;
@@ -90,8 +90,9 @@ var finalNumFightedFires = 0;
 
 var overlayOpen = false;
 var cause = 0;
-var alarmOverlay = false;
+var alarmOverlayOpen = false;
 var alarmCause = 0;
+var alarmSituations = [false,false,false,false,false,false];
 
 var currentGoalTreeX = 0.0;
 var currentGoalTreeY = 0.0;
@@ -103,6 +104,8 @@ var batteryNeeded = false;
 var batteryNeededSession = false;
 var waterNeeded = false;
 var waterNeededSession = false;
+
+var currentAutonomyTime = 0;
 
 router.post('/killall', killall); // kill morse, + init js
 router.post('/start',start); // launch morse
@@ -130,10 +133,12 @@ function killall(req, res) {
       clearInterval(autonomyInterval);
       clearInterval(automanualInterval);
 
+      clearTimeout(timeoutOnManualAlarm);
       overlayOpen = false;
       cause = 0;
-      alarmOverlay = false;
+      alarmOverlayOpen = false;
       alarmCause = 0;
+      alarmSituations = [false,false,false,false,false,false];
       abortSession = false;
       firstTime = false;
       currentGoalTreeX = 0.0;
@@ -146,6 +151,9 @@ function killall(req, res) {
       batteryNeededSession = false;
       waterNeeded = false;
       waterNeededSession = false;
+
+      currentAutonomyTime = 0;
+      autonomousRobot = 0
 
       xrobinet = 42;
       mercurelevelfloat = 10;
@@ -224,7 +232,6 @@ var roboty = 0.0;
 var roboto = 0.0;
 var pastRobotx = 0.0;
 var pastRoboty = 0.0;
-var counter = 0;
 //var thecounter = 0;
 var currentAutoMvt = false;
 
@@ -272,16 +279,12 @@ serverGet.on('message', function(message, remote) {
 
 // AVOID TREES
 
-// TODO make it non buging (si le robot veut tourner sur place à droite, mais qu'il est du mauvais coté, il va tourner à gauche): avance ok ou tourne ko?
-// TODO IDEE 2, ON VA PAS VERS LES ARBRES POUR LESQUELS IL NY A PAS DARBRES SUR LE CHEMIN (pbm quand gotobatery en urgent!)
-// TODO IDEE 3, NOUVEL ABORT LORSQUE OBSTACLE , CONTOURNEMENT, ET RELANCE DU JOB (pbm throwWater?)
-// TODO insure no gototree just after an abort for batery
  if(autonomousRobot==1) {
     var concernedTree = -1;
     for(var q = 0; q < treeslocations.length; q++) {
       if( currentGoalTreeI != q && !currentAvoidTree){
-        for(var LL = 0; LL<4; LL=LL+0.1){
-          for(var ll = -0.2; ll<0.2; ll=ll+0.1 ){
+        for(var LL = 0; LL<4; LL=LL+0.1){ // TODO A CALIBRER POUR QUIL NY AIT PLUS DE PBM
+          for(var ll = -0.3; ll<0.3; ll=ll+0.1 ){
             if (!currentAvoidTree && Math.sqrt( Math.pow( parseFloat(robotx[0]) + LL*Math.cos(roboto) - ll*Math.sin(roboto)-parseFloat(treeslocations[q].x),2) + Math.pow(parseFloat(roboty[0]) + LL*Math.sin(roboto) + ll*Math.cos(roboto)-parseFloat(treeslocations[q].y) ,2) ) < 0.5 && Math.sqrt( Math.pow(parseFloat(pastRobotx[0])-parseFloat(robotx[0]),2) + Math.pow(parseFloat(pastRoboty[0])-parseFloat(roboty[0]),2) ) > 0.1 ){
               concernedTree = q;
               currentAvoidTree = true;
@@ -353,67 +356,6 @@ serverGet.on('message', function(message, remote) {
     }
 
 
-
-
- 
-
-/*
-      if( currentGoalTreeI != q && Math.sqrt( Math.pow(parseFloat(pastRobotx[0])-parseFloat(robotx[0]),2) + Math.pow(parseFloat(pastRoboty[0])-parseFloat(roboty[0]),2) ) > 0.1 ){
-        if ( Math.sqrt( Math.pow( parseFloat(robotx[0]) + 1.3*Math.cos(roboto) - parseFloat(treeslocations[q].x)  ,2) + Math.pow( parseFloat(roboty[0]) + 1.3*Math.sin(roboto) - parseFloat(treeslocations[q].y) ,2) ) < 1.7 && 0 <= Math.cos(roboto) * (parseFloat(treeslocations[q].y) - parseFloat(roboty[0])) - Math.sin(roboto) * (parseFloat(treeslocations[q].x) - parseFloat(robotx[0])) && Math.cos(roboto) * (parseFloat(treeslocations[q].y) - parseFloat(roboty[0])) - Math.sin(roboto) * (parseFloat(treeslocations[q].x) - parseFloat(robotx[0])) < 1 ){
-          console.log("=====!!!!!DROITE!!!!!=====");
-          console.log("=====!!!!!DROITE!!!!!=====");
-          console.log(Math.cos(roboto));
-          console.log(Math.sin(roboto));
-          console.log("=====!!!!!DROITE!!!!!=====");
-          console.log("=====!!!!!DROITE!!!!!=====");
-          if (!currentAvoidTree){
-            currentAvoidTree = true;
-            udpMess = speedToUdpMess(-0.05, 0.6);
-            buffer = new Buffer(udpMess);
-            client = dgram.createSocket('udp4');
-            client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-              if(err) throw err;
-              client.close();
-              setTimeout(function() {
-                client = dgram.createSocket('udp4');
-                client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-                  if(err) throw err;
-                  client.close();
-                  currentAvoidTree = false;
-                });
-              }, 500);
-            });
-          }
-        }
-        if ( Math.sqrt( Math.pow( parseFloat(robotx[0]) + 1.3*Math.cos(roboto) - parseFloat(treeslocations[q].x)  ,2) + Math.pow( parseFloat(roboty[0]) + 1.3*Math.sin(roboto) - parseFloat(treeslocations[q].y) ,2) ) < 1.7 && 0 > Math.cos(roboto) * (parseFloat(treeslocations[q].y) - parseFloat(roboty[0])) - Math.sin(roboto) * (parseFloat(treeslocations[q].x) - parseFloat(robotx[0])) && Math.cos(roboto) * (parseFloat(treeslocations[q].y) - parseFloat(roboty[0])) - Math.sin(roboto) * (parseFloat(treeslocations[q].x) - parseFloat(robotx[0])) > -1 ){
-          console.log("=====!!!!!GAUCHE!!!!!=====");
-          console.log("=====!!!!!GAUCHE!!!!!=====");
-          console.log(Math.cos(roboto));
-          console.log(Math.sin(roboto));
-          console.log("=====!!!!!GAUCHE!!!!!=====");
-          console.log("=====!!!!!GAUCHE!!!!!=====");
-          if (!currentAvoidTree){
-            currentAvoidTree = true;
-            udpMess = speedToUdpMess(0.05, 0.6);
-            buffer = new Buffer(udpMess);
-            client = dgram.createSocket('udp4');
-            client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-              if(err) throw err;
-              client.close();
-              setTimeout(function() {
-                client = dgram.createSocket('udp4');
-                client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-                  if(err) throw err;
-                  client.close();
-                  currentAvoidTree = false;
-                });
-              }, 500);
-            });
-          }
-        }
-      }*/
-
-
     // time to go > battery time + marge
     if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*1.1 && !batteryNeeded){
       batteryNeeded = true;
@@ -423,6 +365,19 @@ serverGet.on('message', function(message, remote) {
       batteryNeededSession = false;
       waterNeeded = false;
       waterNeededSession = false;
+    }
+
+    // alarm battery
+    if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*1.1 && !alarmSituations[0]){
+      // TODO ALARM HAS TO BE RANDOM // TODO lancer autonomousRobot randomly also
+        if(!alarmOverlayOpen && Math.random()>0.5){
+          alarmOverlayOpen = true;
+          alarmCause = 0;
+          alarmSituations[0] = true;
+        }
+    }
+    if(batteryLevel >= 50){
+      alarmSituations[0] = false;
     }
 
 
@@ -436,8 +391,7 @@ serverGet.on('message', function(message, remote) {
     }
   }
 
-// AVOIDTREES // TODO may put it in "autonomous robot" part (interval)
-// TODO en tout cas signaler quand abort pour continuer le process autonome
+// AVOIDTREES
   console.log("~~~~~~~~~~~~AUTONOMY VARIABLES~~~~~~~~~~~~");
   console.log("firstTime:");
   console.log(firstTime);
@@ -463,22 +417,7 @@ serverGet.on('message', function(message, remote) {
   console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
   if(autonomousRobot==1 && goalIsATree) {
-    //var vectorRobotX = Math.cos(roboto);
-    //var vectorRobotY = Math.sin(roboto);
-/*
-    var nextRobotoXaxis = [];
-    var nextRobotoYaxis = [];
-    nextRobotoXaxis[0] = parseFloat(robotx) + Math.cos(roboto);
-    nextRobotoYaxis[0] = parseFloat(roboty) + Math.sin(roboto);
-    nextRobotoXaxis[1] = parseFloat(robotx) + Math.cos(roboto) * 1.2;
-    nextRobotoYaxis[1] = parseFloat(roboty) + Math.sin(roboto) * 1.2;
-    nextRobotoXaxis[2] = parseFloat(robotx) + Math.cos(roboto) * 1.4;
-    nextRobotoYaxis[2] = parseFloat(roboty) + Math.sin(roboto) * 1.4;
-*/
-    //var manoeuvre = false;
 
-// var close = false;
-//    for(var q = 0; q < treeslocations.length; q++) {
       if( Math.sqrt( Math.pow(/*treeslocations[q].x*/ currentGoalTreeX - (parseFloat(robotx)+2*Math.cos(roboto)) , 2) 
 + Math.pow( /*treeslocations[q].y*/ currentGoalTreeY- (parseFloat(roboty)+2*Math.sin(roboto)), 2) ) < 1.0 ){
         console.log("CLOSE TO TREE!");
@@ -496,12 +435,9 @@ serverGet.on('message', function(message, remote) {
             console.log('abort sent to ' + HOST +':'+ PORT);
             client.close();
           });
-          abortSession = true; // TODO lancer quelquechose directement (avec data.integers[IND_ABORTMOVE]==0)
-                           // dans la partie robot autonome, faire qqch de special quand abortSession
-                           // TODO ne pas oublier isAborted coté rttlua
-          throwWater(); // TODO why two throws sometimes? p-e pcq on passe deux fois par là (currentAutoMvt n'est pas encore vrai ...)
+          abortSession = true; 
+          throwWater();
           console.log("!!!!!!!!!!!! I THROW WATER !!!!!!!!!!!!");
-
 
           setTimeout(function() {
             var udpMess1 = speedToUdpMess(0.0, -0.5);
@@ -524,36 +460,15 @@ serverGet.on('message', function(message, remote) {
 
         }
       }
-
-
-
-
-  //  }
   }
 
-// TODO TODO TODO TODO IDEE: mettre les valeurs de position en global, 
-// et tout décider à la fréquence d'autonomous robot (2sec)
-
-  // TODO ici, si autonomousRobot==1 (déjà, keys inactives)
-  // checker si c'est dans la zone d'un arbre
-  // si oui, avec la position précédente, calculer le vecteur vitesse (ou juste avec l'angle calculer le vecteur orientation du robot)
-  // calculer le vecteur robot -> arbre
-  // calculer prodvec(arbre,robot)
-  // si negatif, lancer une commande à gauche
-  // si positif, lancer une commande à droite
-  // TODO aller chercher l'arbre le plus proche plutot que arbitrairement
-  // TODO un seul lancé d'eau !! (côté client?, perte d'eau?)
   // TODO se retirer du feu si temp trop grande: 
   // calculer tous les vecteurs robot->arbres pour lesquels le robot est dans la zone de l'arbre. en faire la moyenne. si prodscal(moyenne, vecteur orientation) > 0 on recule, < 0 on avance
-  //
   if(noMvt==1) {
     currentAutoMvt = false;
   } else{
     currentAutoMvt = true;
   }
-//  console.log("currentAutoMvt " + currentAutoMvt);
-//  console.log("noMvt " + noMvt);
-  // use fill/stop fill water functions
 
   if((roboty[0] < parseFloat(zoneslocations[0].y)+1) && (roboty[0] > parseFloat(zoneslocations[0].y)-1) && (robotx[0] < parseFloat(zoneslocations[0].x) + 1) && (robotx[0] > parseFloat(zoneslocations[0].x)-1)) {
     if(!isFillingWater) {
@@ -590,12 +505,23 @@ serverGet.on('message', function(message, remote) {
       global.newtoken();
       global.stopGame();
     }
+    if(mercurelevelfloat>200 && !alarmSituations[1]){
+      if(!alarmOverlayOpen && Math.random()>0.5){
+        alarmOverlayOpen = true; // TODO ALARM HAS TO BE RANDOM!	
+        alarmCause = 1;
+        alarmSituations[1] = true
+      }
+    }
+    if(mercurelevelfloat<=200){
+      alarmSituations[1] = false;
+    }
+
+
     if(mercurelevelfloat < 50) {
       mercurelevelfloat = 50;
     }
     mercurelevel = mercurelevelfloat.toString()/70 + 'vw';
     hotscreen = mercurelevelfloat/300;
-    counter = 0;
 //  }
 /*
   console.log("=====================");
@@ -603,7 +529,6 @@ serverGet.on('message', function(message, remote) {
   console.log(counter);
   console.log("=====================");
 */
-  counter++;
 //  thecounter++;
 });
 serverGet.bind(PORTGET, HOST);
@@ -696,6 +621,7 @@ router.post('/', function(req, res/*, next*/) {
           //console.log('UDP message sent to ' + HOST +':'+ PORT);
           client.close();
         });
+        clearTimeout(timeoutOnManualAlarm);
       } else if(req.body.key == 'left' && autonomousRobot==0) {
         udpMess = speedToUdpMess(0.05, 0.0);
         buffer = new Buffer(udpMess);
@@ -705,6 +631,7 @@ router.post('/', function(req, res/*, next*/) {
           //console.log('UDP message sent to ' + HOST +':'+ PORT);
           client.close();
         });
+        clearTimeout(timeoutOnManualAlarm);
       } else if(req.body.key == 'right' && autonomousRobot==0) {
         udpMess = speedToUdpMess(-0.05, 0.0);
         buffer = new Buffer(udpMess);
@@ -714,6 +641,7 @@ router.post('/', function(req, res/*, next*/) {
           //console.log('UDP message sent to ' + HOST +':'+ PORT);
           client.close();
         });
+        clearTimeout(timeoutOnManualAlarm);
       } else if(req.body.key == 'back' && autonomousRobot==0) {
         udpMess = speedToUdpMess(0.0, -0.6);
         buffer = new Buffer(udpMess);
@@ -723,8 +651,17 @@ router.post('/', function(req, res/*, next*/) {
           //console.log('UDP message sent to ' + HOST +':'+ PORT);
           client.close();
         });
+        clearTimeout(timeoutOnManualAlarm);
       } else if(req.body.key == 'space' && autonomousRobot==0) {
         throwWater();
+        clearTimeout(timeoutOnManualAlarm);
+      }
+      if(autonomousRobot==1 && !alarmSituations[4] && currentAutonomyTime>=3){
+        if(!alarmOverlayOpen && Math.random()>0.5){
+          alarmOverlayOpen = true; // TODO ALARM HAS TO BE RANDOM!	
+          alarmCause = 4;
+          alarmSituations[4] = true
+        }
       }
       res.json({
         posX: robotx,
@@ -756,16 +693,15 @@ router.get('/finished', function(req, res) {
   res.json([overlayOpen,cause,finalNumFightedFires]);
 });
 
-var alarmCause = 0;
-var alarmOverlayOpen = true;
+
 router.get('/alarms', function(req, res) {
   res.json([alarmOverlayOpen,alarmCause]);
   //alarmCause = (alarmCause + 1)%6;
 });
 
 router.get('/removealarm', function(req, res) {
-  res.json();
   alarmOverlayOpen = false;
+  res.json();
   //alarmCause = (alarmCause + 1)%6;
 });
 
@@ -775,6 +711,7 @@ router.get('/removealarm', function(req, res) {
 //=====================================================
 function throwWater() {
   if(watlevel >= 10) {
+    var watlevelTemp = watlevel;
     watlevel = watlevel - 10;
     currentsplatch = true;
   } else {
@@ -782,6 +719,16 @@ function throwWater() {
     robotTankEmpty = true;
     currentsplatch = false;
   }
+
+  if(watlevel<=20 && watlevelTemp>20 && !alarmSituations[3]){
+    if(!alarmOverlayOpen && Math.random()>0.5){
+      alarmOverlayOpen = true; // TODO ALARM HAS TO BE RANDOM
+      alarmCause = 3;
+      alarmSituations[3] = true;
+    }
+  }
+
+
   for(var i = 0; i < treeslocations.length; i++) {
     // close enough + good orientation
     var diffX = treeslocations[i].x - robotx[0];
@@ -961,7 +908,6 @@ router.get('/watermanagement', function(req, res) {
 
 
 var fillBatteryInterval;
-var batteryEmpty = false;
 var isFillingBattery = false;
 var fillingBattery = function() {
   isFillingBattery = true;
@@ -981,35 +927,14 @@ var stopFillingBattery = function() {
 
 
 
-
-//=====================================================
-// TODO IF autonomous robot, then keys are not responding!
-//=====================================================
-// + fight fires
-// + when is it autonomous/manual? (print it on the screen)
-
-// MODE (AUTONOMOUS/MANUAL)
-
-var autonomousRobot = 0; 	// toutes les minutes (5secs?), on tire au sort si autonome ou pas
-				// + dans une zone bien définie, c'est toujours manuel
 // UDP indexes
 var IND_MODE = 1
 var IND_ENDGOTO = 2
 var IND_ABORTMOVE = 3
-/*
-si batterie=temps pour go batery -> go battery
-sinon si trop chaud -> s'écarter des arbres
-sinon si plus d'eau -> go eau
-sinon si pres d'un arbre en feu -> tirer
-sinon: go arbre en feu
-*/
 var ixe = zoneslocations[0].x;
 var igrec = zoneslocations[0].y;
 var firstTime = false;
 var tempxy = 1.0;
-
-
-
 
 
 //var brokenContainer = false;
@@ -1055,12 +980,15 @@ export function launchgame(req, res) {
       batteryNeededSession = false;
       waterNeeded = false;
       
+      clearTimeout(timeoutOnManualAlarm);
       overlayOpen = false;
       cause = 0;
 
-      alarmOverlay = false;
+      alarmOverlayOpen = false;
       alarmCause = 0;
+      alarmSituations = [false,false,false,false,false,false];
 
+      autonomousRobot = 0
       xrobinet = 42;
       mercurelevelfloat = 10;
       mercurelevel = '0.1vw';
@@ -1072,7 +1000,6 @@ export function launchgame(req, res) {
       watlevel = 50;
       robotTankEmpty = false;
       isFillingWater = false;
-//      crossSize = 0;
       leakPlacesNb = 9;
       leakPlaces = [];
       noleakat = [];
@@ -1089,19 +1016,13 @@ export function launchgame(req, res) {
       numFightedFires = 0;
       finalNumFightedFires = 0;
 
-/*
-      setTimeout(function() {
-          firstTime = true;
-      }, 1000);
-*/
-
 
       automanualInterval = setInterval(function() {
-        // TODO TODO TODO TODO TODO
+
         // TODO TODO TODO TODO TODO !! LANCER AUSSI AUTONOMOUSROBOT QUAND PLUS DE BATTERY !!
         var myAlea = Math.random();
         //if(true) {       
-        if(myAlea>0.5 && !batteryNeeded){
+        if(myAlea>0.5 && !batteryNeeded){ // TODO sure?? !batteryNeeded ??? TODO plutot le gérer à part !
           //clearInterval(autonomyInterval); // no need: the interval always exists but if(autonomousRobot==1) in it
           autonomousRobot = 0;
           // abort
@@ -1114,6 +1035,14 @@ export function launchgame(req, res) {
             console.log('abort sent to ' + HOST +':'+ PORT);
             client.close();
           });
+          alarmSituations[4] = false; // not in autonomous mode anymore
+          timeoutOnManualAlarm = setTimeout(function() {
+            if(!alarmOverlayOpen && Math.random()>0.5){
+              alarmOverlayOpen = true;
+              alarmCause = 5; // TODO ALARM HAS TO BE RANDOM
+              alarmSituations[5] = true;
+            }
+          }, 3000);
         } else if(autonomousRobot==0){
           // reset variables related to autonomous part
           abortSession = false;
@@ -1128,32 +1057,22 @@ export function launchgame(req, res) {
           batteryNeededSession = false;
           waterNeeded = false;
           autonomousRobot = 1;
+          alarmSituations[5] = false;
+          currentAutonomyTime = 0;
 	  // keyboard not allowed! // ok DONE
         }
-	console.log("********automanualInterval*************");
-        console.log("autonomousRobot:");
-        console.log(autonomousRobot);
       }, 10000);
 
-      // declarer globalement (i.e. avec une reinitialisation un peu partout -- > pas obligé puisqu'on change le goal à chaque goto...)
-      // TODO: var currentGoalX = 0.0;
-      //       var currentGoalY = 0.0;
-      //   le but courant = les coordonnees d'un arbre/une zone
-      //   abortEnd (arrivee au but: + lauchWater si arbre)
-      //   abortAvoidTree (enclenche une manoeuvre d'evitement + meme goto)
-      //   SINON LE ROBOT SARRETE TOUT LE TEMPS QUIL EST A COTE DUN !!!
-      //   voir si tout est ok coté rttlua (isAborted avec isFinished) notamment dans robotObservations() DONE!
-      //      car on continue à envoyer à nodejs que le mouvement d'est pas fini alors qu'il a été aborted... 
-      //      et vice-versa, on continue à envoyer à rttlua qu'il faut aborter car on est dans abortSession
+
       //=====================================================
       // Robot Autonomy
       //=====================================================
-      autonomyInterval = setInterval(function() { // TODO "goto waterzone" management + moins d'eau sinon on ne recharge qu'une fois 
+      autonomyInterval = setInterval(function() { // TODO "goto waterzone" management + moins d'eau sinon on ne recharge qu'une fois + plus de battery car c'est chiant
         console.log("Robot Autonomy -- MAIN INTERVAL");
         console.log("currentAutoMvt: ");
         console.log(currentAutoMvt);
 
-        if( (autonomousRobot==1) && batteryNeeded && !batteryNeededSession){  // TODO peut etre un TIMEOUT ici aussi pour etre sur que ca ne se superpose pas avec un goto tree classique
+        if( (autonomousRobot==1) && batteryNeeded && !batteryNeededSession){ 
           waterNeeded = false;
           waterNeededSession = false;
           var udpMess1 = abortMoveToUdpMess();
@@ -1241,8 +1160,6 @@ export function launchgame(req, res) {
             goalIsATree = false;
           }
           else{
-            // define arrival as a tree on fire
-            // TODO select the closest one
             goalIsATree = false;
             var minDistance = 10000;
             var gotoI = -1;
@@ -1262,9 +1179,6 @@ export function launchgame(req, res) {
               goalIsATree = true;
             }
           }
-	  // TODO les destinations sont parfois les zones de recharge
-          // var gotoX = zoneslocations[1].x;
-          // var gotoY =  zoneslocations[1].y;
 
           // vector departure -> arrival computation
           var vecteurX = gotoX - robotx[0];
@@ -1390,6 +1304,13 @@ export function launchgame(req, res) {
       timeInterval = setInterval(function() {
         if(remainingtime > 0) {
           remainingtime = remainingtime - 1;
+          if(remainingtime<=60 && !alarmSituations[2]){
+            if(!alarmOverlayOpen && Math.random()>0.5){
+              alarmOverlayOpen = true;
+              alarmCause = 2; // TODO ALARM HAS TO BE RANDOM
+              alarmSituations[2] = true;
+            }
+          }
         }
         else{
           overlayOpen = true;
@@ -1400,6 +1321,9 @@ export function launchgame(req, res) {
         console.log("oooooooooooooooooooooooooooooooooo");
         console.log('  REMAINING TIME: ' + remainingtime);
         console.log("oooooooooooooooooooooooooooooooooo");
+        if(autonomousRobot==1){
+          currentAutonomyTime = currentAutonomyTime + 1;
+        }
       }, 1000);
       // give remaining time to client
   
@@ -1407,7 +1331,6 @@ export function launchgame(req, res) {
 
   //=====================================================
   // battery part 
-  // TODO: discharging rate higher when moving/using water
   //=====================================================
       console.log("CONTROL: battery part ");
       batteryInterval = setInterval(function() {
@@ -1467,6 +1390,9 @@ var fillWaterInterval;
 var robotTankEmpty = false;
 var isFillingWater = false;
 var fillingWater = function() {
+  if(watlevel>=30){
+    alarmSituations[3] = false;
+  }
   isFillingWater = true;
   clearInterval(fillWaterInterval);
   fillWaterInterval = setInterval(function() {
@@ -1505,10 +1431,9 @@ global.stopGame = function() {
   clearInterval(autonomyInterval);
   clearInterval(automanualInterval);
 
-  /*overlayOpen = false;
-  cause = 0;*/
-  alarmOverlay = false;
+  alarmOverlayOpen = false;
   alarmCause = 0;
+  alarmSituations = [false,false,false,false,false,false];
   abortSession = false;
   firstTime = false;
   currentGoalTreeX = 0.0;
@@ -1521,6 +1446,9 @@ global.stopGame = function() {
   batteryNeededSession = false;
   waterNeeded = false;
   waterNeededSession = false;
+
+  currentAutonomyTime = 0;
+  autonomousRobot = 0
 
   xrobinet = 42;
   mercurelevelfloat = 10;

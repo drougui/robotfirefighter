@@ -58,7 +58,7 @@ export class TrainComponent {
 
     // water management
     $scope.xrobinet = 42;
-    $scope.watlevelContainer = 80; // pourquoi revient-il a zero?
+    $scope.watlevelContainer = 50; // pourquoi revient-il a zero?
     // constants
     var decal = 4;
     var coeffXrob = 10;
