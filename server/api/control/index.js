@@ -2,19 +2,6 @@
 var express = require('express');
 var router = express.Router();
 
-// GET LOCAL IP ADDRESS FOR STREAMING
-var IPaddress =""; 
-require('dns').lookup(require('os').hostname(), function (err, add, fam) {
-  console.log('addr: '+add);
-  IPaddress = add;
-})
-
-router.get('/ipaddress', function(req, res) {
-  res.json(IPaddress);
-  console.log("ip address sent");
-  console.log(IPaddress);
-});
-
 //=====================================================
 // define trees locations using treeslocs.json
 //=====================================================
@@ -39,7 +26,6 @@ console.log(zoneslocations[0].x);
 router.get('/zones', function(req, res) {
   res.json(chaine2);
 });
-
 
 
 
@@ -94,8 +80,8 @@ var alarmOverlayOpen = false;
 var alarmCause = 0;
 var alarmSituations = [false,false,false,false,false,false];
 
-var currentGoalTreeX = 0.0;
-var currentGoalTreeY = 0.0;
+var currentGoalX = 0.0;
+var currentGoalY = 0.0;
 var currentAvoidTree = false;
 var currentAvoidTreeSession = false;
 var currentGoalTreeI = -1;
@@ -141,8 +127,8 @@ function killall(req, res) {
       alarmSituations = [false,false,false,false,false,false];
       abortSession = false;
       firstTime = false;
-      currentGoalTreeX = 0.0;
-      currentGoalTreeY = 0.0;
+      currentGoalX = 0.0;
+      currentGoalY = 0.0;
       currentGoalTreeI = -1;
       currentAvoidTree = false;
       currentAvoidTreeSession = false;
@@ -272,13 +258,7 @@ serverGet.on('message', function(message, remote) {
   roboty = posY;
   roboto = orientation;
 
-
-// LACK OF BATTERY
-//  if(autonomousRobot==1) {
-
-
-// AVOID TREES
-
+ // AVOID TREES
  if(autonomousRobot==1) {
     var concernedTree = -1;
     for(var q = 0; q < treeslocations.length; q++) {
@@ -357,7 +337,7 @@ serverGet.on('message', function(message, remote) {
 
 
     // time to go > battery time + marge
-    if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*1.1 && !batteryNeeded){
+    if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*0.6 && !batteryNeeded){
       batteryNeeded = true;
     }
     if(batteryNeeded && batteryLevel>=99){
@@ -368,8 +348,7 @@ serverGet.on('message', function(message, remote) {
     }
 
     // alarm battery
-    if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*1.1 && !alarmSituations[0]){
-      // TODO ALARM HAS TO BE RANDOM // TODO lancer autonomousRobot randomly also
+    if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*0.6&& !alarmSituations[0]){
         if(!alarmOverlayOpen && Math.random()>0.5){
           alarmOverlayOpen = true;
           alarmCause = 0;
@@ -383,7 +362,6 @@ serverGet.on('message', function(message, remote) {
 
     if(watlevel==0 && !waterNeeded && !batteryNeeded){
       waterNeeded = true;
-      console.log("waterNeeded!");
     }
     if(watlevel>50 && waterNeeded){
       waterNeeded = false;
@@ -399,10 +377,10 @@ serverGet.on('message', function(message, remote) {
   console.log(goalIsATree);
   console.log("abortSession:");
   console.log(abortSession);
-  console.log("currentGoalTreeX:");
-  console.log(currentGoalTreeX);
-  console.log("currentGoalTreeY:");
-  console.log(currentGoalTreeY);
+  console.log("currentGoalX:");
+  console.log(currentGoalX);
+  console.log("currentGoalY:");
+  console.log(currentGoalY);
   console.log("batteryNeeded:");
   console.log(batteryNeeded);
   console.log("batteryNeededSession");
@@ -413,18 +391,13 @@ serverGet.on('message', function(message, remote) {
   console.log(waterNeededSession);
   console.log("batteryLevel:");
   console.log(batteryLevel);
-
+  console.log("currentAutoMvt: ");
+  console.log(currentAutoMvt);
   console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
   if(autonomousRobot==1 && goalIsATree) {
-
-      if( Math.sqrt( Math.pow(/*treeslocations[q].x*/ currentGoalTreeX - (parseFloat(robotx)+2*Math.cos(roboto)) , 2) 
-+ Math.pow( /*treeslocations[q].y*/ currentGoalTreeY- (parseFloat(roboty)+2*Math.sin(roboto)), 2) ) < 1.0 ){
-        console.log("CLOSE TO TREE!");
-        console.log(parseFloat(robotx));
-        console.log(Math.cos(roboto));
-        console.log(parseFloat(roboty));
-        console.log(Math.sin(roboto));
+      if( Math.sqrt( Math.pow(currentGoalX - (parseFloat(robotx)+2*Math.cos(roboto)) , 2) 
++ Math.pow(currentGoalY- (parseFloat(roboty)+2*Math.sin(roboto)), 2) ) < 1.0 ){
         if(!abortSession) {
           udpMess = abortMoveToUdpMess();
           buffer = new Buffer(udpMess);
@@ -437,7 +410,6 @@ serverGet.on('message', function(message, remote) {
           });
           abortSession = true; 
           throwWater();
-          console.log("!!!!!!!!!!!! I THROW WATER !!!!!!!!!!!!");
 
           setTimeout(function() {
             var udpMess1 = speedToUdpMess(0.0, -0.5);
@@ -522,14 +494,7 @@ serverGet.on('message', function(message, remote) {
     }
     mercurelevel = mercurelevelfloat.toString()/70 + 'vw';
     hotscreen = mercurelevelfloat/300;
-//  }
-/*
-  console.log("=====================");
-  console.log(" OBS RTTLUA COUNTER:  ");
-  console.log(counter);
-  console.log("=====================");
-*/
-//  thecounter++;
+
 });
 serverGet.bind(PORTGET, HOST);
 
@@ -604,14 +569,9 @@ var jwt = require('jwt-simple');
 var secret = Buffer.from('fe1a1915a379f3be5394b64d14794932', 'hex');
 var currentsplatch = false;
 router.post('/', function(req, res/*, next*/) {
-  console.log(req.body)
-  console.log("KEY RECEPTION");
-  console.log("autonomousRobot:");
-  console.log(autonomousRobot);
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
     if(decoded.auth && decoded.exp === global.expires){
-      console.log(decoded);
       if(req.body.key == 'front' && autonomousRobot==0) {
         udpMess = speedToUdpMess(0.0, 0.6);
         buffer = new Buffer(udpMess);
@@ -710,24 +670,26 @@ router.get('/removealarm', function(req, res) {
 // SPLATCH
 //=====================================================
 function throwWater() {
+
   if(watlevel >= 10) {
     var watlevelTemp = watlevel;
     watlevel = watlevel - 10;
     currentsplatch = true;
+    console.log("throwWater() : !!!!!!!!!!!! I THROW WATER !!!!!!!!!!!!");
   } else {
     watlevel = 0;
     robotTankEmpty = true;
     currentsplatch = false;
   }
 
+  // ALARM SHOOTS LEFT
   if(watlevel<=20 && watlevelTemp>20 && !alarmSituations[3]){
     if(!alarmOverlayOpen && Math.random()>0.5){
-      alarmOverlayOpen = true; // TODO ALARM HAS TO BE RANDOM
+      alarmOverlayOpen = true;
       alarmCause = 3;
       alarmSituations[3] = true;
     }
   }
-
 
   for(var i = 0; i < treeslocations.length; i++) {
     // close enough + good orientation
@@ -739,15 +701,14 @@ function throwWater() {
     var robotoX = Math.cos(roboto);
     var robotoY = Math.sin(roboto);
     var scalprod = robotoX * diffX + robotoY * diffY;
-    if((normDiff < 3) && (scalprod > 0.9) && firesStatesOfTrees[i] && !robotTankEmpty) {
-      console.log('USEFULL');
+    if((normDiff < 4) && (scalprod > 0.9) && firesStatesOfTrees[i] && !robotTankEmpty) {
       numFightedFires++;
       finalNumFightedFires++;
       var indexTree = i + 1;
       var command1 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -10\' | yarp write /data/out /morse/treeonfire' + indexTree.toString() + '/teleporttf' + indexTree.toString() + '/in';
       var command2 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -0.1\' | yarp write /data/out /morse/tree' + indexTree.toString() + '/teleport' + indexTree.toString() + '/in';
       setTimeout(function() {
-         console.log(command1 + ' && ' + command2);
+         //console.log(command1 + ' && ' + command2);
          exec(command1 + ' && ' + command2, puts);
       }, 500);
       firesStatesOfTrees[i] = false;
@@ -840,11 +801,9 @@ var openingcontrol = 0;
 var faucetcontrol = 0;
 // send new state of control of water management to client
 router.post('/watercontrol', function(req, res/*, next*/) {
-  console.log(req.body);
   var repeater;
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
-    console.log(decoded);
     if(decoded.auth && decoded.exp === global.expires){
       if(req.body.button == 'plusT') {
         if(faucetcontrol < 3) {
@@ -873,6 +832,17 @@ router.post('/watercontrol', function(req, res/*, next*/) {
           noleakat[req.body.leakid] = true;
           wrenchmode = false;
         }
+         
+
+        var leakSomewhere = false;
+        for(var i = 0; i<leakPlacesNb; i++){
+          leakSomewhere = leakSomewhere || !noleakat[i];
+        }
+/*
+	if (!leakSomewhere) {
+          alarmSituations[6] = false;
+        }
+*/
       } 
 /*else if(req.body.button == 'newContainer') { // AND FINALLY "NEW CONTAINER"
         brokenContainer = false;
@@ -949,10 +919,9 @@ router.get('/time', function(req, res) {
 });
 
 export function launchgame(req, res) {
-  console.log("!! CONTROL -- LAUNCHGAME !!")
+  console.log("!! CONTROL -- LAUNCHGAME !!");
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
-    console.log(decoded);
     if(decoded.auth && decoded.exp === global.expires ){
 
       // clear intervals 
@@ -970,8 +939,8 @@ export function launchgame(req, res) {
       // make sure the initialization is correct 
       abortSession = false;
       firstTime = true;
-      currentGoalTreeX = 0.0;
-      currentGoalTreeY = 0.0;
+      currentGoalX = 0.0;
+      currentGoalY = 0.0;
       currentGoalTreeI = -1;
       currentAvoidTree = false;
       currentAvoidTreeSession = false;
@@ -1019,36 +988,39 @@ export function launchgame(req, res) {
 
       automanualInterval = setInterval(function() {
 
-        // TODO TODO TODO TODO TODO !! LANCER AUSSI AUTONOMOUSROBOT QUAND PLUS DE BATTERY !!
+        // TODO TODO TODO TODO TODO !! LANCER AUSSI AUTONOMOUSROBOT QUAND PLUS DE BATTERY ?!! NON...
         var myAlea = Math.random();
-        //if(true) {       
-        if(myAlea>0.5 && !batteryNeeded){ // TODO sure?? !batteryNeeded ??? TODO plutot le gérer à part !
-          //clearInterval(autonomyInterval); // no need: the interval always exists but if(autonomousRobot==1) in it
-          autonomousRobot = 0;
-          // abort
-          var udpMess = abortMoveToUdpMess();
-          var buffer = new Buffer(udpMess);
-          var client = dgram.createSocket('udp4');
-          console.log("!!!!!!!!!!!! send abort to robot AUTOMANUAL !!!!!!!!!!!!");
-          client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-            if(err) throw err;
-            console.log('abort sent to ' + HOST +':'+ PORT);
-            client.close();
-          });
-          alarmSituations[4] = false; // not in autonomous mode anymore
-          timeoutOnManualAlarm = setTimeout(function() {
-            if(!alarmOverlayOpen && Math.random()>0.5){
-              alarmOverlayOpen = true;
-              alarmCause = 5; // TODO ALARM HAS TO BE RANDOM
-              alarmSituations[5] = true;
-            }
-          }, 3000);
-        } else if(autonomousRobot==0){
-          // reset variables related to autonomous part
+        // WITH PROBA 0.5   
+        if(myAlea>0.5 && false){ 
+          // REMAINS OR BECOMES MANUAL ROBOT
+          if(autonomousRobot==1){
+            // abort
+            var udpMess = abortMoveToUdpMess();
+            var buffer = new Buffer(udpMess);
+            var client = dgram.createSocket('udp4');
+            client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+              if(err) throw err;
+              console.log('Change to manual: abort sent to ' + HOST +':'+ PORT);
+              client.close();
+            });
+            // not in autonomous mode anymore
+            alarmSituations[4] = false;
+            // declare it with proba 0.5 (if not avoided by the use of the keyboard)
+            timeoutOnManualAlarm = setTimeout(function() {
+              if(!alarmOverlayOpen && Math.random()>0.5 && !alarmSituations[5]){
+                alarmOverlayOpen = true;
+                alarmCause = 5;
+                alarmSituations[5] = true;
+              }
+            }, 3000);
+            autonomousRobot = 0; // MANUAL ROBOT
+          } 
+        } else if(autonomousRobot==0){ // OR REMAINS OR BECOMS AUTONOMOUS
+          // reset variables related the autonomous expert strategy
           abortSession = false;
-          firstTime = true;
-          currentGoalTreeX = 0.0;
-          currentGoalTreeY = 0.0;
+          //firstTime = true;
+          currentGoalX = 0.0;
+          currentGoalY = 0.0;
           currentGoalTreeI = -1;
           currentAvoidTree = false;
           currentAvoidTreeSession = false;
@@ -1056,10 +1028,10 @@ export function launchgame(req, res) {
           batteryNeeded = false;
           batteryNeededSession = false;
           waterNeeded = false;
-          autonomousRobot = 1;
-          alarmSituations[5] = false;
+          alarmSituations[5] = false; // can be declared as not in manual mode anymore in alarms
           currentAutonomyTime = 0;
-	  // keyboard not allowed! // ok DONE
+          autonomousRobot = 1; // AUTONOMOUS ROBOT 
+          console.log('Change to autonomous: reset variables');
         }
       }, 10000);
 
@@ -1069,8 +1041,6 @@ export function launchgame(req, res) {
       //=====================================================
       autonomyInterval = setInterval(function() { // TODO "goto waterzone" management + moins d'eau sinon on ne recharge qu'une fois + plus de battery car c'est chiant
         console.log("Robot Autonomy -- MAIN INTERVAL");
-        console.log("currentAutoMvt: ");
-        console.log(currentAutoMvt);
 
         if( (autonomousRobot==1) && batteryNeeded && !batteryNeededSession){ 
           waterNeeded = false;
@@ -1137,8 +1107,8 @@ export function launchgame(req, res) {
                 console.log('position to reach sent to ' + HOST +':'+ PORT);
                 client2.close();
               });
-              currentGoalTreeX = gotoX;
-              currentGoalTreeY = gotoY;
+              currentGoalX = gotoX;
+              currentGoalY = gotoY;
             }, 2500);            
 
           });
@@ -1199,11 +1169,11 @@ export function launchgame(req, res) {
           console.log("======= " + ixe + "======= " + igrec );
           client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
             if(err) throw err;
-            console.log('position to reach sent to ' + HOST +':'+ PORT);
+            //console.log('position to reach sent to ' + HOST +':'+ PORT);
             client.close();
           });
-          currentGoalTreeX = ixe;
-          currentGoalTreeY = igrec;
+          currentGoalX = ixe;
+          currentGoalY = igrec;
           currentGoalTreeI = gotoI;
           abortSession = false;
         }
@@ -1214,7 +1184,7 @@ export function launchgame(req, res) {
       //=====================================================
       // tree burning randomization 
       //=====================================================
-      console.log("CONTROL: tree burning randomization");
+      //console.log("CONTROL: tree burning randomization");
       var alea1 = -1;
       var alea2 = -1;
       var treenumber = -1;
@@ -1235,17 +1205,17 @@ export function launchgame(req, res) {
           var command1 = 'echo \'' + treeslocations[treenumber].x.toString() + ' ' + treeslocations[treenumber].y.toString() + ' -0.1\' | yarp write /data/out /morse/treeonfire' + indexTree.toString() + '/teleporttf' + indexTree.toString() + '/in';
           var command2 = 'echo \'' + treeslocations[treenumber].x.toString() + ' ' + treeslocations[treenumber].y.toString() + ' -10\' | yarp write /data/out /morse/tree' + indexTree.toString() + '/teleport' + indexTree.toString() + '/in';
           var command = command2 + ' && ' + command1;
-          console.log(command);
+          //console.log(command);
           exec(command, puts);
         }
-        console.log('new fire ? ' + treenumber + ' ' + onfire);
+        //console.log('new fire ? ' + treenumber + ' ' + onfire);
       }, 3000);
 
 
       //=====================================================
       // water management part: 
       //=====================================================
-      console.log("CONTROL: water management part: ");
+      //console.log("CONTROL: water management part: ");
       var pivalue = 3.1415;
       var valveopening = 1;
       var widthwaterflow = 10 - Math.abs(vlvop);
@@ -1294,13 +1264,22 @@ export function launchgame(req, res) {
         if (watlevelContainer>100){
           watlevelContainer = 100;
         }
+        if (watlevelContainer<15 && !alarmOverlayOpen && Math.random()>0.5 && !alarmSituations[7]){
+          alarmOverlayOpen = true; // TODO ALARM HAS TO BE RANDOM
+          alarmCause = 7;
+          alarmSituations[7] = true;
+        }
+        if (watlevelContainer>=25){
+          alarmSituations[7] = false;
+        }
+
       }, 200);
 
 
   //=====================================================
   // remaining time part
   //=====================================================
-      console.log("CONTROL: remaining time part");
+      //console.log("CONTROL: remaining time part");
       timeInterval = setInterval(function() {
         if(remainingtime > 0) {
           remainingtime = remainingtime - 1;
@@ -1343,7 +1322,7 @@ export function launchgame(req, res) {
           global.newtoken();
           global.stopGame();
         }
-      }, 1000);
+      }, 2000);
       // give battery level to client
   
 
@@ -1353,20 +1332,22 @@ export function launchgame(req, res) {
 
     
   // RANDOM LEAKS
-      console.log("CONTROL: RANDOM LEAKS");
+      //console.log("CONTROL: RANDOM LEAKS");
       leaksInterval = setInterval(function() {
-        //var leaksNotEverywhere = false;
+        var leakSomewhere = false;
         if(Math.random()<0.5) {
           var myInt = Math.floor(Math.random()*leakPlacesNb);
           noleakat[myInt] = false;
-/*          for(var i = 0; i<leakPlacesNb; i++){
-            leaksNotEverywhere = leaksNotEverywhere || noleakat[i];
+          for(var i = 0; i<leakPlacesNb; i++){
+            leakSomewhere = leakSomewhere || !noleakat[i];
           }
-          if(!leaksNotEverywhere) {
-            brokenContainer = true;
-            crossSize = 25;
-          }*/
         }
+/*
+	if(!alarmOverlayOpen && Math.random()>0.5 && leakSomewhere && !alarmSituations[6]){
+          alarmOverlayOpen = true; // TODO ALARM HAS TO BE RANDOM
+          alarmCause = 6;
+          alarmSituations[6] = true;
+        }*/
       }, 5000);
 
 
@@ -1436,8 +1417,8 @@ global.stopGame = function() {
   alarmSituations = [false,false,false,false,false,false];
   abortSession = false;
   firstTime = false;
-  currentGoalTreeX = 0.0;
-  currentGoalTreeY = 0.0;
+  currentGoalX = 0.0;
+  currentGoalY = 0.0;
   currentGoalTreeI = -1;
   currentAvoidTree = false;
   currentAvoidTreeSession = false;

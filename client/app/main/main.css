@@ -1828,17 +1828,19 @@
 }
 
 .brain{
-	width: 2vw; 
-	height: 2vw;
+	width: 3vw; 
+	height: 3vw;
 	background-size: 100% 100%;
-	background-image: url("/assets/images/brain.png");
+/*	background-image: url("/assets/images/brain.png");*/
+	background-image: url("/assets/images/robot_face.png");
 	margin-right: 1vw;
 }
 
 .keyboard{
-	width: 2vw; 
-	height: 2vw;
+	width: 3vw; 
+	height: 3vw;
 	background-size: 100% 100%;
-	background-image: url("/assets/images/keyboard.png");
+/*	background-image: url("/assets/images/keyboard.png");*/
+	background-image: url("/assets/images/controller.png");
 	margin-right: 1vw;
 }

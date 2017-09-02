@@ -15,29 +15,24 @@ export class MainController {
   /*@ngInject*/
   constructor($http, $scope, socket, hotkeys, $timeout, $interval, sharedProperties, $rootScope, $window) {
 
-    $scope.address = "";
-    // GET IP ADDRESS
-    $scope.ipaddress = "";
-    $http.get('/api/control/ipaddress').then(response => {
-      console.log(response.data);
-      $scope.ipaddress=response.data;
-      // for online version
-      //$scope.address = "http://dev.humanrobotinteraction.fr/test";
-      //$scope.address = "http://dev.humanrobotinteraction.fr:8081/?action=stream";
-//NOT!      $scope.address = "http://" + $scope.ipaddress + ":8081/?action=stream";
-      // for local version
-      $scope.address = "http://localhost:8081/?action=stream";      
-    });
+    //---------------------
+    // for online version:
+    // -using nginx
+    //$scope.address = "http://dev.humanrobotinteraction.fr/test";
+    // -without nginx (networks blocking ports cannot see the video)
+    //$scope.address = "http://dev.humanrobotinteraction.fr:8081/?action=stream";
+    //---------------------
+    // for local version
+    $scope.address = "http://localhost:8081/?action=stream";      
 
-    // TODO TODO  le serveur doit envoyer quand c'est gameover avec la cause
-    // bouton accueil
+    // GAME OVER OVERLAYS
     $scope.cause=0;
-    // TODO overlays
     $scope.overlayOpen = false;
 
+    // ALARMS OVERLAYS
     $scope.alarmOverlayOpen = false;
     $scope.alarmCause = 0;
-    $scope.alarmText = ["low battery", "too-high temperature", "60 seconds before the end of the mission", "robot's tank will soon be empty (2 shoots left)", "robot is in autonomous mode", "robot is in manual mode"];
+    $scope.alarmText = ["low battery", "too-high temperature", "60 seconds before the end of the mission", "robot's tank will soon be empty (2 shoots left)", "robot is in autonomous mode", "robot is in manual mode","ground tank is leaking", "ground tank's water level is low"];
     $scope.removeAlarm = function(){
       $scope.alarmOverlayOpen = false;
       $http.get('/api/control/removealarm').then(response => {
