@@ -991,7 +991,7 @@ export function launchgame(req, res) {
         // TODO TODO TODO TODO TODO !! LANCER AUSSI AUTONOMOUSROBOT QUAND PLUS DE BATTERY ?!! NON...
         var myAlea = Math.random();
         // WITH PROBA 0.5   
-        if(myAlea>0.5 && false){ 
+        if(myAlea>0.5){ 
           // REMAINS OR BECOMES MANUAL ROBOT
           if(autonomousRobot==1){
             // abort
@@ -1025,9 +1025,10 @@ export function launchgame(req, res) {
           currentAvoidTree = false;
           currentAvoidTreeSession = false;
           goalIsATree = false;
-          batteryNeeded = false;
+          //batteryNeeded = false;
           batteryNeededSession = false;
-          waterNeeded = false;
+          waterNeededSession = false;
+          //waterNeeded = false;
           alarmSituations[5] = false; // can be declared as not in manual mode anymore in alarms
           currentAutonomyTime = 0;
           autonomousRobot = 1; // AUTONOMOUS ROBOT 
