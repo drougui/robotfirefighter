@@ -7,7 +7,7 @@ import routes from './welcome.routes';
 
 export class WelcomeComponent {
   /*@ngInject*/
-  constructor($http, $scope, socket, sharedProperties, $rootScope) {
+  constructor($http, $scope, socket, sharedProperties, $rootScope, $interval) {
     'ngInject';
     this.$http = $http;
     this.socket = socket;
@@ -19,10 +19,24 @@ export class WelcomeComponent {
       $scope.emptySlot=response.data;
       console.log("emptySlot:")
       console.log(response.data);
-    })
+    });
+
+    // get remaining time
+    var remainingTimeInterval = $interval(function() {
+      $http.get('/api/control/time').then(response => {
+        if(response.status === 200) {
+          $scope.remainingtime = response.data;
+        }
+      });
+    }, 500);
+    $scope.$on("$destroy", function() {
+      if (remainingTimeInterval) {
+        $interval.cancel(remainingTimeInterval);
+      }
+    });
 
     // test authorization for playing
-//    var token = "";
+    // var token = "";
     $rootScope.token = "";
     var myToken = $rootScope.token;
     $scope.play = function(){

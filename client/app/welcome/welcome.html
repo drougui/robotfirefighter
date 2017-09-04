@@ -7,7 +7,11 @@
 	<div class="mainmsg"> <i class="fa fa-wrench" aria-hidden="true"></i> work in progress... but you can already play! </div>
 	<div class="mainBand">
 		<div class="mainButton" ui-sref="loading" ng-click="play()" ng-if="emptySlot"> PLAY </div>
-		<div class="mainButton" ui-sref="game" ng-if="!emptySlot"> SEE </div>
+
+                <div class="timeBeforePlaying" ng-if="!emptySlot"> 
+			<span> Someone is playing: the game will be available in {{remainingtime}} seconds. </span> 
+		</div>
+<!--		<div class="mainButton" ui-sref="game" ng-if="!emptySlot"> SEE </div> -->
 		<div class="mainButton" ui-sref="howto"> HOW TO PLAY? </div>
 		<div class="mainButton" ui-sref="train"> TRAIN </div>
 		<div class="mainButton" ui-sref="about"> ABOUT </div>

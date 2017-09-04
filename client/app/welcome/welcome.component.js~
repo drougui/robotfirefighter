@@ -19,39 +19,24 @@ export class WelcomeComponent {
       $scope.emptySlot=response.data;
       console.log("emptySlot:")
       console.log(response.data);
-    })
-
-
-
-
-
-
-
-// TEST!!!! TO BE REMOVED
-$scope.monCompteur = 0;
-var blabla = setInterval(function() {
-  if ($scope.monCompteur <50 )
-  {
-    $scope.$apply(function () {
-      $scope.monCompteur = $scope.monCompteur+1;
     });
-  }
-  else{
-    $scope.monCompteur = 0;
-  }
-  console.log($scope.monCompteur);
-}, 200);
-// END TEST TO BE REMOVED
 
-
-
-
-
-
-
+    // get remaining time
+    var remainingTimeInterval = $interval(function() {
+      $http.get('/api/control/time').then(response => {
+        if(response.status === 200) {
+          $scope.remainingtime = response.data;
+        }
+      });
+    }, 500);
+    $scope.$on("$destroy", function() {
+      if (remainingTimeInterval) {
+        $interval.cancel(remainingTimeInterval);
+      }
+    });
 
     // test authorization for playing
-//    var token = "";
+    // var token = "";
     $rootScope.token = "";
     var myToken = $rootScope.token;
     $scope.play = function(){

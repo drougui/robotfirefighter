@@ -44,6 +44,11 @@ var automanualInterval;
 var timeoutOnManualAlarm;
 
 var autonomousRobot = 0;
+
+
+var writeAlarms = [];
+var writeUsedKeys = [];
+var writeClicks = [];
 // declare variables
 var xrobinet = 42;
 var mercurelevelfloat = 10;
@@ -102,6 +107,7 @@ var exec = require('child_process').exec;
 
 function killall(req, res) {
   if(req.body.token) {
+    writeClicks.add('giveUp');
     var decoded = jwt.decode(req.body.token, secret);
     console.log(decoded);
     if(decoded.auth && decoded.exp === global.expires){
@@ -119,6 +125,9 @@ function killall(req, res) {
       clearInterval(autonomyInterval);
       clearInterval(automanualInterval);
 
+      if(typeof wstream !== 'undefined' && wstream){
+        wstream.end();
+      }
       clearTimeout(timeoutOnManualAlarm);
       overlayOpen = false;
       cause = 0;
@@ -140,6 +149,10 @@ function killall(req, res) {
 
       currentAutonomyTime = 0;
       autonomousRobot = 0
+
+      writeAlarms = [];
+      writeUsedKeys = [];
+      writeClicks = [];
 
       xrobinet = 42;
       mercurelevelfloat = 10;
@@ -353,6 +366,7 @@ serverGet.on('message', function(message, remote) {
           alarmOverlayOpen = true;
           alarmCause = 0;
           alarmSituations[0] = true;
+          writeAlarms.push(alarmCause);
         }
     }
     if(batteryLevel >= 50){
@@ -481,7 +495,8 @@ serverGet.on('message', function(message, remote) {
       if(!alarmOverlayOpen && Math.random()>0.5){
         alarmOverlayOpen = true; // TODO ALARM HAS TO BE RANDOM!	
         alarmCause = 1;
-        alarmSituations[1] = true
+        alarmSituations[1] = true;
+        writeAlarms.push(alarmCause);
       }
     }
     if(mercurelevelfloat<=200){
@@ -572,55 +587,71 @@ router.post('/', function(req, res/*, next*/) {
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
     if(decoded.auth && decoded.exp === global.expires){
-      if(req.body.key == 'front' && autonomousRobot==0) {
-        udpMess = speedToUdpMess(0.0, 0.6);
-        buffer = new Buffer(udpMess);
-        client = dgram.createSocket('udp4');
-        client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-          if(err) throw err;
-          //console.log('UDP message sent to ' + HOST +':'+ PORT);
-          client.close();
-        });
-        clearTimeout(timeoutOnManualAlarm);
-      } else if(req.body.key == 'left' && autonomousRobot==0) {
-        udpMess = speedToUdpMess(0.05, 0.0);
-        buffer = new Buffer(udpMess);
-        client = dgram.createSocket('udp4');
-        client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-          if(err) throw err;
-          //console.log('UDP message sent to ' + HOST +':'+ PORT);
-          client.close();
-        });
-        clearTimeout(timeoutOnManualAlarm);
-      } else if(req.body.key == 'right' && autonomousRobot==0) {
-        udpMess = speedToUdpMess(-0.05, 0.0);
-        buffer = new Buffer(udpMess);
-        client = dgram.createSocket('udp4');
-        client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-          if(err) throw err;
-          //console.log('UDP message sent to ' + HOST +':'+ PORT);
-          client.close();
-        });
-        clearTimeout(timeoutOnManualAlarm);
-      } else if(req.body.key == 'back' && autonomousRobot==0) {
-        udpMess = speedToUdpMess(0.0, -0.6);
-        buffer = new Buffer(udpMess);
-        client = dgram.createSocket('udp4');
-        client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
-          if(err) throw err;
-          //console.log('UDP message sent to ' + HOST +':'+ PORT);
-          client.close();
-        });
-        clearTimeout(timeoutOnManualAlarm);
-      } else if(req.body.key == 'space' && autonomousRobot==0) {
-        throwWater();
-        clearTimeout(timeoutOnManualAlarm);
+      if(req.body.key == 'front') {
+        writeUsedKeys.push('front');
+        if(autonomousRobot==0){
+          udpMess = speedToUdpMess(0.0, 0.6);
+          buffer = new Buffer(udpMess);
+          client = dgram.createSocket('udp4');
+          client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+            if(err) throw err;
+            //console.log('UDP message sent to ' + HOST +':'+ PORT);
+            client.close();
+          });
+          clearTimeout(timeoutOnManualAlarm);
+        }
+      } else if(req.body.key == 'left') {
+        writeUsedKeys.push('left');
+        if(autonomousRobot==0){
+          udpMess = speedToUdpMess(0.05, 0.0);
+          buffer = new Buffer(udpMess);
+          client = dgram.createSocket('udp4');
+          client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+            if(err) throw err;
+            //console.log('UDP message sent to ' + HOST +':'+ PORT);
+            client.close();
+          });
+          clearTimeout(timeoutOnManualAlarm);
+        }
+      } else if(req.body.key == 'right') {
+        writeUsedKeys.push('right');
+        if(autonomousRobot==0){
+          udpMess = speedToUdpMess(-0.05, 0.0);
+          buffer = new Buffer(udpMess);
+          client = dgram.createSocket('udp4');
+          client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+            if(err) throw err;
+            //console.log('UDP message sent to ' + HOST +':'+ PORT);
+            client.close();
+          });
+          clearTimeout(timeoutOnManualAlarm);
+        }
+      } else if(req.body.key == 'back') {
+        writeUsedKeys.push('back');
+        if(autonomousRobot==0){
+          udpMess = speedToUdpMess(0.0, -0.6);
+          buffer = new Buffer(udpMess);
+          client = dgram.createSocket('udp4');
+          client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
+            if(err) throw err;
+            //console.log('UDP message sent to ' + HOST +':'+ PORT);
+            client.close();
+          });
+          clearTimeout(timeoutOnManualAlarm);
+        }
+      } else if(req.body.key == 'space') {
+        writeUsedKeys.push('space');
+        if(autonomousRobot==0){
+          throwWater();
+          clearTimeout(timeoutOnManualAlarm);
+        }
       }
       if(autonomousRobot==1 && !alarmSituations[4] && currentAutonomyTime>=3){
         if(!alarmOverlayOpen && Math.random()>0.5){
           alarmOverlayOpen = true; // TODO ALARM HAS TO BE RANDOM!	
           alarmCause = 4;
-          alarmSituations[4] = true
+          alarmSituations[4] = true;
+          writeAlarms.push(alarmCause);
         }
       }
       res.json({
@@ -660,6 +691,7 @@ router.get('/alarms', function(req, res) {
 });
 
 router.get('/removealarm', function(req, res) {
+  writeClicks.add('removeAlarm');
   alarmOverlayOpen = false;
   res.json();
   //alarmCause = (alarmCause + 1)%6;
@@ -688,6 +720,7 @@ function throwWater() {
       alarmOverlayOpen = true;
       alarmCause = 3;
       alarmSituations[3] = true;
+      writeAlarms.push(alarmCause);
     }
   }
 
@@ -715,7 +748,7 @@ function throwWater() {
     }
   }
   setTimeout(function() {
-          currentsplatch = false; // TODO ca doit etre pour ca le double splatch
+    currentsplatch = false; // TODO ca doit etre pour ca le double splatch
   }, 500); // enfin ça ;) -- update: maybe no bug anymore
 }
 
@@ -806,14 +839,17 @@ router.post('/watercontrol', function(req, res/*, next*/) {
     var decoded = jwt.decode(req.body.token, secret);
     if(decoded.auth && decoded.exp === global.expires){
       if(req.body.button == 'plusT') {
+        writeClicks.add('plus');
         if(faucetcontrol < 3) {
 	  faucetcontrol = faucetcontrol + 1;
         }
       } else if(req.body.button == 'minusT') {
+        writeClicks.add('minus');
         if(faucetcontrol > -3) {
           faucetcontrol = faucetcontrol - 1;
         }
       } else if(req.body.button == 'pushButton') { // WATER PUSH BUTTON
+        writeClicks.add('push');
         waterwidth = 7;
         var callCount = 1;
         clearInterval(repeater);
@@ -825,9 +861,11 @@ router.post('/watercontrol', function(req, res/*, next*/) {
             clearInterval(repeater);
           }
         }, 1000);
-      } else if(req.body.button == 'wrenchButton') { // WRENCH 
+      } else if(req.body.button == 'wrenchButton') { // WRENCH
+        writeClicks.add('wrench');
         wrenchmode = !wrenchmode;
       } else if(req.body.button == 'clickLeak') { // CLICK AT LEAK
+        writeClicks.add('clickLeak' + req.body.leakid);
         if(wrenchmode) {
           noleakat[req.body.leakid] = true;
           wrenchmode = false;
@@ -905,6 +943,7 @@ var ixe = zoneslocations[0].x;
 var igrec = zoneslocations[0].y;
 var firstTime = false;
 var tempxy = 1.0;
+var wstream;
 
 
 //var brokenContainer = false;
@@ -923,7 +962,100 @@ export function launchgame(req, res) {
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
     if(decoded.auth && decoded.exp === global.expires ){
+/*
+      fs.writeFile("/home/drougard/robotfirefighter/test.txt", "Test write", function(err){
+        if(err){
+          return console.log(err); 
+        }
+        console.log("FILE SAVED!");
+      });
+*/ 
+      var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
+      if(typeof wstream !== 'undefined' && wstream){
+        wstream.end();
+      }
+      var date = new Date();
+      // new file at each game, with date and time ex: record_2017_09_04__03_11.txt
+      wstream = fs.createWriteStream('records/record_' + date.getFullYear() + '_' + date.getMonth() + '_' + date.getDate() + '__' + date.getHours() + '_' + date.getMinutes() + '.txt');
+      wstream.write('# ip: ' + ip + '\n');
+      wstream.write('# remaining_time, autonomous_robot, alarm, robot_x, robot_y, robot_angle, trees_state, battery_level, temperature, water_level, ground_tank_water_level, leaks_number, used_keys, clicks \n');
+      
+      var stringWriteAlarms = "";
+      if (writeAlarms.length>0){
+        for(var i=0;i<writeAlarms.length;i++){
+          var comma = "\'";
+          if(i>0){
+            comma = ',';
+          }
+          stringWriteAlarms = stringWriteAlarms + comma + writeAlarms[i];
+        }
+      } else{
+        stringWriteAlarms = "\'-1";
+      }
+      stringWriteAlarms = stringWriteAlarms + "\'";
 
+      var stringWriteTreesStates = "";
+      for(var i=0;i<firesStatesOfTrees.length;i++){
+        var comma = '';
+        if(i>0){
+          comma = ',';
+        } else{
+          comma = "\'";
+        }
+        stringWriteTreesStates = stringWriteTreesStates + comma + firesStatesOfTrees[i];
+      }
+      stringWriteTreesStates = stringWriteTreesStates + "\'";
+
+      var stringWriteleaks = "";
+      for(var i=0;i<noleakat.length;i++){
+        var comma = '';
+        if(i>0){
+          comma = ',';
+        } else{
+          comma = "\'";
+        }
+        stringWriteleaks = stringWriteleaks + comma + !noleakat[i];
+      }
+      stringWriteleaks = stringWriteleaks + "\'";
+
+
+      var stringWriteUsedKeys = "";
+      if (writeUsedKeys.length>0){
+        for(var i=0;i<writeUsedKeys.length;i++){
+          var comma = "\'";
+          if(i>0){
+            comma = ',';
+          }
+          stringWriteUsedKeys = stringWriteUsedKeys + comma + writeUsedKeys[i];
+        }
+      } else{
+        stringWriteUsedKeys = "\'-1";
+      }
+      stringWriteUsedKeys = stringWriteUsedKeys + "\'";
+
+      var stringWriteClicks = "";
+      if (writeClicks.length>0){
+        for(var i=0;i<writeClicks.length;i++){
+          var comma = "\'";
+          if(i>0){
+            comma = ',';
+          }
+          stringWriteClicks = stringWriteClicks + comma + writeClicks[i];
+        }
+      } else{
+        stringWriteClicks = "\'-1";
+      }
+      stringWriteClicks = stringWriteClicks + "\'";
+
+      wstream.write(remainingtime + ', ' + autonomousRobot + ', ' + stringWriteAlarms + ', ' + robotx + ', ' + roboty + ', ' + roboto + ', ' + stringWriteTreesStates + ', ' + batteryLevel + ', ' + mercurelevelfloat + ', ' + watlevel + ', ' + watlevelContainer + ', ' + stringWriteleaks + ', ' + stringWriteUsedKeys + ', ' + stringWriteClicks + '\n');
+      writeAlarms = [];
+      writeUsedKeys = [];
+      writeClicks = [];
+      // creer un interval toutes (freq demi seconde) qui fait le wstream.write() d'une ligne bien formatée
+      // creer une variable par info qui se vide apres avoir ecrit
+      // temps, ACTIONS: autonomous/manual, alarmes, STATES: position du robot, etat des arbres, batterylevel, temp, 
+//watlevel, watertanklevel, nbleaks, HAI: touches claviers, cliks
+ 
       // clear intervals 
       clearInterval(waterManagementInterval);
       clearInterval(leaksInterval);
@@ -957,6 +1089,10 @@ export function launchgame(req, res) {
       alarmCause = 0;
       alarmSituations = [false,false,false,false,false,false];
 
+      writeAlarms = [];
+      writeUsedKeys = [];
+      writeClicks = [];
+
       autonomousRobot = 0
       xrobinet = 42;
       mercurelevelfloat = 10;
@@ -985,10 +1121,8 @@ export function launchgame(req, res) {
       numFightedFires = 0;
       finalNumFightedFires = 0;
 
-
+      // RANDOM AUTONOMOUS/MANUAL EVERY 10secs
       automanualInterval = setInterval(function() {
-
-        // TODO TODO TODO TODO TODO !! LANCER AUSSI AUTONOMOUSROBOT QUAND PLUS DE BATTERY ?!! NON...
         var myAlea = Math.random();
         // WITH PROBA 0.5   
         if(myAlea>0.5){ 
@@ -1000,9 +1134,29 @@ export function launchgame(req, res) {
             var client = dgram.createSocket('udp4');
             client.send(buffer, 0, buffer.length, PORT, HOST, function(err) {
               if(err) throw err;
-              console.log('Change to manual: abort sent to ' + HOST +':'+ PORT);
+              console.log('Change to manual: abort 1 sent to ' + HOST +':'+ PORT);
               client.close();
             });
+            setTimeout(function() {
+              var udpMess1 = abortMoveToUdpMess();
+              var buffer1 = new Buffer(udpMess1);
+              var client1 = dgram.createSocket('udp4');
+              client1.send(buffer1, 0, buffer1.length, PORT, HOST, function(err) {
+                if(err) throw err;
+                console.log('Change to manual: abort 2 sent to ' + HOST +':'+ PORT);
+                client1.close();
+              });
+            }, 500);
+            setTimeout(function() {
+              var udpMess2 = abortMoveToUdpMess();
+              var buffer2 = new Buffer(udpMess2);
+              var client2 = dgram.createSocket('udp4');
+              client2.send(buffer2, 0, buffer2.length, PORT, HOST, function(err) {
+                if(err) throw err;
+                console.log('Change to manual: abort 3 sent to ' + HOST +':'+ PORT);
+                client2.close();
+              });
+            }, 1000);
             // not in autonomous mode anymore
             alarmSituations[4] = false;
             // declare it with proba 0.5 (if not avoided by the use of the keyboard)
@@ -1011,6 +1165,7 @@ export function launchgame(req, res) {
                 alarmOverlayOpen = true;
                 alarmCause = 5;
                 alarmSituations[5] = true;
+                writeAlarms.push(alarmCause);
               }
             }, 3000);
             autonomousRobot = 0; // MANUAL ROBOT
@@ -1027,6 +1182,7 @@ export function launchgame(req, res) {
           goalIsATree = false;
           //batteryNeeded = false;
           batteryNeededSession = false;
+          waterNeededSession = false;
           //waterNeeded = false;
           alarmSituations[5] = false; // can be declared as not in manual mode anymore in alarms
           currentAutonomyTime = 0;
@@ -1184,7 +1340,6 @@ export function launchgame(req, res) {
       //=====================================================
       // tree burning randomization 
       //=====================================================
-      //console.log("CONTROL: tree burning randomization");
       var alea1 = -1;
       var alea2 = -1;
       var treenumber = -1;
@@ -1215,7 +1370,6 @@ export function launchgame(req, res) {
       //=====================================================
       // water management part: 
       //=====================================================
-      //console.log("CONTROL: water management part: ");
       var pivalue = 3.1415;
       var valveopening = 1;
       var widthwaterflow = 10 - Math.abs(vlvop);
@@ -1265,9 +1419,10 @@ export function launchgame(req, res) {
           watlevelContainer = 100;
         }
         if (watlevelContainer<15 && !alarmOverlayOpen && Math.random()>0.5 && !alarmSituations[7]){
-          alarmOverlayOpen = true; // TODO ALARM HAS TO BE RANDOM
+          alarmOverlayOpen = true;
           alarmCause = 7;
           alarmSituations[7] = true;
+          writeAlarms.push(alarmCause);
         }
         if (watlevelContainer>=25){
           alarmSituations[7] = false;
@@ -1279,17 +1434,89 @@ export function launchgame(req, res) {
   //=====================================================
   // remaining time part
   //=====================================================
-      //console.log("CONTROL: remaining time part");
       timeInterval = setInterval(function() {
         if(remainingtime > 0) {
           remainingtime = remainingtime - 1;
           if(remainingtime<=60 && !alarmSituations[2]){
             if(!alarmOverlayOpen && Math.random()>0.5){
               alarmOverlayOpen = true;
-              alarmCause = 2; // TODO ALARM HAS TO BE RANDOM
+              alarmCause = 2;
               alarmSituations[2] = true;
+              writeAlarms.push(alarmCause);
             }
           }
+          
+          var stringWriteAlarms = "";
+          if (writeAlarms.length>0){
+            for(var i=0;i<writeAlarms.length;i++){
+              var comma = "\'";
+              if(i>0){
+                comma = ',';
+              }
+              stringWriteAlarms = stringWriteAlarms + comma + writeAlarms[i];
+            }
+          } else{
+            stringWriteAlarms = "\'-1";
+          }
+          stringWriteAlarms = stringWriteAlarms + "\'";
+          
+          var stringWriteTreesStates = "";
+          for(var i=0;i<firesStatesOfTrees.length;i++){
+            var comma = '';
+            if(i>0){
+              comma = ',';
+            } else{
+              comma = "\'";
+            }
+            stringWriteTreesStates = stringWriteTreesStates + comma + firesStatesOfTrees[i];
+          }
+          stringWriteTreesStates = stringWriteTreesStates + "\'";
+
+          
+          var stringWriteleaks = "";
+          for(var i=0;i<noleakat.length;i++){
+            var comma = '';
+            if(i>0){
+              comma = ',';
+            } else{
+              comma = "\'";
+            }
+            stringWriteleaks = stringWriteleaks + comma + !noleakat[i];
+          }
+          stringWriteleaks = stringWriteleaks + "\'";
+
+          var stringWriteUsedKeys = "";
+          if (writeUsedKeys.length>0){
+            for(var i=0;i<writeUsedKeys.length;i++){
+              var comma = "\'";
+              if(i>0){
+                comma = ',';
+              }
+              stringWriteUsedKeys = stringWriteUsedKeys + comma + writeUsedKeys[i];
+            }
+          } else{
+            stringWriteUsedKeys = "\'-1";
+          }
+          stringWriteUsedKeys = stringWriteUsedKeys + "\'";
+
+          var stringWriteClicks = "";
+          if (writeClicks.length>0){
+            for(var i=0;i<writeClicks.length;i++){
+              var comma = "\'";
+              if(i>0){
+                comma = ',';
+              }
+              stringWriteClicks = stringWriteClicks + comma + writeClicks[i];
+            }
+          } else{
+            stringWriteClicks = "\'-1";
+          }
+          stringWriteClicks = stringWriteClicks + "\'";
+
+          wstream.write(remainingtime + ', ' + autonomousRobot + ', ' + stringWriteAlarms + ', ' + robotx + ', ' + roboty + ', ' + roboto + ', ' + stringWriteTreesStates + ', ' + batteryLevel + ', ' + mercurelevelfloat + ', ' + watlevel + ', ' + watlevelContainer + ', ' + stringWriteleaks + ', ' + stringWriteUsedKeys + ', ' + stringWriteClicks + '\n');
+          writeAlarms = [];
+          writeUsedKeys = [];
+          writeClicks = []; 
         }
         else{
           overlayOpen = true;
@@ -1412,6 +1639,9 @@ global.stopGame = function() {
   clearInterval(autonomyInterval);
   clearInterval(automanualInterval);
 
+  if(typeof wstream !== 'undefined' && wstream){
+    wstream.end();
+  }
   alarmOverlayOpen = false;
   alarmCause = 0;
   alarmSituations = [false,false,false,false,false,false];
@@ -1429,7 +1659,11 @@ global.stopGame = function() {
   waterNeededSession = false;
 
   currentAutonomyTime = 0;
-  autonomousRobot = 0
+  autonomousRobot = 0;
+
+  writeAlarms = [];
+  writeUsedKeys = [];
+  writeClicks = [];
 
   xrobinet = 42;
   mercurelevelfloat = 10;

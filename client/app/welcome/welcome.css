@@ -24,7 +24,7 @@
 	width: 100%;
 	display: flex;
 	justify-content: space-around;
-	height: 10%;
+	height: 25%;
 /*	background-color: yellow;*/
 }
 
@@ -69,4 +69,15 @@
 
 .thanks{
 	font-size: 0.8vw;
+}
+
+.timeBeforePlaying{
+	font-size: 200%;
+	padding: 2%;
+	border: solid #333 0.3vw;
+	border-radius: 0.5vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 27vw;
 }
