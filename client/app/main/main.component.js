@@ -14,7 +14,8 @@ export class MainController {
 
   /*@ngInject*/
   constructor($http, $scope, socket, hotkeys, $timeout, $interval, sharedProperties, $rootScope, $window) {
-
+    $scope.user = {};
+    $scope.user.pseudo = "";
     //---------------------
     // for online version:
     // -using nginx
@@ -203,9 +204,11 @@ export class MainController {
           $scope.overlayOpen = response.data[0];
           $scope.cause = response.data[1];
           $scope.finalnumfires = response.data[2];
+          $scope.newBestScore = response.data[3];
           console.log($scope.overlayOpen);
           console.log($scope.cause);
           console.log($scope.finalnumfires);
+          console.log($scope.user.pseudo);
         }
       });
 
@@ -302,10 +305,20 @@ export class MainController {
        }
      });
 
-    $scope.gohome = function(){
-       $timeout(function() {
-         $window.location.reload();
-        }, 100);
+    $scope.gohome = function(){ 
+      if($scope.newBestScore){
+        $http.post('/api/control/pseudo', {pseudo: $scope.user.pseudo}).then(response => { // sans token, pas secure!
+          if(response.status === 200) {
+            console.log($scope.user.pseudo);
+            console.log("new pseudo sent");
+          } else{
+            console.log('nok pseudo');
+          }
+        });
+      }
+      $timeout(function() {
+        $window.location.reload();
+      }, 100);
     }
     var myToken = $rootScope.token;
     $scope.killall = function(){

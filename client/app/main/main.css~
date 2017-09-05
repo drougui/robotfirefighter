@@ -122,6 +122,21 @@
 	width: 37vw;
 }
 
+.newbestscore{
+	margin-top: 5vw;
+	font-size: 3vw;
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 55vw;
+}
+
+.newbestscore input{
+	width: 10vw;
+	color: black;
+}
+
 .gohome{
 	margin-top: 2vw;
 	font-size: 2vw;
@@ -1840,6 +1855,7 @@
 	width: 3vw; 
 	height: 3vw;
 	background-size: 100% 100%;
-	background-image: url("/assets/images/keyboard.png");
+/*	background-image: url("/assets/images/keyboard.png");*/
+	background-image: url("/assets/images/controller.png");
 	margin-right: 1vw;
 }

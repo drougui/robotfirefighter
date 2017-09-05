@@ -47,6 +47,7 @@
 @import 'howto/howto.css';
 @import 'loading/loading.css';
 @import 'main/main.css';
+@import 'scores/scores.css';
 @import 'train/train.css';
 @import 'welcome/welcome.css';
 @import '../components/footer/footer.css';

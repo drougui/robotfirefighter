@@ -1,0 +1,25 @@
+<div class="scoresScreen">
+	<div class="scoresTitle">
+		<i class="fa fa-trophy" aria-hidden="true"></i> Best scores:
+	</div>
+	<div class="bestScores">
+		<div class="scoresNames">
+			<span> NAME </span>
+			<div ng-repeat="(key, value) in currentScores">
+				<i class="fa fa-fire-extinguisher" aria-hidden="true"></i> {{value.name}}
+			</div>
+		</div>
+		<div class="scoresValues">
+			<span> SCORE </span>
+			<div ng-repeat="(key, value) in currentScores">
+				{{value.score}}
+			</div>
+		</div>
+		<div class="scoresDates">
+			<span> DATE </span>
+			<div ng-repeat="(key, value) in currentScores">
+				{{value.date}}
+			</div>
+		</div>
+	</div>
+</div>

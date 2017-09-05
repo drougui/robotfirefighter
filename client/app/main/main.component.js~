@@ -14,12 +14,15 @@ export class MainController {
 
   /*@ngInject*/
   constructor($http, $scope, socket, hotkeys, $timeout, $interval, sharedProperties, $rootScope, $window) {
-
-    // for online version
-    // using nginx
+    $scope.user = {};
+    $scope.user.pseudo = "";
+    //---------------------
+    // for online version:
+    // -using nginx
     //$scope.address = "http://dev.humanrobotinteraction.fr/test";
-    // without nginx (networks blocking ports cannot see the video)
+    // -without nginx (networks blocking ports cannot see the video)
     //$scope.address = "http://dev.humanrobotinteraction.fr:8081/?action=stream";
+    //---------------------
     // for local version
     $scope.address = "http://localhost:8081/?action=stream";      
 
@@ -201,9 +204,11 @@ export class MainController {
           $scope.overlayOpen = response.data[0];
           $scope.cause = response.data[1];
           $scope.finalnumfires = response.data[2];
+          $scope.newBestScore = response.data[3];
           console.log($scope.overlayOpen);
           console.log($scope.cause);
           console.log($scope.finalnumfires);
+          console.log($scope.user.pseudo);
         }
       });
 
@@ -301,9 +306,19 @@ export class MainController {
      });
 
     $scope.gohome = function(){
-       $timeout(function() {
-         $window.location.reload();
-        }, 100);
+      if($scope.newBestScore){
+        $http.post('/api/control/pseudo', {pseudo: $scope.user.pseudo}).then(response => {
+          if(response.status === 200) {
+            console.log($scope.user.pseudo);
+            console.log("new pseudo sent");
+          } else{
+            console.log('nok pseudo');
+          }
+        });
+      }
+/*      $timeout(function() {
+        $window.location.reload();
+      }, 100);*/ // A REMETTRE TODO
     }
     var myToken = $rootScope.token;
     $scope.killall = function(){

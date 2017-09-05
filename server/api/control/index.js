@@ -27,6 +27,17 @@ router.get('/zones', function(req, res) {
   res.json(chaine2);
 });
 
+//=====================================================
+// define scores using scores.json
+//=====================================================
+var chaine3 = fs.readFileSync('../driving-human-robots-interaction/scores.json', 'UTF-8');
+var scores = JSON.parse(chaine3);
+console.log('SCORES');
+console.log(scores);
+router.get('/scores', function(req, res) {
+  chaine3 = fs.readFileSync('../driving-human-robots-interaction/scores.json', 'UTF-8');
+  res.json(chaine3);
+});
 
 
 // declare intervals
@@ -44,7 +55,9 @@ var automanualInterval;
 var timeoutOnManualAlarm;
 
 var autonomousRobot = 0;
-
+var rewardsSum = 0;
+var newBestScore = false;
+var rank = 0;
 
 var writeAlarms = [];
 var writeUsedKeys = [];
@@ -219,7 +232,7 @@ function start(req, res) {
 
 var PORT = 9000;
 var PORTGET = 9010;
-var HOST = 'localhost'; // TODO real address
+var HOST = 'localhost';
 var dgram = require('dgram');
 var serverGet = dgram.createSocket('udp4');
 serverGet.on('listening', function() {
@@ -493,7 +506,7 @@ serverGet.on('message', function(message, remote) {
     }
     if(mercurelevelfloat>200 && !alarmSituations[1]){
       if(!alarmOverlayOpen && Math.random()>0.5){
-        alarmOverlayOpen = true; // TODO ALARM HAS TO BE RANDOM!	
+        alarmOverlayOpen = true;	
         alarmCause = 1;
         alarmSituations[1] = true;
         writeAlarms.push(alarmCause);
@@ -648,7 +661,7 @@ router.post('/', function(req, res/*, next*/) {
       }
       if(autonomousRobot==1 && !alarmSituations[4] && currentAutonomyTime>=3){
         if(!alarmOverlayOpen && Math.random()>0.5){
-          alarmOverlayOpen = true; // TODO ALARM HAS TO BE RANDOM!	
+          alarmOverlayOpen = true;	
           alarmCause = 4;
           alarmSituations[4] = true;
           writeAlarms.push(alarmCause);
@@ -681,7 +694,7 @@ router.get('/robot', function(req, res) {
 
 // give end/gameover state
 router.get('/finished', function(req, res) {
-  res.json([overlayOpen,cause,finalNumFightedFires]);
+  res.json([overlayOpen,cause,finalNumFightedFires,newBestScore]);
 });
 
 
@@ -826,6 +839,18 @@ function abortMoveToUdpMess() {
   return udpMess;
 }
 
+
+router.post('/pseudo', function(req, res/*, next*/) {
+  if(0<=rank && rank<10){
+    scores[rank].name = req.body.pseudo;
+    console.log("PSEUDO!!!");
+    console.log("PSEUDO!!!");
+    console.log(req.body.pseudo);
+    var newChaine = JSON.stringify(scores);
+    fs.writeFileSync('../driving-human-robots-interaction/scores.json', newChaine, 'UTF-8');
+  }
+  rank = 10; // vanne secure
+});
 
 
 var waterwidth = 0;
@@ -976,7 +1001,7 @@ export function launchgame(req, res) {
       }
       var date = new Date();
       // new file at each game, with date and time ex: record_2017_09_04__03_11.txt
-      wstream = fs.createWriteStream('records/record_' + date.getFullYear() + '_' + date.getMonth() + '_' + date.getDate() + '__' + date.getHours() + '_' + date.getMinutes() + '.txt');
+      wstream = fs.createWriteStream('records/record_' + date.getFullYear() + '_' + (date.getMonth()+1) + '_' + date.getDate() + '__' + date.getHours() + '_' + date.getMinutes() + '.txt');
       wstream.write('# ip: ' + ip + '\n');
       wstream.write('# remaining_time, autonomous_robot, alarm, robot_x, robot_y, robot_angle, trees_state, battery_level, temperature, water_level, ground_tank_water_level, leaks_number, used_keys, clicks \n');
       
@@ -1051,6 +1076,11 @@ export function launchgame(req, res) {
       writeAlarms = [];
       writeUsedKeys = [];
       writeClicks = [];
+      for(var i = 0; i<firesStatesOfTrees.length;i++){
+        if(!firesStatesOfTrees[i]){
+          rewardsSum = rewardsSum+1;
+        }
+      }
       // creer un interval toutes (freq demi seconde) qui fait le wstream.write() d'une ligne bien formatée
       // creer une variable par info qui se vide apres avoir ecrit
       // temps, ACTIONS: autonomous/manual, alarmes, STATES: position du robot, etat des arbres, batterylevel, temp, 
@@ -1092,6 +1122,10 @@ export function launchgame(req, res) {
       writeAlarms = [];
       writeUsedKeys = [];
       writeClicks = [];
+
+      newBestScore = false;
+      rewardsSum = 0;
+      rank = 0;
 
       autonomousRobot = 0
       xrobinet = 42;
@@ -1195,7 +1229,7 @@ export function launchgame(req, res) {
       //=====================================================
       // Robot Autonomy
       //=====================================================
-      autonomyInterval = setInterval(function() { // TODO "goto waterzone" management + moins d'eau sinon on ne recharge qu'une fois + plus de battery car c'est chiant
+      autonomyInterval = setInterval(function() {
         console.log("Robot Autonomy -- MAIN INTERVAL");
 
         if( (autonomousRobot==1) && batteryNeeded && !batteryNeededSession){ 
@@ -1517,6 +1551,11 @@ export function launchgame(req, res) {
           writeAlarms = [];
           writeUsedKeys = [];
           writeClicks = []; 
+          for(var i = 0; i<firesStatesOfTrees.length;i++){
+            if(!firesStatesOfTrees[i]){
+              rewardsSum = rewardsSum+1;
+            }
+          }
         }
         else{
           overlayOpen = true;
@@ -1625,6 +1664,40 @@ router.get('/robotwater', function(req, res) {
 
 // used in auth
 global.stopGame = function() { 
+
+  // new best score ? TODO gerer le nom du joueur a l'aide de la variable new best score 
+  // TODO a mettre au debut de killall aussi voire fusionner les 2, TODO comparer rewardsSum pour raffiner 
+  console.log("NEW BEST SCORE ??????");
+  console.log("NEW BEST SCORE ??????");
+  console.log("NEW BEST SCORE ??????");
+  console.log("NEW BEST SCORE ??????");
+  while(rank<10 && scores[rank].score>=finalNumFightedFires){
+    rank++;
+  }
+  console.log("rank");
+  console.log(rank);
+  console.log("finalNumFightedFires");
+  console.log(finalNumFightedFires);
+  if(rank<10){
+    newBestScore = true;
+    for(var i=9; i>rank; i--){
+      scores[i].name = scores[i-1].name;
+      scores[i].score = scores[i-1].score;
+      scores[i].date = scores[i-1].date;
+      scores[i].reward = scores[i-1].reward;
+    }
+    scores[rank].name = "anonym" + rewardsSum;
+    scores[rank].score = finalNumFightedFires;
+    var date = new Date();
+    scores[rank].date = (date.getMonth()+1) + '/' + date.getDate() + '/' + date.getFullYear() + ', ' + date.getHours() + ':' + date.getMinutes();
+    scores[rank].reward = rewardsSum;
+    var newChaine = JSON.stringify(scores);
+    fs.writeFileSync('../driving-human-robots-interaction/scores.json', newChaine, 'UTF-8');
+  }
+
+
+
+
   exec('bash ~/driving-human-robots-interaction/killAll.sh');
 
   // clear intervals 

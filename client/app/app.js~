@@ -33,8 +33,7 @@ import './app.css';
 angular.module('videogameApp', [ngCookies, ngResource, ngSanitize, 'btford.socket-io', uiRouter,
   uiBootstrap, navbar, footer, main, welcome, AboutComponent, LoadingComponent, TrainComponent, HowtoComponent, constants, socket, util, 'cfp.hotkeys'
 ]).service('sharedProperties', function () {
-        var property = 'First';
-
+        var property = "";
         return {
             getProperty: function () {
                 return property;

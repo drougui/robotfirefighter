@@ -122,6 +122,21 @@
 	width: 37vw;
 }
 
+.newbestscore{
+	margin-top: 5vw;
+	font-size: 3vw;
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 55vw;
+}
+
+.newbestscore input{
+	width: 15vw;
+	color: black;
+}
+
 .gohome{
 	margin-top: 2vw;
 	font-size: 2vw;

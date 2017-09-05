@@ -1,0 +1,44 @@
+.scoresScreen{
+	height: 96vh;
+	width: 100vw;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.scoresTitle{
+	font-size: 7vh;
+}
+
+.bestScores{
+	width: 95vw;
+	display: flex;
+	font-size: 4vh;
+	justify-content: space-around;
+	height: 90vh;
+}
+
+.scoresNames{
+	width: 30vw;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+}
+
+.scoresValues{
+	width: 5vw;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+}
+
+.scoresDates{
+	width: 40vw;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+	font-size: 3vh;
+}
+
