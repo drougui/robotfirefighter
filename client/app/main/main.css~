@@ -133,7 +133,7 @@
 }
 
 .newbestscore input{
-	width: 10vw;
+	width: 15vw;
 	color: black;
 }
 

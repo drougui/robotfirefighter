@@ -18,6 +18,8 @@
 
 .mainmsg{
 	font-size: 250%;
+	display: flex;
+	align-items: flex-end;
 }
 
 .mainBand{
@@ -45,7 +47,7 @@
 	width: 50%;
 	display: flex;
 	justify-content: space-around;
-	height: 20%;
+	height: 10%;
 }
 
 .dassault{
@@ -80,4 +82,39 @@
 	justify-content: center;
 	align-items: center;
 	width: 27vw;
+}
+
+.allThanks{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.bold{
+	font-weight: bold;
+}
+
+.tapwater{
+	background-image: url("/assets/images/tapwater.png");
+	width: 3vw;
+	height: 3vw;
+	background-size: 3vw 3vw;
+	margin-left: 0.5vw;
+}
+
+.mainmsgs .brain{
+	margin-left: 1vw;
+}
+
+.mainmsgs .fireicon{
+	margin-left: 1vw;
+	margin-right: 1vw;
+}
+
+.mainmsgs .keyboard{
+	margin-left: 1vw;
+	margin-right: 1vw;
+	width: 2.7vw;
+	height: 2.7vw;
+	background-size: 2.7vw 2.7vw;
 }

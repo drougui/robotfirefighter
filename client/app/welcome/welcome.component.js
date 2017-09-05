@@ -13,13 +13,7 @@ export class WelcomeComponent {
     this.socket = socket;
     //this.$scope = $scope;
 
-    // display the appropriate interface?
-    $http.get('/api/auth').then(response => {
-      console.log(response);
-      $scope.emptySlot=response.data;
-      console.log("emptySlot:")
-      console.log(response.data);
-    });
+
 
     // get remaining time
     var remainingTimeInterval = $interval(function() {
@@ -28,7 +22,14 @@ export class WelcomeComponent {
           $scope.remainingtime = response.data;
         }
       });
-    }, 500);
+      // display the appropriate interface? // WARNING!!! MIS LA POUR QUE EMPTYSLOT SE METTE A JOUR (pas testé)
+      $http.get('/api/auth').then(response => {
+        console.log(response);
+        $scope.emptySlot=response.data;
+        console.log("emptySlot:")
+        console.log(response.data);
+      });
+    }, 1000);
     $scope.$on("$destroy", function() {
       if (remainingTimeInterval) {
         $interval.cancel(remainingTimeInterval);

@@ -1665,8 +1665,9 @@ router.get('/robotwater', function(req, res) {
 // used in auth
 global.stopGame = function() { 
 
-  // new best score ? TODO gerer le nom du joueur a l'aide de la variable new best score 
-  // TODO a mettre au debut de killall aussi voire fusionner les 2, TODO comparer rewardsSum pour raffiner 
+  // new best score ?  
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO a mettre au debut de killall aussi voire fusionner les 2 (ou pas)
+  // TODO comparer rewardsSum pour raffiner 
   console.log("NEW BEST SCORE ??????");
   console.log("NEW BEST SCORE ??????");
   console.log("NEW BEST SCORE ??????");

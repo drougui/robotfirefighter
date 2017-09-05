@@ -1,21 +1,30 @@
 <div class="page">
 	<div class="mainmsgs">
-		<div class="mainmsg"> Welcome at HoRIzon's webpage.</div> 
-		<div class="mainmsg"> The Robot Firefighter game is waiting for you! </div>
+		<div class="mainmsg"> Welcome at HoRIzon's webpage hosting the <span class="bold"> firefighter robot game </span> </div> 
+<!-- div class="mainmsg">  is waiting for you! </div> -->
 	</div>
+	
 	<div class="logos"> <div class="dassault"> </div> <!-- <div class="supaero"> </div> --> </div>
-	<div class="mainmsg"> <i class="fa fa-wrench" aria-hidden="true"></i> work in progress... but you can already play! </div>
+	<div class="mainmsgs">	
+		<div class="mainmsg"> <span> Try to fight fires </span> <div class="fireicon"> </div> <span> with a ground robot </span> <div class="brain"> </div> </div>
+		<div class="mainmsg"> <span> by controlling it </span> <div class="keyboard"> </div> <span> when it loses its autonomy </span> </div>
+		<div class="mainmsg"> <span> and by managing its water tank </span> <div class="tapwater"> </div>  </div>
+	</div>
 	<div class="mainBand">
+		<div class="mainButton" ui-sref="howto"> RULES </div>
+		<div class="mainButton" ui-sref="train"> TRAIN </div>		
 		<div class="mainButton" ui-sref="loading" ng-click="play()" ng-if="emptySlot"> PLAY </div>
 
                 <div class="timeBeforePlaying" ng-if="!emptySlot"> 
 			<span> Someone is playing: the game will be available in {{remainingtime}} seconds. </span> 
 		</div>
-<!--		<div class="mainButton" ui-sref="game" ng-if="!emptySlot"> SEE </div> -->
-		<div class="mainButton" ui-sref="howto"> HOW TO PLAY? </div>
-		<div class="mainButton" ui-sref="train"> TRAIN </div>
+<!--		<div class="mainButton" ui-sref="game" ng-if="!emptySlot"> SEE </div> -->		
+		
 		<div class="mainButton" ui-sref="scores"> SCORES </div>		
 		<div class="mainButton" ui-sref="about"> ABOUT </div>
 	</div>
-	<div class="thanks"> Thanks to EmojiOne for providing free emoji icons. Font Awesome by Dave Gandy - http://fontawesome.io </div>
+	<div class="allThanks">
+		<div class="thanks"> By <span class="bold"> Nicolas Drougard</span>. Many thanks to Corentin Chauffaut and Pascal Chauvin for the robotic framework. firstname.name@isae-supaero.fr </div>
+		<div class="thanks"> Thanks to EmojiOne for providing free emoji icons. Font Awesome by Dave Gandy - http://fontawesome.io </div> 
+	</div>
 </div>
