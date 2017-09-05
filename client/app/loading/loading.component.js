@@ -12,15 +12,21 @@ export class LoadingComponent {
   constructor($http, $scope, socket, $interval, $timeout, sharedProperties, $rootScope) {
     'ngInject';
     $scope.playEnabled = false;
+    $scope.lostGame = false;
     this.$http = $http;
     this.socket = socket;
     $scope.dot = 0;
+    var standBy = false;
     var servercall = $interval(function() { 
       $http.get('/api/auth/gameready').then(response => { // TODO POST TOKEN TO AVOID AN OTHER VISITOR TO GET THE INFORMATION (MAKING THE PLAYER UNABLE TO CLICK)
         if(response.status === 200) {
           //console.log(response.data);
-          if(response.data) {
+          if(standBy && response.data){
+            $scope.lostGame = true;
+          }
+          if(response.data && !standBy) {
             $scope.playEnabled = true;
+            standBy = true;
             //console.log('server informs that game is ready!');
           }
         }

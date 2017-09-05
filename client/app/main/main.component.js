@@ -718,8 +718,8 @@ down arrow 	40
 //  WATER: SD A E
     hotkeys.add('s', 'tapleft', $scope.faucetctrlfctminus);
     hotkeys.add('d', 'tapright', $scope.faucetctrlfctplus);
-    hotkeys.add('a', 'pushbutton', $scope.waterPushButton);
-    hotkeys.add('e', 'wrench', $scope.wrenchOnOff);
+    hotkeys.add('e', 'pushbutton', $scope.waterPushButton);
+    hotkeys.add('a', 'wrench', $scope.wrenchOnOff);
 
 /*
     hotkeys.add('0', 'tozero', $scope.tozero);

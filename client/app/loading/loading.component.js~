@@ -63,7 +63,7 @@ export class LoadingComponent {
           console.log("le token est ok, la partie js du jeu est lancée");
           // kill timeout TODO a mettre au début de main.component.js si ça se lance pas
           console.log("post token to auth/killTimeout");
-          $http.post('/api/auth/killTimeout', {token: myToken}).then(response => {      
+          $http.post('/api/auth/killtimeout', {token: myToken}).then(response => {      
             console.log("letsplay -- auth/killTimeout -- response: ");
             console.log(response);
             if(response.status === 200){

@@ -8,6 +8,7 @@
 							<i class="fa fa-tint" aria-hidden="true"></i>
 						</div>
 						<div class="robinetcontainer">
+							<div class="arrowShowing"> <i class="fa fa-arrow-down" aria-hidden="true"></i> </div>
 							<div class="robinet" ng-style="{left: xrobinet+2+'%', bottom: yrobinet/1.8 + 46 +'%'}"> 
 							</div>
 							<div class="wheel" ng-if="direction!=0" ng-class="{wheelinverse: direction<0}"  ng-style="{left: xrobinet+7.9+'%', bottom: yrobinet/1.8+60+'%', 'animation-duration': animtime + 's'}"> 
@@ -46,7 +47,7 @@
 								</div>
 							</div>
 							<div class="wmbuttons">
-								<i class="fa fa-mouse-pointer" aria-hidden="true"></i>
+								<!-- <i class="fa fa-mouse-pointer" aria-hidden="true"></i> -->
 								<div class="speed">  
 									<div class="wheelsmall2"> </div> 
 									<div> speed: {{faucetcontrolShow}} </div>
@@ -131,7 +132,7 @@
 					</div>
 				</div>
 			</div>
-			<div ui-sref="welcome" class="gohome"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>	
+			<div ui-sref="welcome" class="gohomeTrain"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>	
 			<!--<button ui-sref="welcome"> BACK </button>-->	
 		</div>
 	</div>

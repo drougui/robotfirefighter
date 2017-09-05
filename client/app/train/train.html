@@ -8,6 +8,7 @@
 							<i class="fa fa-tint" aria-hidden="true"></i>
 						</div>
 						<div class="robinetcontainer">
+							<div class="arrowShowing"> <i class="fa fa-arrow-down" aria-hidden="true"></i> </div>
 							<div class="robinet" ng-style="{left: xrobinet+2+'%', bottom: yrobinet/1.8 + 46 +'%'}"> 
 							</div>
 							<div class="wheel" ng-if="direction!=0" ng-class="{wheelinverse: direction<0}"  ng-style="{left: xrobinet+7.9+'%', bottom: yrobinet/1.8+60+'%', 'animation-duration': animtime + 's'}"> 
@@ -46,7 +47,7 @@
 								</div>
 							</div>
 							<div class="wmbuttons">
-								<i class="fa fa-mouse-pointer" aria-hidden="true"></i>
+								<!-- <i class="fa fa-mouse-pointer" aria-hidden="true"></i> -->
 								<div class="speed">  
 									<div class="wheelsmall2"> </div> 
 									<div> speed: {{faucetcontrolShow}} </div>
@@ -72,13 +73,13 @@
 										<div class="buttonTap">
 										</div>
 									</div>
-									<div class="char"> a </div>
+									<div class="char"> e </div>
 								</div>
 								<div class="buttonletterChar">
 									<div class="wrenchButton" ng-class="{'cursorPointer': !wrenchmodeTrain}" ng-click="wrenchOnOff()">
 										<i class="fa fa-wrench" aria-hidden="true"></i>
 									</div>
-									<div class="char"> e </div>
+									<div class="char"> a </div>
 								</div>
 							</div>
 						</div>

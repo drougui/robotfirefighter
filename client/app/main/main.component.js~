@@ -38,6 +38,7 @@ export class MainController {
       $scope.alarmOverlayOpen = false;
       $http.get('/api/control/removealarm').then(response => {
         if(response.status === 200) {
+          $scope.alarmOverlayOpen = false;
         }
       });
     }

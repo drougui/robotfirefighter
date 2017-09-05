@@ -1,0 +1,6 @@
+# ip: 127.0.0.1
+# remaining_time, autonomous_robot, alarm, robot_x, robot_y, robot_angle, trees_state, battery_level, temperature, water_level, ground_tank_water_level, leaks_number, used_keys, clicks 
+600, 0, '-1', -0.000024805087377899326, -0.000004769347469846252, 0.00016618723748251796, 'false,false,false,false,false,false,false,false,false', 100, 50, 50, 50, 'false,false,false,false,false,false,false,false,false', '-1', '-1'
+599, 0, '-1', -0.000024805087377899326, -0.000004769347469846252, 0.00016618723748251796, 'false,false,false,false,false,false,false,false,false', 100, 10, 50, 50, 'false,false,false,false,false,false,false,false,false', '-1', '-1'
+598, 0, '-1', -0.000024805087377899326, -0.000004769347469846252, 0.00016618723748251796, 'false,false,false,false,false,false,false,false,false', 99, 10, 50, 50, 'false,false,false,false,false,false,false,false,false', '-1', '-1'
+597, 0, '-1', -0.000024805087377899326, -0.000004769347469846252, 0.00016618723748251796, 'false,false,false,true,false,false,false,false,false', 99, 10, 50, 50, 'false,false,false,false,false,false,false,false,false', '-1', '-1'

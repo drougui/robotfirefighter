@@ -1,10 +1,16 @@
 <div class="loading">
-	<div class="loadpart">
+	<div class="loadpart" ng-if="!playEnabled && !lostGame">
 		<span> LOADING <span ng-if="dot>0">.</span><span ng-if="dot>1">.</span><span ng-if="dot>2">.</span></span>
 	</div>
+        <div class="loadpart" ng-if="playEnabled && !lostGame">
+		<span> LOADED! </span>
+	</div>
+	<div class="loadpart" ng-if="lostGame">
+		<span> TO LATE! </span>
+	</div>
 	<!-- <span class="advice"> Press F11 for a better experience </span> -->
-	<span class="advice"> Please do not refresh web pages from now! </span>
-	<div class="reminders" ng-if="!playEnabled">
+	<span class="advice" ng-if="!lostGame"> Please do not refresh web pages from now! </span>
+	<div class="reminders" ng-if="!playEnabled && !lostGame">
 		<div class="watermanagementLoading">
 			<div> <i class="fa fa-tint" aria-hidden="true"></i> Ground tank water management: </div>
 			<div class="explainkeys">		
@@ -78,5 +84,6 @@
 			</div>-->
 		</div>
 	</div>
-	<div class="letsplaybutton" ui-sref="game"  ui-sref-opts="{reload: true}" ng-if="playEnabled" ng-click="letsplay()"> Click here to play! </div>
+	<div class="letsplaybutton" ui-sref="game"  ui-sref-opts="{reload: true}" ng-if="playEnabled && !lostGame" ng-click="letsplay()"> Click here to play! </div>
+	<div ui-sref="welcome" class="gohomeTrain" ng-if="lostGame"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>
 </div>

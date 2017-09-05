@@ -963,6 +963,14 @@
 	width: 100%;
 }
 
+.arrowShowing{
+	position: absolute;
+	top: 23%;
+	right: 53%;
+	color: #333;
+	font-size: 2vw;
+}
+
 .robinet{
 	background-image: url("/assets/images/robinetWHITE.png");
 	width: 5vw;
@@ -1001,23 +1009,24 @@
 	z-index: 3;
 }
 
+
 .wheelsmall2{
 	background-image: url("/assets/images/wheelBlack.png");
 	/*border-radius: 50%;
 	background-color: white;*/
-	height: 2vh;
-	width: 2vh;
-	background-size: 2vh 2vh;
+	height: 2.5vh;
+	width: 2.5vh;
+	background-size: 2.5vh 2.5vh;
 	z-index: 3;
 }
 
 
 .speed{
 	display: flex;
-	font-size: 1vw;
+	font-size: 1.5vw;
 	justify-content: space-around;
 	align-items: center;
-	width: 6vw;
+	width: 9vw;
 }
 
 .wheelinverse{

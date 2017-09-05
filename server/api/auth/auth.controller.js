@@ -116,6 +116,7 @@ var server = net.createServer(function(socket) {
     console.log(global.token);
     console.log('Auth -- Kill game.');
     exec('bash ~/driving-human-robots-interaction/killAll.sh');
+    global.isgameready = true; // TO SAY IT IS DEAD
   }, 30000);
 });
 server.listen(50002, 'localhost');

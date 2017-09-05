@@ -426,7 +426,8 @@ serverGet.on('message', function(message, remote) {
 
   if(autonomousRobot==1 && goalIsATree) {
       if( Math.sqrt( Math.pow(currentGoalX - (parseFloat(robotx)+2*Math.cos(roboto)) , 2) 
-+ Math.pow(currentGoalY- (parseFloat(roboty)+2*Math.sin(roboto)), 2) ) < 1.0 ){
++ Math.pow(currentGoalY- (parseFloat(roboty)+2*Math.sin(roboto)), 2) ) < 1.0  || Math.sqrt( Math.pow(currentGoalX - (parseFloat(robotx)+ 0.5*Math.cos(roboto)) , 2) 
++ Math.pow(currentGoalY- (parseFloat(roboty)+0.5*Math.sin(roboto)), 2) ) < 1.0){
         if(!abortSession) {
           udpMess = abortMoveToUdpMess();
           buffer = new Buffer(udpMess);
@@ -1415,7 +1416,7 @@ export function launchgame(req, res) {
       var pivalue = 3.1415;
       var valveopening = 1;
       var widthwaterflow = 10 - Math.abs(vlvop);
-      var coeffspeed = 25;
+      var coeffspeed = 20;
       var coeffspeedopening = 0.1;
       var faucetxaxis = 2 * 10 / 40;
       waterManagementInterval = setInterval(function() {

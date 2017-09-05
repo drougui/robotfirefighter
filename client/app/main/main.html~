@@ -180,7 +180,7 @@ leaks/wrench/etc in server files-->
 					</div>
 -->
 					<div class="wmbuttons">
-						<i class="fa fa-mouse-pointer" aria-hidden="true"></i>
+						<!-- <i class="fa fa-mouse-pointer" aria-hidden="true"></i> -->
 						<div class="speed">  
 							<div class="wheelsmall2"> </div> 
 							<div> speed: {{faucetcontrol}} </div>
@@ -292,7 +292,7 @@ leaks/wrench/etc in server files-->
 							</div>
 						</div>
 					</div>
-					<span> {{nbonfire}} </span>
+					<!--<span> {{nbonfire}} </span>-->
 				</div>
 				<div class="iconscontents2">
 					<div class="linktoicon">

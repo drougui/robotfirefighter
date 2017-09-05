@@ -40,7 +40,7 @@ export class TrainComponent {
     });
 
     hotkeys.add({
-      combo: 'a',
+      combo: 'e',
       description: 'pushbutton',
       callback: function() {
         $scope.waterPushButton();
@@ -48,7 +48,7 @@ export class TrainComponent {
     });
 
     hotkeys.add({
-      combo: 'e',
+      combo: 'a',
       description: 'wrench',
       callback: function() {
         $scope.wrenchOnOff();
@@ -82,7 +82,7 @@ export class TrainComponent {
     // water management part: 
     //=====================================================
     var pivalue = 3.1415;
-    var coeffspeed = 25;
+    var coeffspeed = 20;
     var faucetxaxis = 2 * 10 / 40;
 
 
