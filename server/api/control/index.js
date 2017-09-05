@@ -360,40 +360,39 @@ serverGet.on('message', function(message, remote) {
       }, 1500);
 
     }
+  }
+
+  // time to go > battery time + marge
+  if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*0.6 && !batteryNeeded){
+    batteryNeeded = true;
+  }
+  if(batteryNeeded && batteryLevel>=99){
+    batteryNeeded = false;
+    batteryNeededSession = false;
+    waterNeeded = false;
+    waterNeededSession = false;
+  }
+
+  // alarm battery
+  if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*0.6&& !alarmSituations[0]){
+    if(!alarmOverlayOpen && Math.random()>0.5){
+      alarmOverlayOpen = true;
+      alarmCause = 0;
+      alarmSituations[0] = true;
+      writeAlarms.push(alarmCause);
+    }
+  }
+  if(batteryLevel >= 50){
+    alarmSituations[0] = false;
+  }
 
 
-    // time to go > battery time + marge
-    if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*0.6 && !batteryNeeded){
-      batteryNeeded = true;
-    }
-    if(batteryNeeded && batteryLevel>=99){
-      batteryNeeded = false;
-      batteryNeededSession = false;
-      waterNeeded = false;
-      waterNeededSession = false;
-    }
-
-    // alarm battery
-    if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*0.6&& !alarmSituations[0]){
-        if(!alarmOverlayOpen && Math.random()>0.5){
-          alarmOverlayOpen = true;
-          alarmCause = 0;
-          alarmSituations[0] = true;
-          writeAlarms.push(alarmCause);
-        }
-    }
-    if(batteryLevel >= 50){
-      alarmSituations[0] = false;
-    }
-
-
-    if(watlevel==0 && !waterNeeded && !batteryNeeded){
-      waterNeeded = true;
-    }
-    if(watlevel>50 && waterNeeded){
-      waterNeeded = false;
-      waterNeededSession = false;
-    }
+  if(watlevel==0 && !waterNeeded && !batteryNeeded){
+    waterNeeded = true;
+  }
+  if(watlevel>50 && waterNeeded){
+    waterNeeded = false;
+    waterNeededSession = false;
   }
 
 // AVOIDTREES
@@ -1162,6 +1161,8 @@ export function launchgame(req, res) {
         if(myAlea>0.5){ 
           // REMAINS OR BECOMES MANUAL ROBOT
           if(autonomousRobot==1){
+            batteryNeededSession = false;
+            waterNeededSession = false;
             // abort
             var udpMess = abortMoveToUdpMess();
             var buffer = new Buffer(udpMess);

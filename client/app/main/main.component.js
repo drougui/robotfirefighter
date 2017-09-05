@@ -624,6 +624,9 @@ down arrow 	40
               }
               isPlaying = true;
               $scope.animtime = 10 - Math.abs($scope.faucetcontrol)*3;
+              if($scope.faucetcontrol>0) {
+                $scope.faucetcontrol = '+' + $scope.faucetcontrol;
+              }
             } else if(debug) {
               console.log('nok');
             }

@@ -92,7 +92,6 @@
 
 .bold{
 	font-weight: bold;
-	margin-left: 1vw;
 }
 
 .tapwater{

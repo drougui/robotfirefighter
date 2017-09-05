@@ -305,9 +305,9 @@ export class MainController {
        }
      });
 
-    $scope.gohome = function(){
+    $scope.gohome = function(){ 
       if($scope.newBestScore){
-        $http.post('/api/control/pseudo', {pseudo: $scope.user.pseudo}).then(response => {
+        $http.post('/api/control/pseudo', {pseudo: $scope.user.pseudo}).then(response => { // sans token, pas secure!
           if(response.status === 200) {
             console.log($scope.user.pseudo);
             console.log("new pseudo sent");
@@ -316,9 +316,9 @@ export class MainController {
           }
         });
       }
-/*      $timeout(function() {
+      $timeout(function() {
         $window.location.reload();
-      }, 100);*/ // A REMETTRE TODO
+      }, 100);
     }
     var myToken = $rootScope.token;
     $scope.killall = function(){
