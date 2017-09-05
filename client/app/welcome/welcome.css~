@@ -19,7 +19,6 @@
 .mainmsg{
 	font-size: 250%;
 	display: flex;
-	align-items: flex-end;
 }
 
 .mainBand{
@@ -47,7 +46,7 @@
 	width: 50%;
 	display: flex;
 	justify-content: space-around;
-	height: 10%;
+	height: 15%;
 }
 
 .dassault{
@@ -117,4 +116,8 @@
 	width: 2.7vw;
 	height: 2.7vw;
 	background-size: 2.7vw 2.7vw;
+}
+
+.titleWelcome{
+	font-size: 2.5vw;
 }

@@ -56,6 +56,9 @@ var timeoutOnManualAlarm;
 
 var autonomousRobot = 0;
 var rewardsSum = 0;
+var finalNumFightedFires = 0;
+var finalNumFightedFiresSent = 0;
+
 var newBestScore = false;
 var rank = 0;
 
@@ -90,7 +93,7 @@ var watlevelContainer = 50;
 var remainingtime = 600;
 var batteryLevel = 100;
 var numFightedFires = 0;
-var finalNumFightedFires = 0;
+
 
 var overlayOpen = false;
 var cause = 0;
@@ -693,7 +696,7 @@ router.get('/robot', function(req, res) {
 
 // give end/gameover state
 router.get('/finished', function(req, res) {
-  res.json([overlayOpen,cause,finalNumFightedFires,newBestScore]);
+  res.json([overlayOpen,cause,finalNumFightedFiresSent,newBestScore]);
 });
 
 
@@ -749,6 +752,7 @@ function throwWater() {
     if((normDiff < 4) && (scalprod > 0.9) && firesStatesOfTrees[i] && !robotTankEmpty) {
       numFightedFires++;
       finalNumFightedFires++;
+      finalNumFightedFiresSent++;
       var indexTree = i + 1;
       var command1 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -10\' | yarp write /data/out /morse/treeonfire' + indexTree.toString() + '/teleporttf' + indexTree.toString() + '/in';
       var command2 = 'echo \'' + treeslocations[i].x.toString() + ' ' + treeslocations[i].y.toString() + ' -0.1\' | yarp write /data/out /morse/tree' + indexTree.toString() + '/teleport' + indexTree.toString() + '/in';
@@ -1155,6 +1159,7 @@ export function launchgame(req, res) {
       batteryLevel = 100;
       numFightedFires = 0;
       finalNumFightedFires = 0;
+      finalNumFightedFiresSent = 0;
 
       // RANDOM AUTONOMOUS/MANUAL EVERY 10secs
       automanualInterval = setInterval(function() {
@@ -1700,6 +1705,8 @@ global.stopGame = function() {
     scores[rank].reward = rewardsSum;
     var newChaine = JSON.stringify(scores);
     fs.writeFileSync('../driving-human-robots-interaction/scores.json', newChaine, 'UTF-8');
+    finalNumFightedFires = 0;
+    rewardsSum = 0;
   }
 
 

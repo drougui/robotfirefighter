@@ -1,10 +1,9 @@
 <div class="page">
 	<div class="mainmsgs">
-		<div class="mainmsg"> Welcome at HoRIzon's webpage hosting the &nbsp; <span class="bold"> firefighter robot game </span> </div> 
-<!-- div class="mainmsg">  is waiting for you! </div> -->
+		<div class="titleWelcome"> Welcome to the HoRIzon's webpage hosting the <span class="bold"> FIREFIGHTER ROBOT GAME </span> </div> 
 	</div>
 	
-	<div class="logos"> <div class="dassault"> </div> <!-- <div class="supaero"> </div> --> </div>
+	<div class="logos"> <div class="dassault"> </div>  <div class="supaero"> </div>  </div>
 	<div class="mainmsgs">	
 		<div class="mainmsg"> <span> Try to fight fires </span> <div class="fireicon"> </div> <span> with a ground robot </span> <div class="brain"> </div> </div>
 		<div class="mainmsg"> <span> by controlling it </span> <div class="keyboard"> </div> <span> when it loses its autonomy </span> </div>
@@ -16,7 +15,7 @@
 		<div class="mainButton" ui-sref="loading" ng-click="play()" ng-if="emptySlot"> PLAY </div>
 
                 <div class="timeBeforePlaying" ng-if="!emptySlot"> 
-			<span> Someone is playing: the game will be available in {{remainingtime}} seconds. </span> 
+			<span> Someone is playing: the game will be available in {{remainingtime || "few"}} seconds. </span> 
 		</div>
 <!--		<div class="mainButton" ui-sref="game" ng-if="!emptySlot"> SEE </div> -->		
 		
