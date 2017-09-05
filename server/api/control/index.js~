@@ -841,12 +841,14 @@ function abortMoveToUdpMess() {
 
 router.post('/pseudo', function(req, res/*, next*/) {
   if(0<=rank && rank<10){
-    scores[rank].name = req.body.pseudo;
-    console.log("PSEUDO!!!");
-    console.log("PSEUDO!!!");
-    console.log(req.body.pseudo);
-    var newChaine = JSON.stringify(scores);
-    fs.writeFileSync('../driving-human-robots-interaction/scores.json', newChaine, 'UTF-8');
+    if(req.body.pseudo!=''){
+      scores[rank].name = req.body.pseudo;
+      console.log("PSEUDO!!!");
+      console.log("PSEUDO!!!");
+      console.log(req.body.pseudo);
+      var newChaine = JSON.stringify(scores);
+      fs.writeFileSync('../driving-human-robots-interaction/scores.json', newChaine, 'UTF-8');
+    }
   }
   rank = 10; // vanne secure
 });
@@ -1161,6 +1163,8 @@ export function launchgame(req, res) {
         if(myAlea>0.5){ 
           // REMAINS OR BECOMES MANUAL ROBOT
           if(autonomousRobot==1){
+            batteryNeededSession = false;
+            waterNeededSession = false;
             // abort
             var udpMess = abortMoveToUdpMess();
             var buffer = new Buffer(udpMess);
@@ -1667,18 +1671,18 @@ global.stopGame = function() {
   // new best score ?  
   // TODO TODO TODO TODO TODO TODO TODO TODO TODO a mettre au debut de killall aussi voire fusionner les 2 (ou pas)
   // TODO comparer rewardsSum pour raffiner 
-  console.log("NEW BEST SCORE ??????");
-  console.log("NEW BEST SCORE ??????");
-  console.log("NEW BEST SCORE ??????");
-  console.log("NEW BEST SCORE ??????");
+  console.log("NEW BEST SCORE ?");
+  rank = 0;
   while(rank<10 && scores[rank].score>=finalNumFightedFires){
     rank++;
+    console.log("while...");
   }
   console.log("rank");
   console.log(rank);
   console.log("finalNumFightedFires");
   console.log(finalNumFightedFires);
   if(rank<10){
+    console.log("YES, WE HAVE A WINNER!");
     newBestScore = true;
     for(var i=9; i>rank; i--){
       scores[i].name = scores[i-1].name;
@@ -1689,7 +1693,10 @@ global.stopGame = function() {
     scores[rank].name = "anonym" + rewardsSum;
     scores[rank].score = finalNumFightedFires;
     var date = new Date();
-    scores[rank].date = (date.getMonth()+1) + '/' + date.getDate() + '/' + date.getFullYear() + ', ' + date.getHours() + ':' + date.getMinutes();
+    var MyDateString = ('0' + (date.getMonth()+1)).slice(-2) + '/'
+             + ('0' + date.getDate()).slice(-2) + '/'
+             + date.getFullYear();
+    scores[rank].date =  MyDateString + ', ' + ('0' + date.getHours()).slice(-2) + ':' + ( '0' + date.getMinutes()).slice(-2);
     scores[rank].reward = rewardsSum;
     var newChaine = JSON.stringify(scores);
     fs.writeFileSync('../driving-human-robots-interaction/scores.json', newChaine, 'UTF-8');

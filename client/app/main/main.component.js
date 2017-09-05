@@ -38,6 +38,7 @@ export class MainController {
       $scope.alarmOverlayOpen = false;
       $http.get('/api/control/removealarm').then(response => {
         if(response.status === 200) {
+          $scope.alarmOverlayOpen = false;
         }
       });
     }
@@ -316,9 +317,9 @@ export class MainController {
           }
         });
       }
-      $timeout(function() {
+/*      $timeout(function() {
         $window.location.reload();
-      }, 100);
+      }, 100);*/
     }
     var myToken = $rootScope.token;
     $scope.killall = function(){
