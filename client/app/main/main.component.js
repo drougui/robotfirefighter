@@ -206,10 +206,6 @@ export class MainController {
           $scope.cause = response.data[1];
           $scope.finalnumfires = response.data[2];
           $scope.newBestScore = response.data[3];
-          console.log($scope.overlayOpen);
-          console.log($scope.cause);
-          console.log($scope.finalnumfires);
-          console.log($scope.user.pseudo);
         }
       });
 
@@ -219,20 +215,6 @@ export class MainController {
           $scope.alarmCause = response.data[1];
         }
       });
-
-    /*
-      tictac = !tictac;
-      if(tictac){
-        $scope.widthTrashTapWater = 5;
-      } else {
-	$scope.widthTrashTapWater = 10;
-      }
-      if($scope.iconBatt<4){
-        $scope.iconBatt++;
-      } else {
-        $scope.iconBatt = 0;
-      }
-*/
     }, 500);
     $scope.$on("$destroy", function() {
         if (mainInterval) {
@@ -317,9 +299,9 @@ export class MainController {
           }
         });
       }
-/*      $timeout(function() {
+        $timeout(function() {
         $window.location.reload();
-      }, 100);*/
+      }, 100);
     }
     var myToken = $rootScope.token;
     $scope.killall = function(){

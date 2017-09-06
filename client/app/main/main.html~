@@ -210,13 +210,13 @@ leaks/wrench/etc in server files-->
 								<div class="buttonTap">
 								</div>
 							</div>
-							<div class="char"> a </div>
+							<div class="char"> e </div>
 						</div>
 						<div class="buttonletterChar">
 							<div class="wrenchButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="wrenchOnOff()">
 								<i class="fa fa-wrench" aria-hidden="true"></i>
 							</div>
-							<div class="char"> e </div>
+							<div class="char"> a </div>
 						</div>
 <!--
 						<div class="newContainerButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="newContainer()">

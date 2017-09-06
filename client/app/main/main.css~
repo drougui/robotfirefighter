@@ -967,7 +967,7 @@
 	position: absolute;
 	top: 23%;
 	right: 53%;
-	color: gray;
+	color: #333;
 	font-size: 2vw;
 }
 
