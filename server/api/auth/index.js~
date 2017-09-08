@@ -16,7 +16,7 @@ router.get('/', controller.status);
 router.get('/play', controller.play);
 router.post('/newtoken', controller.newtoken);
 router.get('/gameready', controller.gameReady);
-router.post('/killTimeout', controller.killTimeout);
+router.post('/killtimeout', controller.killTimeout);
 router.post('/isplaying', controller.isplaying)
 //router.get('/killall',controller.killall);
 //router.get('/start',controller.start);

@@ -29,6 +29,10 @@
 					<i class="fa fa-undo" aria-hidden="true"></i>
 					<div class="wheelsmall"> </div>
 				</div>
+				<div> or </div>
+				<div class="anykey">
+					<div> d </div>					
+				</div>
 				<div> wheel turns right </div>
 			</div>
 			<div class="explainkeys">
@@ -36,11 +40,19 @@
 					<div class="buttonTap">
 					</div>
 				</div>
+				<div> or </div>
+				<div class="anykey">
+					<div> e </div>					
+				</div>
 				<div> tap opens few seconds </div>
 			</div>
 			<div class="explainkeys">
 				<div class="wrenchButton">
 					<i class="fa fa-wrench" aria-hidden="true"></i>
+				</div>
+				<div> or </div>
+				<div class="anykey">
+					<div> a </div>					
 				</div>
 				<div> allows to fix leaks </div>
 			</div>				

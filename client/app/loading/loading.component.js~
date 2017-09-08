@@ -11,17 +11,26 @@ export class LoadingComponent {
   /*@ngInject*/
   constructor($http, $scope, socket, $interval, $timeout, sharedProperties, $rootScope) {
     'ngInject';
+    var myToken = $rootScope.token; // does nothing, usually $rootScope.token isn't filled yet.
     $scope.playEnabled = false;
+    $scope.lostGame = false;
     this.$http = $http;
     this.socket = socket;
     $scope.dot = 0;
-    var servercall = $interval(function() { 
-      $http.get('/api/auth/gameready').then(response => { // TODO POST TOKEN TO AVOID AN OTHER VISITOR TO GET THE INFORMATION (MAKING THE PLAYER UNABLE TO CLICK)
+    var servercall = $interval(function() {
+      myToken = $rootScope.token;
+      console.log("$rootScope.token");
+      console.log($rootScope.token);
+      $http.post('/api/auth/gameready', {token: myToken}).then(response => {  //POST TOKEN TO AVOID AN OTHER VISITOR TO GET THE INFORMATION (MAKING THE PLAYER UNABLE TO CLICK)
         if(response.status === 200) {
-          //console.log(response.data);
-          if(response.data) {
-            $scope.playEnabled = true;
-            //console.log('server informs that game is ready!');
+          console.log(response.data.isgameready);
+          console.log(response.data.istoolate);
+          if(response.data.isgameready || $scope.playEnabled){
+            $scope.playEnabled = true;            
+          }
+          if(response.data.istoolate || $scope.lostGame) {
+            $scope.lostGame = true;
+
           }
         }
       });
@@ -37,7 +46,6 @@ export class LoadingComponent {
       }
     });
 
-    var myToken = $rootScope.token; // does nothing, usually $rootScope.token isn't filled yet.
     console.log("LOADING!");
     console.log("$rootScope.token:");
     console.log($rootScope.token);

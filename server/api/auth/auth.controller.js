@@ -93,6 +93,7 @@ var payload = {auth: true,
 var sys = require('sys');
 var exec = require('child_process').exec;
 global.isgameready = false; // state of loading
+global.istoolate = false;
 var net = require('net');
 var clickOnLetsPlayTimeout; // a timeout is defined when everything is loaded
 // listen to the end of MORSE & co's loading
@@ -106,26 +107,40 @@ var server = net.createServer(function(socket) {
   });
   global.isgameready = true;
   clickOnLetsPlayTimeout = setTimeout(function() { // the player has 30secs to click on letsplay
-    console.log('Auth -- TIMEOUT on LETSPLAY -> emptySlot=true');
-    emptySlot = true;
-    global.expires = moment().add('minutes', 11).valueOf();
-    payload = {auth: true,
-               exp: global.expires};
-    global.token = jwt.encode(payload, secret);
-    console.log('Auth -- New token:');
-    console.log(global.token);
-    console.log('Auth -- Kill game.');
     exec('bash ~/driving-human-robots-interaction/killAll.sh');
-    global.isgameready = true; // TO SAY IT IS DEAD
+    setTimeout(function() {
+      console.log('Auth -- TIMEOUT on LETSPLAY -> emptySlot=true');
+      emptySlot = true;
+      global.expires = moment().add('minutes', 11).valueOf();
+      payload = {auth: true,
+                 exp: global.expires};
+      global.token = jwt.encode(payload, secret);
+      console.log('Auth -- New token:');
+      console.log(global.token);
+      console.log('Auth -- Kill game.');
+      exec('bash ~/driving-human-robots-interaction/killAll.sh');
+    },2000);
+      global.istoolate = true; // TO SAY IT IS DEAD
+      console.log("global.istoolate");
+      console.log(global.istoolate);
   }, 30000);
 });
 server.listen(50002, 'localhost');
 
 // send loading information to client
 export function gameReady(req, res) {
-  res.json(global.isgameready);
-  global.isgameready = false;
-  console.log('Auth -- send loading information to client');
+   if(req.body.token) {
+    var decoded = jwt.decode(req.body.token, secret);
+    console.log("decoded.auth:");
+    console.log(decoded.auth);    
+    if(decoded.auth && decoded.exp === global.expires){
+      res.json({isgameready: global.isgameready, 
+                istoolate: global.istoolate});
+      global.isgameready = false;
+      global.istoolate = false;
+      console.log('Auth -- send loading information to client');
+    }
+  }
 }
 var mycounter = 1;
 var mycounter2 = 1;
