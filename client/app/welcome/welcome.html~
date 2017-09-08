@@ -3,7 +3,7 @@
 		<div class="titleWelcome"> Welcome to the HoRIzon's webpage hosting the <span class="bold"> FIREFIGHTER ROBOT GAME </span> </div> 
 	</div>
 	
-	<div class="logos"> <div class="dassault"> </div>  <div class="supaero"> </div>  </div>
+	<div class="logos"> <div class="dassault"> </div> <!-- <div class="supaero"> </div> --> </div>
 	<div class="mainmsgs">	
 		<div class="mainmsg"> <span> Try to fight fires </span> <div class="fireicon"> </div> <span> with a ground robot </span> <div class="brain"> </div> </div>
 		<div class="mainmsg"> <span> by controlling it </span> <div class="keyboard"> </div> <span> when it loses its autonomy </span> </div>

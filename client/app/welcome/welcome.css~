@@ -19,6 +19,7 @@
 .mainmsg{
 	font-size: 250%;
 	display: flex;
+	align-items: flex-end;
 }
 
 .mainBand{
@@ -46,7 +47,8 @@
 	width: 50%;
 	display: flex;
 	justify-content: space-around;
-	height: 15%;
+	height: 10%;
+	background-color: green;
 }
 
 .dassault{
@@ -54,8 +56,10 @@
 	/*
 	width: 16.45vw;
 	height: 10vw;*/
-	width: 11.515vw;
-	height: 7vw;
+/*	width: 11.515vw;
+	height: 7vw;*/
+	width: 7.6767vw;
+	height: 4.667vw;
 	background-size: cover;
 }
 
