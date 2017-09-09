@@ -121,6 +121,7 @@ var server = net.createServer(function(socket) {
       exec('bash ~/driving-human-robots-interaction/killAll.sh');
     },2000);
       global.istoolate = true; // TO SAY IT IS DEAD
+      global.isgameready = false;
       console.log("global.istoolate");
       console.log(global.istoolate);
   }, 30000);
@@ -219,6 +220,7 @@ export function status(req, res) {
 // BEGIN A PLAY SESSION
 export function play(req, res) {
   if(emptySlot){
+    global.istoolate = false;
     global.expires = moment().add('minutes', 11).valueOf(); // payload = [authorization, expiration]
     payload = { auth: true,
                 exp: global.expires };

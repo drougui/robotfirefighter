@@ -426,8 +426,8 @@ serverGet.on('message', function(message, remote) {
 
   if(autonomousRobot==1 && goalIsATree) {
       if( Math.sqrt( Math.pow(currentGoalX - (parseFloat(robotx)+2*Math.cos(roboto)) , 2) 
-+ Math.pow(currentGoalY- (parseFloat(roboty)+2*Math.sin(roboto)), 2) ) < 1.0  || Math.sqrt( Math.pow(currentGoalX - (parseFloat(robotx)+ Math.cos(roboto)) , 2) 
-+ Math.pow(currentGoalY- (parseFloat(roboty)+Math.sin(roboto)), 2) ) < 1.0){
++ Math.pow(currentGoalY- (parseFloat(roboty)+2*Math.sin(roboto)), 2) ) < 1.0  || Math.sqrt( Math.pow(currentGoalX - (parseFloat(robotx)+ 0.5*Math.cos(roboto)) , 2) 
++ Math.pow(currentGoalY- (parseFloat(roboty)+0.5*Math.sin(roboto)), 2) ) < 1.0){
         if(!abortSession) {
           udpMess = abortMoveToUdpMess();
           buffer = new Buffer(udpMess);

@@ -107,19 +107,24 @@ var server = net.createServer(function(socket) {
   });
   global.isgameready = true;
   clickOnLetsPlayTimeout = setTimeout(function() { // the player has 30secs to click on letsplay
-    console.log('Auth -- TIMEOUT on LETSPLAY -> emptySlot=true');
-    emptySlot = true;
-    global.expires = moment().add('minutes', 11).valueOf();
-    payload = {auth: true,
-               exp: global.expires};
-    global.token = jwt.encode(payload, secret);
-    console.log('Auth -- New token:');
-    console.log(global.token);
-    console.log('Auth -- Kill game.');
     exec('bash ~/driving-human-robots-interaction/killAll.sh');
-    global.istoolate = true; // TO SAY IT IS DEAD
-    console.log("global.istoolate");
-    console.log(global.istoolate);
+    setTimeout(function() {
+      console.log('Auth -- TIMEOUT on LETSPLAY -> emptySlot=true');
+      emptySlot = true;
+      global.expires = moment().add('minutes', 11).valueOf();
+      payload = {auth: true,
+                 exp: global.expires};
+      global.token = jwt.encode(payload, secret);
+      console.log('Auth -- New token:');
+      console.log(global.token);
+      console.log('Auth -- Kill game.');
+      exec('bash ~/driving-human-robots-interaction/killAll.sh');
+    },2000);
+      global.istoolate = true; // TO SAY IT IS DEAD
+      console.log("global.istoolate");
+      console.log(global.istoolate);
+      global.isgameready = false;
+      global.istoolate = false;
   }, 30000);
 });
 server.listen(50002, 'localhost');

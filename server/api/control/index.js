@@ -196,7 +196,7 @@ function killall(req, res) {
       remainingtime = 600;
       batteryLevel = 100;
       numFightedFires = 0;
-
+      exec('bash ~/driving-human-robots-interaction/killAll.sh');
       res.status(200).json("everything killed")
     }
     else{
