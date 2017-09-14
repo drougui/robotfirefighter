@@ -290,10 +290,11 @@ export class MainController {
 
     $scope.gohome = function(){ 
       if($scope.newBestScore){
-        $http.post('/api/control/pseudo', {pseudo: $scope.user.pseudo}).then(response => { // sans token, pas secure!
+        $http.post('/api/control/pseudo', {pseudo: $scope.user.pseudo, token: myToken}).then(response => { // sans token, pas secure!
           if(response.status === 200) {
             console.log($scope.user.pseudo);
             console.log("new pseudo sent");
+            global.newtoken();
           } else{
             console.log('nok pseudo');
           }
@@ -303,6 +304,29 @@ export class MainController {
         $window.location.reload();
       }, 100);
     }
+
+
+    $scope.sendpseudo = function(){ 
+      if($scope.newBestScore){
+        $http.post('/api/control/pseudo', {pseudo: $scope.user.pseudo, token: myToken}).then(response => { // sans token, pas secure!
+          if(response.status === 200) {
+            console.log($scope.user.pseudo);
+            console.log("new pseudo sent");
+            global.newtoken();
+          } else{
+            console.log('nok pseudo');
+          }
+        });
+      }
+        $timeout(function() {
+        $window.location.reload();
+      }, 100);
+    }
+
+
+// + FAIRE UN BOUTON QUI SE CHARGE D'ENVOYER LE PSEUDO
+// + global.newtoken()
+
     var myToken = $rootScope.token;
     $scope.killall = function(){
       myToken = $rootScope.token;

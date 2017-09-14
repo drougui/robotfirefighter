@@ -193,7 +193,7 @@ function killall(req, res) {
       }
       vlvop = 1;
       watlevelContainer = 50;
-      remainingtime = 600;
+      remainingtime = "few";
       batteryLevel = 100;
       numFightedFires = 0;
       exec('bash ~/driving-human-robots-interaction/killAll.sh');
@@ -504,7 +504,6 @@ serverGet.on('message', function(message, remote) {
       mercurelevelfloat = 270;
       overlayOpen = true;
       cause = 2;
-      global.newtoken();
       global.stopGame();
     }
     if(mercurelevelfloat>200 && !alarmSituations[1]){
@@ -845,17 +844,22 @@ function abortMoveToUdpMess() {
 
 
 router.post('/pseudo', function(req, res/*, next*/) {
-  if(0<=rank && rank<10){
-    if(req.body.pseudo!=''){
-      scores[rank].name = req.body.pseudo;
-      console.log("PSEUDO!!!");
-      console.log("PSEUDO!!!");
-      console.log(req.body.pseudo);
-      var newChaine = JSON.stringify(scores);
-      fs.writeFileSync('../driving-human-robots-interaction/scores.json', newChaine, 'UTF-8');
+  if(req.body.token) {
+    var decoded = jwt.decode(req.body.token, secret);
+    if(decoded.auth && decoded.exp === global.expires){
+      if(req.body.pseudo!=''){
+        var mychain = fs.readFileSync('../driving-human-robots-interaction/scores.json', 'UTF-8');
+        scores = JSON.parse(chaine3);
+        scores[rank].name = req.body.pseudo;
+        console.log("PSEUDO!!!");
+        console.log(req.body.pseudo);
+        var newChaine = JSON.stringify(scores);
+        fs.writeFileSync('../driving-human-robots-interaction/scores.json', newChaine, 'UTF-8');
+      }
+      clearTimeout(endOfGameTimeOut);
+      global.newtoken();
     }
   }
-  rank = 10; // vanne secure
 });
 
 
@@ -1569,7 +1573,6 @@ export function launchgame(req, res) {
         else{
           overlayOpen = true;
           cause = 0;
-          global.newtoken();
           global.stopGame();
         }
         console.log("oooooooooooooooooooooooooooooooooo");
@@ -1594,7 +1597,6 @@ export function launchgame(req, res) {
 	else{
 	  overlayOpen = true;
           cause = 1;
-          global.newtoken();
           global.stopGame();
         }
       }, 2000);
@@ -1670,7 +1672,7 @@ router.get('/robotwater', function(req, res) {
   res.json([watlevel,robotTankEmpty]);
 });
 
-
+var endOfGameTimeOut;
 // used in auth
 global.stopGame = function() { 
 
@@ -1710,8 +1712,10 @@ global.stopGame = function() {
     rewardsSum = 0;
   }
 
-
-
+// TODO: global.newtoken(); lorsqu'on a 
+  endOfGameTimeOut = setTimeout(function() {
+    global.newtoken();
+  }, 60000); 
 
   exec('bash ~/driving-human-robots-interaction/killAll.sh');
 
@@ -1776,7 +1780,7 @@ global.stopGame = function() {
   }
   vlvop = 1;
   watlevelContainer = 50;
-  remainingtime = 600;
+  remainingtime = "few";
   batteryLevel = 100;
   numFightedFires = 0;
 

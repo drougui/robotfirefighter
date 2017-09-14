@@ -133,9 +133,22 @@
 }
 
 .newbestscore input{
-	width: 15vw;
+	width: 10vw;
 	color: black;
 }
+
+.validpseudo{
+	border-radius: 1vw;
+	border: solid white 0.3vw;
+	height: 4vw;
+	width: 4vw;
+	font-size: 2vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+}
+
 
 .gohome{
 	margin-top: 2vw;
