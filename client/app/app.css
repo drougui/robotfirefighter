@@ -49,6 +49,7 @@
 @import 'main/main.css';
 @import 'scores/scores.css';
 @import 'train/train.css';
+@import 'videodemo/videodemo.css';
 @import 'welcome/welcome.css';
 @import '../components/footer/footer.css';
 @import '../components/modal/modal.css';

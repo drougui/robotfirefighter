@@ -30,7 +30,7 @@ export class LoadingComponent {
           }
           if(response.data.istoolate || $scope.lostGame) {
             $scope.lostGame = true;
-
+            $scope.playEnabled = false;  
           }
         }
       });
@@ -85,6 +85,14 @@ export class LoadingComponent {
         }
       });
 
+    }
+
+
+
+    $scope.reload = function() {
+      $timeout(function() {
+        $window.location.reload();
+      }, 500);
     }
   }
 

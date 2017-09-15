@@ -101,5 +101,5 @@
 		</div>
 	</div>
 	<div class="letsplaybutton" ui-sref="game"  ui-sref-opts="{reload: true}" ng-if="playEnabled && !lostGame" ng-click="letsplay()"> Click here to play! </div>
-	<div ui-sref="welcome" class="gohomeTrain" ng-if="lostGame"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>
+	<div ui-sref="welcome" class="gohomeTrain" ng-if="lostGame" ng-click="reload()"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>
 </div>

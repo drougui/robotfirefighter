@@ -9,7 +9,7 @@ export class LoadingComponent {
   $http;
   socket;
   /*@ngInject*/
-  constructor($http, $scope, socket, $interval, $timeout, sharedProperties, $rootScope) {
+  constructor($http, $scope, socket, $interval, $timeout, sharedProperties, $rootScope, $window) {
     'ngInject';
     var myToken = $rootScope.token; // does nothing, usually $rootScope.token isn't filled yet.
     $scope.playEnabled = false;
@@ -85,6 +85,14 @@ export class LoadingComponent {
         }
       });
 
+    }
+
+
+
+    $scope.reload = function() {
+      $timeout(function() {
+        $window.location.reload();
+      }, 500);
     }
   }
 

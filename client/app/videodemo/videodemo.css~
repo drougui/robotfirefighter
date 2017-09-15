@@ -1,0 +1,7 @@
+.videodemo{
+	height: 97vh;
+	font-size: 1vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
