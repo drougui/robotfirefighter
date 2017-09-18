@@ -856,6 +856,7 @@ router.post('/pseudo', function(req, res/*, next*/) {
         var newChaine = JSON.stringify(scores);
         fs.writeFileSync('../driving-human-robots-interaction/scores.json', newChaine, 'UTF-8');
       }
+      clearTimeout(endOfGameTimeOut);
       global.newtoken();
     }
   }
@@ -1671,7 +1672,7 @@ router.get('/robotwater', function(req, res) {
   res.json([watlevel,robotTankEmpty]);
 });
 
-
+var endOfGameTimeOut;
 // used in auth
 global.stopGame = function() { 
 
@@ -1712,7 +1713,9 @@ global.stopGame = function() {
   }
 
 // TODO: global.newtoken(); lorsqu'on a 
-
+  endOfGameTimeOut = setTimeout(function() {
+    global.newtoken();
+  }, 60000); 
 
   exec('bash ~/driving-human-robots-interaction/killAll.sh');
 

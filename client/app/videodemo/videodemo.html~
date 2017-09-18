@@ -1,1 +1,37 @@
-<div class="videodemo">This is the videodemo view.</div>
+<div class="videodemo">
+<!--	<iframe width="60%" height="70%" src="https://www.youtube.com/embed/3qftdIPUaAE" frameBorder="0" allowfullscreen></iframe>-->
+
+<iframe width="60%" height="70%" src="https://www.youtube.com/embed/3qftdIPUaAE?rel=0&amp;showinfo=1&amp;autoplay=1&amp;cc_load_policy=1&amp;controls=1&amp;mute=1      " frameborder="0" allowfullscreen></iframe>
+
+
+<!--
+<div id="muteYouTubeVideoPlayer"></div>
+
+<script async src="https://youtu.be/3qftdIPUaAE"></script>
+<script>
+ function onYouTubeIframeAPIReady() {
+  var player;
+  player = new YT.Player('muteYouTubeVideoPlayer', {
+    videoId: '3qftdIPUaAE', // YouTube Video ID
+    width: 560,               // Player width (in px)
+    height: 316,              // Player height (in px)
+    playerVars: {
+      autoplay: 1,        // Auto-play the video on load
+      controls: 1,        // Show pause/play buttons in player
+      showinfo: 0,        // Hide the video title
+      modestbranding: 1,  // Hide the Youtube Logo
+      loop: 1,            // Run the video in a loop
+      fs: 0,              // Hide the full screen button
+      cc_load_policty: 0, // Hide closed captions
+      iv_load_policy: 3,  // Hide the Video Annotations
+      autohide: 0         // Hide video controls when playing
+    },
+    events: {
+      onReady: function(e) {
+        e.target.mute();
+      }
+    }
+  });
+ }
+</script>
+</div>-->

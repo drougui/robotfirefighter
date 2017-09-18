@@ -73,13 +73,13 @@
 										<div class="buttonTap">
 										</div>
 									</div>
-									<div class="char"> a </div>
+									<div class="char"> e </div>
 								</div>
 								<div class="buttonletterChar">
 									<div class="wrenchButton" ng-class="{'cursorPointer': !wrenchmodeTrain}" ng-click="wrenchOnOff()">
 										<i class="fa fa-wrench" aria-hidden="true"></i>
 									</div>
-									<div class="char"> e </div>
+									<div class="char"> a </div>
 								</div>
 							</div>
 						</div>
@@ -132,7 +132,10 @@
 					</div>
 				</div>
 			</div>
-			<div ui-sref="welcome" class="gohomeTrain"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>	
+			<div class="videoOrGoback">
+				<div ui-sref="welcome" class="gohomeTrain"> <i class="fa fa-video-camera" aria-hidden="true"></i> see a video of the game </div>
+				<div ui-sref="welcome" class="gohomeTrain"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>	
+			</div>
 			<!--<button ui-sref="welcome"> BACK </button>-->	
 		</div>
 	</div>

@@ -848,8 +848,6 @@ router.post('/pseudo', function(req, res/*, next*/) {
     var decoded = jwt.decode(req.body.token, secret);
     if(decoded.auth && decoded.exp === global.expires){
       if(req.body.pseudo!=''){
-        var mychain = fs.readFileSync('../driving-human-robots-interaction/scores.json', 'UTF-8');
-        scores = JSON.parse(chaine3);
         scores[rank].name = req.body.pseudo;
         console.log("PSEUDO!!!");
         console.log(req.body.pseudo);
@@ -1674,10 +1672,11 @@ router.get('/robotwater', function(req, res) {
 
 var endOfGameTimeOut;
 // used in auth
-global.stopGame = function() { 
+global.stopGame = function() {
+  var mychain = fs.readFileSync('../driving-human-robots-interaction/scores.json', 'UTF-8');
+  scores = JSON.parse(mychain);
 
   // new best score ?  
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO a mettre au debut de killall aussi voire fusionner les 2 (ou pas)
   // TODO comparer rewardsSum pour raffiner 
   console.log("NEW BEST SCORE ?");
   rank = 0;
