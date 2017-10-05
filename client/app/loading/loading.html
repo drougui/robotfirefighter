@@ -1,28 +1,31 @@
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
 <div class="loading">
 	<div class="loadpart" ng-if="!playEnabled && !lostGame">
 		<span> LOADING <span ng-if="dot>0">.</span><span ng-if="dot>1">.</span><span ng-if="dot>2">.</span></span>
 	</div>
-        <div class="loadpart" ng-if="playEnabled && !lostGame">
-		<span> LOADED! </span>
+        <div class="loadpart2" ng-if="playEnabled && !lostGame">
+		<span style="color: #05BDFF" ng-if="user.pseudo!=''"> Hi {{user.pseudo}}! </span>
+		<span> The game is ready! </span>
 	</div>
 	<div class="loadpart" ng-if="lostGame">
 		<span> TOO LATE, SORRY! </span>
 	</div>
 	<!-- <span class="advice"> Press F11 for a better experience </span> -->
 	<span class="advice" ng-if="!lostGame"> Please do not refresh web pages from now! </span>
+        <span class="advice" ng-if="!lostGame && !playEnabled"> Enter your pseudo in case of a new best score: <input type="text" maxlength="10" ng-model="user.pseudo" /> </span>
 	<div class="reminders" ng-if="!playEnabled && !lostGame">
 		<div class="watermanagementLoading">
 			<div> <i class="fa fa-tint" aria-hidden="true"></i> Ground tank water management: </div>
-			<div class="explainkeys">		
-				<div class="mainbuttonL"> 
+			<div class="explainkeys">
+				<div class="mainbuttonL">
 					<i class="fa fa-undo" aria-hidden="true"></i>
 					<div class="wheelsmall"> </div>
 				</div>
 				<div> or </div>
 				<div class="anykey">
-					<div> s </div>					
+					<div style="color: black"> s </div>					
 				</div>
-				<div> wheel turns left </div>
+				<div class="result"> wheel turns left</div>
 			</div>
 			<div class="explainkeys">	
 				<div class="mainbuttonR"> 
@@ -31,9 +34,9 @@
 				</div>
 				<div> or </div>
 				<div class="anykey">
-					<div> d </div>					
+					<div style="color: black"> d </div>					
 				</div>
-				<div> wheel turns right </div>
+				<div class="result"> wheel turns right </div>
 			</div>
 			<div class="explainkeys">
 				<div class="pushButton">
@@ -42,9 +45,9 @@
 				</div>
 				<div> or </div>
 				<div class="anykey">
-					<div> e </div>					
+					<div style="color: black"> e </div>					
 				</div>
-				<div> tap opens few seconds </div>
+				<div class="result"> tap opens few seconds </div>
 			</div>
 			<div class="explainkeys">
 				<div class="wrenchButton">
@@ -52,9 +55,9 @@
 				</div>
 				<div> or </div>
 				<div class="anykey">
-					<div> a </div>					
+					<div style="color: black"> a </div>					
 				</div>
-				<div> allows to fix leaks </div>
+				<div class="result"> allows to fix leaks </div>
 			</div>				
 		</div>
 		<div class="robotControlLoading">
@@ -63,35 +66,35 @@
 				<div class="littlesplatch">
 				</div>
 				<div class="spaceKey">
-					<div> SPACE </div>					
+					<div style="color: black"> SPACE </div>					
 				</div>
 			</div>
 			<div class="explainkeys">
 				<div class="arrowFor">
 				</div>
 				<div class="anykey">
-					<div> <i class="fa fa-arrow-up" aria-hidden="true"></i> </div>					
+					<div style="color: black"> <i class="fa fa-arrow-up" aria-hidden="true"></i> </div>					
 				</div>
 			</div>
 			<div class="explainkeys">
 				<div class="arrowBack">
 				</div>
 				<div class="anykey">
-					<div> <i class="fa fa-arrow-down" aria-hidden="true"></i> </div>					
+					<div style="color: black"> <i class="fa fa-arrow-down" aria-hidden="true"></i> </div>					
 				</div>
 			</div>
 			<div class="explainkeys">
 				<div class="arrowLeft">
 				</div>
 				<div class="anykey">
-					<div> <i class="fa fa-arrow-left" aria-hidden="true"></i> </div>					
+					<div style="color: black"> <i class="fa fa-arrow-left" aria-hidden="true"></i> </div>					
 				</div>
 			</div>
 			<div class="explainkeys">
 				<div class="arrowRight">
 				</div>
 				<div class="anykey">
-					<div> <i class="fa fa-arrow-right" aria-hidden="true"></i> </div>					
+					<div style="color: black"> <i class="fa fa-arrow-right" aria-hidden="true"></i> </div>					
 				</div>
 			</div>
 			<!--<div ng-if="emptySlot">

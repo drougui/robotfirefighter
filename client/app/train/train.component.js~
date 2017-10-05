@@ -82,7 +82,7 @@ export class TrainComponent {
     // water management part: 
     //=====================================================
     var pivalue = 3.1415;
-    var coeffspeed = 25;
+    var coeffspeed = 20;
     var faucetxaxis = 2 * 10 / 40;
 
 
@@ -220,7 +220,7 @@ export class TrainComponent {
     $scope.wrenchmodeTrain = false;
     $scope.wrenchOnOff = function(){
       $scope.wrenchmodeTrain = !$scope.wrenchmodeTrain;
-      console.log($scope.wrenchmodeTrain);
+//      console.log($scope.wrenchmodeTrain);
     }
 
     $scope.clickLeak = function(leakId) {

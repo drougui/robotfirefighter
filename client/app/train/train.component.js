@@ -220,7 +220,7 @@ export class TrainComponent {
     $scope.wrenchmodeTrain = false;
     $scope.wrenchOnOff = function(){
       $scope.wrenchmodeTrain = !$scope.wrenchmodeTrain;
-      console.log($scope.wrenchmodeTrain);
+//      console.log($scope.wrenchmodeTrain);
     }
 
     $scope.clickLeak = function(leakId) {

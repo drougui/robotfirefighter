@@ -1,14 +1,14 @@
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
 <div class="page">
 	<div class="mainmsgs">
-		<div class="titleWelcome"> Welcome to the HoRIzON's webpage hosting the <span class="bold"> FIREFIGHTER ROBOT GAME </span> </div> 
+		<div class="titleWelcome"> Welcome to the HoRIzON's webpage </div>
+		<div class="titleWelcome"> hosting the <span class="bold"> FIREFIGHTER ROBOT GAME </span> </div>
 	</div>
-	
-	<div class="logos"> <div class="dassault"> </div> <div class="supaero"> </div> </div>
-	<div class="mainmsgs">	
+	<div class="mainmsgsrules">	
 		<div class="mainmsg"> <span> Try to fight fires </span> <div class="fireicon"> </div> <span> with a ground robot </span> <div class="brain"> </div> </div>
 		<div class="mainmsg"> <span> by controlling it </span> <div class="keyboard"> </div> <span> when it loses its autonomy </span> </div>
 		<div class="mainmsg"> <span> and by managing its water tank </span> <div class="tapwater"> </div>  </div>
-		<div class="mainmsg"> <div> <i class="fa fa-wifi" aria-hidden="true"></i> </div> <span> You need a good internet connection! </span> </div> 
+		<div class="mainmsg"> <div> <i class="fa fa-wifi" aria-hidden="true"></i> </div> <span> &nbsp; You need a good internet connection! </span> </div> 
 	</div>
 	<div class="mainBand">
 		<div class="mainButton" ui-sref="howto"> RULES </div>
@@ -16,13 +16,17 @@
 		<div class="mainButton" ui-sref="loading" ng-click="play()" ng-if="emptySlot"> PLAY </div>
 
                 <div class="timeBeforePlaying" ng-if="!emptySlot"> 
-			<span> Someone is playing: the game will be available in {{remainingtime || "few"}} seconds. </span> 
+			<span class="notegame"> Someone is playing: the game will be available in {{remainingtime || "few"}} seconds. </span> 
 		</div>
 <!--		<div class="mainButton" ui-sref="game" ng-if="!emptySlot"> SEE </div> -->		
 		
 		<div class="mainButton" ui-sref="scores"> SCORES </div>		
 		<div class="mainButton" ui-sref="about"> ABOUT </div>
 	</div>
+	<div class="notegame"> This crowdsourcing platform has been developped by the department
+<a style="color: #05BDFF" href="https://www.isae-supaero.fr/en/research/departments/department-of-aerospace-vehicles-design-and-control-dcas-95/department-of-aerospace-vehicles-design-and-control-dcas/">DCAS</a>
+ of <a style="color: #05BDFF" href="https://www.isae-supaero.fr/en/">ISAE-SUPAERO</a> in the context of the     <a style="color: #05BDFF" href="https://www.isae-supaero.fr/en/isae-supaero/mecenat-relations-avec-la-fondation-isae-supaero/chaire-dassault-aviation/">Dassault Aviation chair</a>. </div>
+	<div class="logos"> <div class="logosclose"> <div class="dassault"> </div> <div class="supaero"> </div> </div>  </div>
 	<div class="allThanks">
 		<div class="thanks"> By <span class="bold"> Nicolas Drougard</span>. Many thanks to Corentin Chauffaut and Pascal Chauvin for the robotic framework. firstname.name@isae-supaero.fr </div>
 		<div class="thanks"> Also many thanks to Jonathan Carbasse for his great help with angular fullstack (firstname.name@gmail.com). Thanks to EmojiOne for providing free emoji icons. Font Awesome by Dave Gandy - http://fontawesome.io </div> 

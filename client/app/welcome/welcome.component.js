@@ -12,7 +12,7 @@ export class WelcomeComponent {
     this.$http = $http;
     this.socket = socket;
     //this.$scope = $scope;
-
+    var debug = false;
 
 
     // get remaining time
@@ -24,10 +24,12 @@ export class WelcomeComponent {
       });
       // display the appropriate interface? // WARNING!!! MIS LA POUR QUE EMPTYSLOT SE METTE A JOUR (pas testé)
       $http.get('/api/auth').then(response => {
-        console.log(response);
+        if(debug){
+          console.log(response);
+          console.log("emptySlot:")
+          console.log(response.data);
+        }
         $scope.emptySlot=response.data;
-        console.log("emptySlot:")
-        console.log(response.data);
       });
     }, 1000);
     $scope.$on("$destroy", function() {
@@ -42,26 +44,35 @@ export class WelcomeComponent {
     var myToken = $rootScope.token;
     $scope.play = function(){
       $http.get('/api/auth/play').then(response => {
-        console.log("response!")
-        console.log(response);
+        if(debug){
+          console.log("response!")
+          console.log(response);
+        }
         if(response.status === 200){
-          console.log("give token");
+          if(debug){
+            console.log("give token");
+          }
           // ok, I give a token to you
           $rootScope.token = response.data;
           myToken = $rootScope.token;
-          console.log("welcome - play() -- I JUST GOT A TOKEN: ");
-          console.log($rootScope.token);
-          console.log("welcome - play() -- myToken : ");
-          console.log(myToken);
-
+          if(debug){
+            console.log("welcome - play() -- I JUST GOT A TOKEN: ");
+            console.log($rootScope.token);
+            console.log("welcome - play() -- myToken : ");
+            console.log(myToken);
+          }
           // launch MORSE & co
           $http.post('/api/control/start', {token: myToken}).then(response => {
-            console.log("control/start response:");
-            console.log(response);
-            if(response.status === 200){
-              console.log("game launched!");
+            if(debug){
+              console.log("control/start response:");
+              console.log(response);
             }
-            else{
+            if(response.status === 200){
+              if(debug){  
+                console.log("game launched!");
+              }
+            }
+            else if(debug){
               console.log("game not launched");
             }
           });
@@ -69,7 +80,9 @@ export class WelcomeComponent {
         else{
           // no token, display appropriate home
           $scope.emptySlot=false;
-          console.log("no token available!")
+          if(debug){
+            console.log("no token available!");
+          }
         }
       })
     }; // play

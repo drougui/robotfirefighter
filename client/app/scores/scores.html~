@@ -1,6 +1,6 @@
 <div class="scoresScreen">
 	<div class="scoresTitle">
-		<i class="fa fa-trophy" aria-hidden="true"></i> Best scores:
+		<i class="fa fa-trophy" aria-hidden="true"></i> Best scores: 
 	</div>
 	<div class="bestScores">
 		<div class="scoresNames">
@@ -22,4 +22,5 @@
 			</div>
 		</div>
 	</div>
+	<div ui-sref="welcome" class="gohomeTrain"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>	
 </div>

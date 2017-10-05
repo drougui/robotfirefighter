@@ -22,7 +22,7 @@ export class WelcomeComponent {
           $scope.remainingtime = response.data;
         }
       });
-      // display the appropriate interface?
+      // display the appropriate interface? // WARNING!!! MIS LA POUR QUE EMPTYSLOT SE METTE A JOUR (pas testé)
       $http.get('/api/auth').then(response => {
         console.log(response);
         $scope.emptySlot=response.data;

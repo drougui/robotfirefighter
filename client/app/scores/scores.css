@@ -4,10 +4,14 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	font-family: 'Montserrat', sans-serif;
+	background-color: #373737;
+	color: white;
 }
 
 .scoresTitle{
 	font-size: 7vh;
+	color: #05BDFF;
 }
 
 .bestScores{
@@ -41,3 +45,6 @@
 	justify-content: space-around;
 }
 
+.scoresScreen i{
+	color: #05BDFF;
+}

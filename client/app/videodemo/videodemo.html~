@@ -2,6 +2,7 @@
 <!--	<iframe width="60%" height="70%" src="https://www.youtube.com/embed/3qftdIPUaAE" frameBorder="0" allowfullscreen></iframe>-->
 
 <iframe width="60%" height="70%" src="https://www.youtube.com/embed/3qftdIPUaAE?rel=0&amp;showinfo=1&amp;autoplay=1&amp;cc_load_policy=1&amp;controls=1&amp;mute=1      " frameborder="0" allowfullscreen></iframe>
+<div ui-sref="welcome" class="gohomeTrain"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>
 
 
 <!--

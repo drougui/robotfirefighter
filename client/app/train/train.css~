@@ -6,8 +6,10 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-color: #4F849E;
+/*	background-color: #4F849E;*/
+	background-color: #373737;
 /*	cursor: url("/assets/images/wrench.png"), pointer;*/
+	font-family: 'Montserrat', sans-serif;
 }
 
 
@@ -105,7 +107,29 @@
 .gohomeTrain{
 	margin-top: 2vw;
 	font-size: 2vw;
-	color: #333;
-	cursor: pointer;	
+	color: #05BDFF;
+	cursor: pointer;
 }
 
+.videoOrGoback{
+	display: flex;
+	flex-direction: column;
+}
+
+.train .robinetcontainer{
+	background-color: #05BDFF;
+	border-radius: 1vw;
+}
+
+.train .neckcontainer{
+	background-color: #05BDFF;
+}
+
+.train .iconCircle{
+	background-color: white;
+	border: solid white;
+}
+
+.train .maincontainer{
+	border: solid white 1vw;
+}

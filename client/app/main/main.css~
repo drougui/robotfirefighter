@@ -26,6 +26,9 @@
   margin-left: 15px;
 }*/
 
+.notegame{
+	font-size: 1.3vw;
+}
 
 .overlay{
     height: 100%;
@@ -129,7 +132,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	width: 55vw;
+	width: 70vw;
 }
 
 .newbestscore input{
@@ -146,6 +149,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	cursor: pointer;
 }
 
 
@@ -174,7 +178,7 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	height: 96vh;
+	height: 97vh;
 }
 
 .screenWrench{
@@ -451,7 +455,7 @@
 	height: 5vw;
 	width: 5vw;
 	background-size: 5vw 5vw;
-	background-image: url("/assets/images/littlesplatch.png");
+	background-image: url("/assets/images/littlesplatchblue.png");
 }
 
 .explainkeys{
@@ -617,21 +621,21 @@
 	height: 4vw;
 	width: 4vw;
 	background-size: 4vw 4vw;
-	background-image: url("/assets/images/arrowFor.png");
+	background-image: url("/assets/images/arrowForblue.png");
 }
 
 .arrowBack{
 	height: 4vw;
 	width: 4vw;
 	background-size: 4vw 4vw;
-	background-image: url("/assets/images/arrowBack.png");
+	background-image: url("/assets/images/arrowBackblue.png");
 }
 
 .arrowRight{
 	height: 4vw;
 	width: 3vw;
 	background-size: 3vw 4vw;
-	background-image: url("/assets/images/arrowRight.png");
+	background-image: url("/assets/images/arrowRightblue.png");
 	margin-left: 0.25vw;
 }
 
@@ -639,7 +643,7 @@
 	height: 4vw;
 	width: 3vw;
 	background-size: 3vw 4vw;
-	background-image: url("/assets/images/arrowLeft.png");
+	background-image: url("/assets/images/arrowLeftblue.png");
 	margin-left: 0.25vw;
 }
 

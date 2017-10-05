@@ -54,6 +54,8 @@ var autonomyInterval;
 var automanualInterval;
 var timeoutOnManualAlarm;
 
+var currentPseudo = '';
+
 var autonomousRobot = 0;
 var rewardsSum = 0;
 var finalNumFightedFires = 0;
@@ -181,6 +183,7 @@ function killall(req, res) {
       watlevel = 50;
       robotTankEmpty = false;
       isFillingWater = false;
+//      currentPseudo = '';
       //crossSize = 0;
       leakPlacesNb = 9;
       leakPlaces = [];
@@ -696,7 +699,7 @@ router.get('/robot', function(req, res) {
 
 // give end/gameover state
 router.get('/finished', function(req, res) {
-  res.json([overlayOpen,cause,finalNumFightedFiresSent,newBestScore]);
+  res.json([overlayOpen,cause,finalNumFightedFiresSent,newBestScore,currentPseudo]);
 });
 
 
@@ -843,7 +846,10 @@ function abortMoveToUdpMess() {
 }
 
 
-router.post('/pseudo', function(req, res/*, next*/) {
+
+
+// TODO REMPLACER CA PAR UNE MISE A JOUR DES SCORES AVEC currentPseudo
+/*router.post('/pseudo', function(req, res) {
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
     if(decoded.auth && decoded.exp === global.expires){
@@ -856,7 +862,31 @@ router.post('/pseudo', function(req, res/*, next*/) {
       }
       clearTimeout(endOfGameTimeOut);
       global.newtoken();
+      res.json();
     }
+    else{
+      res.status(401).json("Invalid token");
+    }
+  }
+  else{
+    res.status(401).json("No token given");
+  }
+});*/
+
+router.post('/pseudobegin', function(req, res/*, next*/) {
+  if(req.body.token) {
+    var decoded = jwt.decode(req.body.token, secret);
+    if(decoded.auth && decoded.exp === global.expires){
+      currentPseudo = req.body.pseudo;
+      //console.log(req.body.pseudo);
+      res.json();
+    }
+    else{
+      res.status(401).json("Invalid token");
+    }
+  }
+  else{
+    res.status(401).json("No token given");
   }
 });
 
@@ -1642,9 +1672,11 @@ export function launchgame(req, res) {
 // robot tank
 //=====================================================
 // define fill/stopfill water functions
+/*
 var fillWaterInterval;
 var robotTankEmpty = false;
 var isFillingWater = false;
+*/
 var fillingWater = function() {
   if(watlevel>=30){
     alarmSituations[3] = false;
@@ -1670,7 +1702,7 @@ router.get('/robotwater', function(req, res) {
   res.json([watlevel,robotTankEmpty]);
 });
 
-var endOfGameTimeOut;
+//var endOfGameTimeOut;
 // used in auth
 global.stopGame = function() {
   var mychain = fs.readFileSync('../driving-human-robots-interaction/scores.json', 'UTF-8');
@@ -1697,7 +1729,11 @@ global.stopGame = function() {
       scores[i].date = scores[i-1].date;
       scores[i].reward = scores[i-1].reward;
     }
-    scores[rank].name = "anonym" + rewardsSum;
+    if(currentPseudo==''){
+      scores[rank].name = "anonym" + rewardsSum;
+    }else{
+      scores[rank].name = currentPseudo;
+    }
     scores[rank].score = finalNumFightedFires;
     var date = new Date();
     var MyDateString = ('0' + (date.getMonth()+1)).slice(-2) + '/'
@@ -1710,11 +1746,12 @@ global.stopGame = function() {
     finalNumFightedFires = 0;
     rewardsSum = 0;
   }
+  global.newtoken();
 
 // TODO: global.newtoken(); lorsqu'on a 
-  endOfGameTimeOut = setTimeout(function() {
+/*  endOfGameTimeOut = setTimeout(function() {
     global.newtoken();
-  }, 60000); 
+  }, 60000);*/ 
 
   exec('bash ~/driving-human-robots-interaction/killAll.sh');
 
@@ -1749,6 +1786,7 @@ global.stopGame = function() {
   waterNeeded = false;
   waterNeededSession = false;
 
+//  currentPseudo = '';
   currentAutonomyTime = 0;
   autonomousRobot = 0;
 

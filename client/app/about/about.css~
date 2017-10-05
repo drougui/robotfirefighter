@@ -1,3 +1,4 @@
+/*
 .pageAbout{
 	width: 99vw;
 	height: 123vw;
@@ -7,6 +8,19 @@
 	height: 100%;
 	width: 99vw;
 	background-size: 99vw auto;
-	background-image: url("/assets/images/poster_site.png");
+	background-image: url("/assets/images/poster.png");
+}*/
+
+
+.pageAbout{
+	width: 1821px;
+	height: 2575px;
+}
+
+.poster{
+	height: 100%;
+	width: 1821px;
+	background-size: 99vw auto;
+	background-image: url("/assets/images/poster.png");
 }
 

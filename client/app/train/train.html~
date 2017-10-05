@@ -1,3 +1,4 @@
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
 <div class="train"  ng-class="{'screenWrenchTrain': wrenchmodeTrain}">
 	<div class="screenTrain">
 		<div class="twoparts">
@@ -5,7 +6,7 @@
 				<div class="waterBlocktrain">
 					<div class="maincontainer">
 						<div class="iconCircle">
-							<i class="fa fa-tint" aria-hidden="true"></i>
+							<i style="color: #05BDFF;" class="fa fa-tint" aria-hidden="true"></i>
 						</div>
 						<div class="robinetcontainer">
 							<div class="arrowShowing"> <i class="fa fa-arrow-down" aria-hidden="true"></i> </div>
@@ -133,7 +134,7 @@
 				</div>
 			</div>
 			<div class="videoOrGoback">
-				<div ui-sref="welcome" class="gohomeTrain"> <i class="fa fa-video-camera" aria-hidden="true"></i> see a video of the game </div>
+				<div ui-sref="videodemo" class="gohomeTrain"> <i class="fa fa-video-camera" aria-hidden="true"></i> see a video of the game </div>
 				<div ui-sref="welcome" class="gohomeTrain"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>	
 			</div>
 			<!--<button ui-sref="welcome"> BACK </button>-->	

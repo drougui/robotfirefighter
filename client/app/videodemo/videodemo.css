@@ -5,5 +5,7 @@
 	flex-direction: column; 
 	justify-content: space-around;
 	align-items: center;
-	background-color: #4F849E;
+	background-color: #373737;
+	color: white;
+	font-family: 'Montserrat', sans-serif;
 }

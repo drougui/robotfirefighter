@@ -14,8 +14,8 @@ export class MainController {
 
   /*@ngInject*/
   constructor($http, $scope, socket, hotkeys, $timeout, $interval, sharedProperties, $rootScope, $window) {
-    $scope.user = {};
-    $scope.user.pseudo = "";
+    /*$scope.user = {};
+    $scope.user.pseudo = "";*/
     //---------------------
     // for online version:
     // -using nginx
@@ -58,7 +58,7 @@ export class MainController {
     $scope.nbfighted = 0;
     this.$http = $http;
     this.socket = socket;
-    var debug = true;
+    var debug = false;
 
     // map management functions/params
     var translationX = 19;
@@ -75,7 +75,9 @@ export class MainController {
 
     $scope.start = function(){
       $http.get('/api/control/start').then(response => {
-        console.log(response);
+        if(debug){
+          console.log(response);
+        }
         if(response.status === 200){
 
         }
@@ -206,6 +208,7 @@ export class MainController {
           $scope.cause = response.data[1];
           $scope.finalnumfires = response.data[2];
           $scope.newBestScore = response.data[3];
+          $scope.winnerPseudo = response.data[4];
         }
       });
 
@@ -268,15 +271,23 @@ export class MainController {
     //var isPlaying = false;
     var isPlaying = true;
     var isPlayingInterval = $interval(function() {
-      console.log("IS PLAYING: ");
-      console.log(isPlaying);
+      if(debug){
+        console.log("IS PLAYING: ");
+        console.log(isPlaying);
+      }
       $http.post('/api/auth/isplaying', {isplaying: isPlaying, token: myToken}).then(response => {
-        console.log("wait for response....");
+        if(debug){
+          console.log("wait for response....");
+        }
         if(response.status === 200) {
-          console.log('isPlaying taken into account by auth');
+          if(debug){
+            console.log('isPlaying taken into account by auth');
+          }
           //isPlaying = false;
         } else{
-          console.log('isPlaying -- nok auth');
+          if(debug){
+            console.log('isPlaying -- nok auth');
+          }
         }
       });
       //isPlaying = false;
@@ -289,40 +300,47 @@ export class MainController {
      });
 
     $scope.gohome = function(){ 
-      if($scope.newBestScore){
+/*    if($scope.newBestScore){
         $http.post('/api/control/pseudo', {pseudo: $scope.user.pseudo, token: myToken}).then(response => { // sans token, pas secure!
           if(response.status === 200) {
-            console.log($scope.user.pseudo);
-            console.log("new pseudo sent");
-            global.newtoken();
+            if(debug){
+              console.log($scope.user.pseudo);
+              console.log("new pseudo sent");
+            }
           } else{
-            console.log('nok pseudo');
+            if(debug){
+              console.log('nok pseudo');
+            }
           }
         });
-      }
-        $timeout(function() {
+      }*/
+      $timeout(function() {
         $window.location.reload();
       }, 100);
     }
 
 
+/* TODO not used anymore + res.json needed:
     $scope.sendpseudo = function(){ 
-      if($scope.newBestScore){
+    if($scope.newBestScore){
         $http.post('/api/control/pseudo', {pseudo: $scope.user.pseudo, token: myToken}).then(response => { // sans token, pas secure!
           if(response.status === 200) {
-            console.log($scope.user.pseudo);
-            console.log("new pseudo sent");
-            global.newtoken();
+            if(debug){
+              console.log($scope.user.pseudo);
+              console.log("new pseudo sent");
+            }
           } else{
-            console.log('nok pseudo');
+            if(debug){
+              console.log('nok pseudo');
+            }
           }
         });
       }
-        $timeout(function() {
+      $timeout(function() {
         $window.location.reload();
       }, 100);
     }
-
+*/
 
 // + FAIRE UN BOUTON QUI SE CHARGE D'ENVOYER LE PSEUDO
 // + global.newtoken()
@@ -334,7 +352,9 @@ export class MainController {
         pending = true;
         $http.post('/api/control/killall', {token: myToken}).then(response => {
           pending = false;
-          console.log($rootScope.token);
+          if(debug){
+            console.log($rootScope.token);
+          }
           if(response.status === 200) {
             $http.post('/api/auth/newtoken', {token: myToken}).then(response => { // TODO maybe after $http.post('/api/control/killall' ?
               if(response.status === 200) {
@@ -615,7 +635,6 @@ down arrow 	40
     $scope.faucetctrlfctminus = function() {
       myToken = $rootScope.token;
       if($scope.faucetcontrol > -3) {
-        console.log("yo!");
         if(!pendingButtons) {
           pendingButtons = true;
           $http.post('/api/control/watercontrol', {button: 'minusT',token: myToken}).then(response => {
@@ -652,7 +671,9 @@ down arrow 	40
         $http.post('/api/control/watercontrol', {button: 'pushButton',token: myToken}).then(response => {
           pendingButtons = false;
           if(response.status === 200) {
-            console.log("pushbutton well received")
+            if(debug){
+              console.log("pushbutton well received");
+            }
             isPlaying = true;
           } else if(debug) {
             console.log('nok');
@@ -669,7 +690,9 @@ down arrow 	40
           pendingButtons = false;
           if(response.status === 200) {
             $scope.wrenchMode = response.data.wrenchMode;
-            console.log("wrench mode ON/OFF! MODE: " + $scope.wrenchMode );
+            if(debug){
+              console.log("wrench mode ON/OFF! MODE: " + $scope.wrenchMode );
+            }
             isPlaying = true;
           } else if(debug) {
             console.log('nok');
@@ -687,7 +710,9 @@ down arrow 	40
           if(response.status === 200) {
             $scope.noleakat = response.data.noLeakAt;
             $scope.wrenchMode = response.data.wrenchMode;
-            console.log("clikleak -- : " + $scope.noleakat )
+            if(debug){
+              console.log("clikleak -- : " + $scope.noleakat );
+            }
             isPlaying = true;
           } else if(debug) {
             console.log('nok');
