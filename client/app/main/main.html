@@ -188,14 +188,14 @@ leaks/wrench/etc in server files-->
 						<div class="buttonWheel">
 							<div class="buttonChar">
 								<div class="mainbuttonL" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctminus()"> 
-									<i class="fa fa-undo" aria-hidden="true"></i>
+									<div class="undo"> <i class="fa fa-undo" aria-hidden="true"></i></div>
 									<div class="wheelsmall"> </div>
 								</div>
 								<div class="char"> s </div>
 							</div>
 							<div class="buttonletterChar">
 								<div class="mainbuttonR" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctplus()"> 
-									<i class="fa fa-undo" aria-hidden="true"></i>
+									<div class="undo">  <i class="fa fa-undo" aria-hidden="true"></i> </div>
 									<div class="wheelsmall"> </div>
 								</div>
 								<div class="char"> d </div>
@@ -322,6 +322,8 @@ leaks/wrench/etc in server files-->
 											<div class="cercle">
 												<div class="bluecercle">
 												</div>								
+											</div>
+											<div class="someRed">
 											</div>
 											<div class="thermometer">
 												<div class="mercure" ng-style="{height: mercurelevel}"> 	

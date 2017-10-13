@@ -131,7 +131,7 @@
 	color: white;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: center;
 	width: 70vw;
 }
 
@@ -1014,16 +1014,6 @@
 	animation-timing-function: linear;
 }
 
-.wheelsmall{
-	background-image: url("/assets/images/wheelBlack.png");
-	/*border-radius: 50%;
-	background-color: white;*/
-	height: 2vh;
-	width: 2vh;
-	background-size: 2vh 2vh;
-        position: absolute;
-	z-index: 3;
-}
 
 
 .wheelsmall2{
@@ -1110,6 +1100,7 @@
 	justify-content: center;
 	align-items: center;
 	border-radius: 1vw;
+	position: relative;
 }
 
 .mainbuttonR{
@@ -1122,6 +1113,29 @@
 	align-items: center;
 	border-radius: 1vw;
 	transform: scale(-1, 1);
+	position: relative;
+}
+
+.undo{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+
+.wheelsmall{
+	background-image: url("/assets/images/wheelBlack.png");
+	/*border-radius: 50%;
+	background-color: white;*/
+	height: 2vh;
+	width: 2vh;
+	background-size: 2vh 2vh;
+        position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 3;
 }
 
 .pushButton{
@@ -1740,9 +1754,9 @@
     background-color: #D0D0D0;
     width: 6vw;
     height: 90%;
-/*    margin-top: 0.5vw;*/
+/*  margin-top: 0.5vw;*/
     margin-left: 12vw;
-/*    margin-right: 0.5vw;*/
+/*  margin-right: 0.5vw;*/
     border: solid gray 0.3vw;   
     display: flex;
     align-items: flex-end; 
@@ -1754,6 +1768,7 @@
 .graduations{
 	position: absolute;
 	right: 0%;
+	top: 0%;
 	width: 0.5vw;
 	height: 100%;
 	background-color: red;
@@ -1835,6 +1850,16 @@
 	margin-bottom: 1vw;
 }
 
+.someRed{
+	background-color: red;
+	width: 0.8vw;
+	height: 0.8vw;
+	position: absolute;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	bottom:0;
+}
+
 .mercure{
 	/*background-color: #4F849E;*/
 	background-color: red;
@@ -1852,6 +1877,8 @@
 	justify-content: center;
 	align-items: center;
 	position: absolute;
+	left: 50%;
+	transform: translate(-50%, 0%);
 	bottom:0;
 }
 

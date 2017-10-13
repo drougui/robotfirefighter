@@ -24,7 +24,10 @@ export class MainController {
     //$scope.address = "http://dev.humanrobotinteraction.fr:8081/?action=stream";
     //---------------------
     // for local version
-    $scope.address = "http://localhost:8081/?action=stream";      
+    //$scope.address = "http://localhost:8081/?action=stream";
+
+    // for physio settings
+    $scope.address = "http://192.168.1.2:8081/?action=stream";
 
     // GAME OVER OVERLAYS
     $scope.cause=0;

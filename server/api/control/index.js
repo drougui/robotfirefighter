@@ -2,6 +2,21 @@
 var express = require('express');
 var router = express.Router();
 
+
+//=====================================================
+// LSL TCP client
+//=====================================================
+var net = require('net');
+var clientTCP = new net.Socket();
+clientTCP.connect(1337, '127.0.0.1', function() {
+  console.log('Connected');
+  //clientTCP.write('Hi LSL I am nodejs');
+});
+// TODO pour l'instant on lance le miniServer (i.e. LSL) avant de lancer le jeu
+// mais il faudra le lancer avec "exec" ensuite
+// et kill le client proprement
+// le client doit etre lancé pour etre capté par Labrecorder
+
 //=====================================================
 // define trees locations using treeslocs.json
 //=====================================================
@@ -1589,6 +1604,31 @@ export function launchgame(req, res) {
           stringWriteClicks = stringWriteClicks + "\'";
 
           wstream.write(remainingtime + ', ' + autonomousRobot + ', ' + stringWriteAlarms + ', ' + robotx + ', ' + roboty + ', ' + roboto + ', ' + stringWriteTreesStates + ', ' + batteryLevel + ', ' + mercurelevelfloat + ', ' + watlevel + ', ' + watlevelContainer + ', ' + stringWriteleaks + ', ' + stringWriteUsedKeys + ', ' + stringWriteClicks + '\n');
+
+          // TODO ICI AJOUTER LE CLIENT TCP ENVOYANT A MINISERVER.PY
+	  // CONTENANT LE SCRIPT DE STREAM LSL
+          clientTCP.write(remainingtime + ' ' + autonomousRobot + ' ' + stringWriteAlarms + ' ' + robotx + ' ' + roboty + ' ' + roboto + ' ' + stringWriteTreesStates + ' ' + batteryLevel + ' ' + mercurelevelfloat + ' ' + watlevel + ' ' + watlevelContainer + ' ' + stringWriteleaks + ' ' + stringWriteUsedKeys + ' ' + stringWriteClicks);
+//            clientTCP.destroy();
+/*
+float: 0,1,3,4,5,7,8,9,10
+*/
+
+/*
+clientTCP.on('data', function(data) {
+  console.log('Received: ' + data);
+  //clientTCP.destroy(); // kill client after server's response
+});
+*/
+/*
+
+
+
+
+          client.on('close', function() {
+	    console.log('Connection closed');
+          });
+*/          
+
           writeAlarms = [];
           writeUsedKeys = [];
           writeClicks = []; 
