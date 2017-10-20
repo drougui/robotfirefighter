@@ -82,7 +82,7 @@ var secret = Buffer.from('fe1a1915a379f3be5394b64d14794932', 'hex');
 // INITIATIZATION
 // someone playing ?
 var emptySlot = true; // nobody is playing
-global.expires = moment().add('minutes', 11).valueOf(); // payload = [authorization, expiration]
+global.expires = moment().add('minutes', 12).valueOf(); // payload = [authorization, expiration]
 var payload = {auth: true,
                exp: expires};
 
@@ -111,7 +111,7 @@ var server = net.createServer(function(socket) {
     setTimeout(function() {
       console.log('Auth -- TIMEOUT on LETSPLAY -> emptySlot=true');
       emptySlot = true;
-      global.expires = moment().add('minutes', 11).valueOf();
+      global.expires = moment().add('minutes', 12).valueOf();
       payload = {auth: true,
                  exp: global.expires};
       global.token = jwt.encode(payload, secret);
@@ -169,7 +169,7 @@ export function killTimeout(req,res) {
           console.log("==========================================");
           console.log('Auth -- FIRST TIMEOUT on isplaying -> emptySlot=true');
           emptySlot = true;
-          global.expires = moment().add('minutes', 11).valueOf();
+          global.expires = moment().add('minutes', 12).valueOf();
           payload = {auth: true,
                      exp: global.expires};
           global.token = jwt.encode(payload, secret);
@@ -197,7 +197,7 @@ export function newtoken(req,res) {
       emptySlot=true;
       console.log('Auth -- emptySlot:');
       console.log(emptySlot);
-      global.expires = moment().add('minutes', 11).valueOf();
+      global.expires = moment().add('minutes', 12).valueOf();
       payload = {auth: true,
                  exp: global.expires};
       global.token = jwt.encode(payload, secret);
@@ -221,7 +221,7 @@ export function status(req, res) {
 export function play(req, res) {
   if(emptySlot){
     global.istoolate = false;
-    global.expires = moment().add('minutes', 11).valueOf(); // payload = [authorization, expiration]
+    global.expires = moment().add('minutes', 12).valueOf(); // payload = [authorization, expiration]
     payload = { auth: true,
                 exp: global.expires };
     global.token = jwt.encode(payload, secret);
@@ -240,7 +240,7 @@ var checkExpiration = setInterval(function() {
   if( global.expires <= Date.now() ) {
     emptySlot = true;
     console.log("Auth -- expiration of current token, creation of a new one. ");
-    global.expires = moment().add('minutes', 11).valueOf();
+    global.expires = moment().add('minutes', 12).valueOf();
     payload = { auth: true,
               exp: global.expires };
     global.token = jwt.encode(payload, secret);
@@ -274,7 +274,7 @@ export function isplaying(req,res) {
           console.log("==========================================");
           console.log('Auth -- TIMEOUT on isplaying -> emptySlot=true');
           emptySlot = true;
-          global.expires = moment().add('minutes', 11).valueOf();
+          global.expires = moment().add('minutes', 12).valueOf();
           payload = {auth: true,
                      exp: global.expires};
           global.token = jwt.encode(payload, secret);
@@ -302,7 +302,7 @@ global.newtoken = function() {
   emptySlot=true;
   console.log('emptySlot:');
   console.log(emptySlot);
-  global.expires = moment().add('minutes', 11).valueOf();
+  global.expires = moment().add('minutes', 12).valueOf();
   payload = {auth: true,
              exp: global.expires};
   global.token = jwt.encode(payload, secret);

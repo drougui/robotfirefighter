@@ -2,16 +2,19 @@
 var express = require('express');
 var router = express.Router();
 
-
+var sys = require('sys');
+var exec = require('child_process').exec;
 //=====================================================
 // LSL TCP client
 //=====================================================
+exec('python ~/driving-human-robots-interaction/miniServer.py');
 var net = require('net');
 var clientTCP = new net.Socket();
 clientTCP.connect(1337, '127.0.0.1', function() {
   console.log('Connected');
   //clientTCP.write('Hi LSL I am nodejs');
 });
+
 // TODO pour l'instant on lance le miniServer (i.e. LSL) avant de lancer le jeu
 // mais il faudra le lancer avec "exec" ensuite
 // et kill le client proprement
@@ -134,9 +137,6 @@ var currentAutonomyTime = 0;
 router.post('/killall', killall); // kill morse, + init js
 router.post('/start',start); // launch morse
 router.post('/launchgame',launchgame); // launch js
-
-var sys = require('sys');
-var exec = require('child_process').exec;
 
 function killall(req, res) {
   if(req.body.token) {
