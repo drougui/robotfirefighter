@@ -151,6 +151,7 @@ var mycounter2 = 1;
 
 
 // bug = res.status zapé
+
 export function killTimeout(req,res) {
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
@@ -161,6 +162,7 @@ export function killTimeout(req,res) {
       console.log('Auth -- Clear timeout.');
       clearTimeout(clickOnLetsPlayTimeout);
       console.log('Auth -- Isplaying timeout creation.');
+/*
       global.isPlayingTimeout = setTimeout(function() { // the player has 30secs to click on a button or press a control key
           exec('bash ~/driving-human-robots-interaction/killAll.sh');
           global.stopGame();
@@ -177,6 +179,7 @@ export function killTimeout(req,res) {
           console.log(global.token);
           console.log('Auth -- FIRST Kill game.');
         }, 30000);
+*/
         res.status(200).json('Auth -- clickOnLetsPlayTimeout cleared, isPlayingTimeout defined');
      } else{
       res.status(401).json('Auth -- Invalid token.');
@@ -185,6 +188,7 @@ export function killTimeout(req,res) {
     res.status(401).json('Auth -- No token.');
   }
 }
+
 
 // TODO: changer la valeur de emptySlot selon l'activité du mec (fin du jeu/30sec sans rien toucher => killall + emptySlot = true
 export function newtoken(req,res) {
@@ -201,7 +205,7 @@ export function newtoken(req,res) {
       payload = {auth: true,
                  exp: global.expires};
       global.token = jwt.encode(payload, secret);
-      clearTimeout(global.isPlayingTimeout);
+      //clearTimeout(global.isPlayingTimeout);
       res.status(200).json('Auth -- Slot is now empty, a new token is created (given to nobody).');
     } else{
       res.status(401).json('Auth -- Wrong token.');
@@ -252,7 +256,11 @@ var checkExpiration = setInterval(function() {
   }
 }, 3000);
 
-global.isPlayingTimeout;
+//global.isPlayingTimeout;
+
+// not used!
+// TODO NOT USED ANYMORE
+/*
 export function isplaying(req,res) {
   console.log('Auth -- isplaying function:');
   console.log(req.body);
@@ -294,7 +302,7 @@ export function isplaying(req,res) {
   } else{
     res.status(401).json('Auth -- No token.');
   }
-}
+}*/
 
 
 global.newtoken = function() {
@@ -306,6 +314,6 @@ global.newtoken = function() {
   payload = {auth: true,
              exp: global.expires};
   global.token = jwt.encode(payload, secret);
-  clearTimeout(global.isPlayingTimeout);
+  //clearTimeout(global.isPlayingTimeout);
 }
 

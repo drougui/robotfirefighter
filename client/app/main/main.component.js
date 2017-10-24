@@ -24,10 +24,26 @@ export class MainController {
     //$scope.address = "http://dev.humanrobotinteraction.fr:8081/?action=stream";
     //---------------------
     // for local version
-    //$scope.address = "http://localhost:8081/?action=stream";
+    $scope.address = "http://localhost:8081/?action=stream";
+    //---------------------
+    // for PC SMI settings
+    //$scope.address = "http://192.168.1.2:8081/?action=stream";
 
-    // for physio settings
-    $scope.address = "http://192.168.1.2:8081/?action=stream";
+    // refresh every 2secs
+    var tictac = 0;
+    $scope.addressUpdated = $scope.address
+    var streamingInterval = $interval(function() {
+      tictac = tictac + 1;
+      tictac = tictac%2;
+      $scope.addressUpdated = $scope.address + '?' + tictac;
+      console.log($scope.addressUpdated);
+    }, 2000);
+    $scope.$on("$destroy", function() {
+      if (streamingInterval) {
+        $interval.cancel(streamingInterval);
+      }
+    });
+
 
     // GAME OVER OVERLAYS
     $scope.cause=0;
@@ -264,7 +280,7 @@ export class MainController {
         }
      });
 
-    var tictac = true; 
+    
     $scope.iconBatt = 0; 
 
   
@@ -272,7 +288,8 @@ export class MainController {
 
     // TODO ISPLAYING (with token) sent to control and auth every 10sec
     //var isPlaying = false;
-    var isPlaying = true;
+    //var isPlaying = true;
+/*
     var isPlayingInterval = $interval(function() {
       if(debug){
         console.log("IS PLAYING: ");
@@ -301,6 +318,7 @@ export class MainController {
          $interval.cancel(isPlayingInterval);
        }
      });
+*/
 
     $scope.gohome = function(){ 
 /*    if($scope.newBestScore){
@@ -446,7 +464,7 @@ down arrow 	40
               $scope.forward();
               console.log("CONTINUE TOUT DROIT!");
             }*/
-            isPlaying = true;
+            //isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }
@@ -484,7 +502,7 @@ down arrow 	40
               $scope.forward();
               console.log("CONTINUE TOUT DROIT!");
             }*/
-            isPlaying = true;
+            //isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }
@@ -518,7 +536,7 @@ down arrow 	40
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
-            isPlaying = true;
+            //isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }
@@ -552,7 +570,7 @@ down arrow 	40
               console.log(response.data.posY[0]);
               console.log(response.data.orientation[0]);
             }
-            isPlaying = true;
+            //isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }
@@ -583,7 +601,7 @@ down arrow 	40
               if(debug) {
                 //console.log('watlevel: ' + response.data.waterlevel);
               }
-              isPlaying = true;
+              //isPlaying = true;
             } else if(debug) {
               console.log('nok');
             }
@@ -626,7 +644,7 @@ down arrow 	40
               if($scope.faucetcontrol>0) {
                 $scope.faucetcontrol = '+' + $scope.faucetcontrol;
               }
-              isPlaying = true;
+              //isPlaying = true;
             } else if(debug) {
               console.log('nok');
             }
@@ -651,7 +669,7 @@ down arrow 	40
               } else {
                 $scope.direction = 0;
               }
-              isPlaying = true;
+              //isPlaying = true;
               $scope.animtime = 10 - Math.abs($scope.faucetcontrol)*3;
               if($scope.faucetcontrol>0) {
                 $scope.faucetcontrol = '+' + $scope.faucetcontrol;
@@ -677,7 +695,7 @@ down arrow 	40
             if(debug){
               console.log("pushbutton well received");
             }
-            isPlaying = true;
+            //isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }
@@ -696,7 +714,7 @@ down arrow 	40
             if(debug){
               console.log("wrench mode ON/OFF! MODE: " + $scope.wrenchMode );
             }
-            isPlaying = true;
+            //isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }
@@ -716,7 +734,7 @@ down arrow 	40
             if(debug){
               console.log("clikleak -- : " + $scope.noleakat );
             }
-            isPlaying = true;
+            //isPlaying = true;
           } else if(debug) {
             console.log('nok');
           }

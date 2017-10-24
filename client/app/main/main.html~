@@ -323,6 +323,8 @@ leaks/wrench/etc in server files-->
 												<div class="bluecercle">
 												</div>								
 											</div>
+											<div class="someRed">
+											</div>
 											<div class="thermometer">
 												<div class="mercure" ng-style="{height: mercurelevel}"> 	
 												</div>	
