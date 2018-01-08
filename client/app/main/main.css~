@@ -1853,7 +1853,7 @@
 .someRed{
 	background-color: red;
 	width: 0.8vw;
-	height: 0.8vw;
+	height: 1vw;
 	position: absolute;
 	left: 50%;
 	transform: translate(-50%, -50%);

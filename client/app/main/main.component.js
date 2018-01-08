@@ -36,7 +36,7 @@ export class MainController {
       tictac = tictac + 1;
       tictac = tictac%2;
       $scope.addressUpdated = $scope.address + '?' + tictac;
-      console.log($scope.addressUpdated);
+      /*console.log($scope.addressUpdated);*/
     }, 2000);
     $scope.$on("$destroy", function() {
       if (streamingInterval) {
@@ -365,7 +365,7 @@ export class MainController {
 
 // + FAIRE UN BOUTON QUI SE CHARGE D'ENVOYER LE PSEUDO
 // + global.newtoken()
-
+    var pending = false;
     var myToken = $rootScope.token;
     $scope.killall = function(){
       myToken = $rootScope.token;
@@ -408,7 +408,36 @@ down arrow 	40
 (space) 	32 
 */
 
+// TODO server part
+// TODO also when it is pressed (till up)
+    window.onkeydown = function(e) {
+      if (e.keyCode!=37 && e.keyCode!=38 && e.keyCode!=39 && e.keyCode!=40 && e.keyCode!=32 && e.keyCode!=68 && e.keyCode!=69 && e.keyCode!=83 && e.keyCode!=65){
+        myToken = $rootScope.token;
+        if(debug) {
+          console.log('anyotherkey');
+          console.log("pending:");
+          console.log(pending);
+        }
+        if(!pending) {
+          pending = true;
+          $http.post('/api/control/otherkey', {key: 'otherkey',token: myToken}).then(response => {
+            pending = false;
+            if(response.status === 200) {
+              console.log('other sent');
+            } else if(debug) {
+              console.log('nok');
+            }
 
+          });
+        }
+
+      }
+    }
+    
+
+    $scope.otherclick = function(){
+      console.log("click!");
+    };
 
 
 
@@ -425,6 +454,18 @@ down arrow 	40
       if(pressedKeys[39] && !pressedKeys[38] && !pressedKeys[40]) {
               $scope.totheright();
       }
+
+/*
+      anotherKeyPressed = false;
+      for(var i =0;i<pressedKeys.length;i++){
+        if (i!=37 && i!=38 && i!=39 && i!=40 && i!=32 && i!=68 && i!=69 && i!=83 && i!=65){
+          anotherKeyPressed = anotherKeyPressed || pressedKeys[i];
+        }
+      }
+      if(anotherKeyPressed){
+        console.log("anotherKeyPressed!!");
+      }
+*/
     }, 300);
 
     $scope.$on("$destroy", function() {
@@ -439,7 +480,7 @@ down arrow 	40
     // | |
     // | |____  
     // |______| 
-    var pending = false;
+
     $scope.totheleft = function() {
       myToken = $rootScope.token;
       if(debug) {
@@ -760,6 +801,9 @@ down arrow 	40
       }
     };*/
 
+    $scope.otherKey = function(){
+      console.log('other')
+    };
 
     hotkeys.add('left', 'totheleft', $scope.totheleft);
     hotkeys.add('right', 'totheright', $scope.totheright);
@@ -772,6 +816,51 @@ down arrow 	40
     hotkeys.add('d', 'tapright', $scope.faucetctrlfctplus);
     hotkeys.add('e', 'pushbutton', $scope.waterPushButton);
     hotkeys.add('a', 'wrench', $scope.wrenchOnOff);
+
+
+
+// others
+/*
+    hotkeys.add('z', 'otherKey', $scope.otherKey);
+    hotkeys.add('r', 'otherKey', $scope.otherKey);
+    hotkeys.add('t', 'otherKey', $scope.otherKey);
+    hotkeys.add('y', 'otherKey', $scope.otherKey);
+    hotkeys.add('u', 'otherKey', $scope.otherKey);
+    hotkeys.add('i', 'otherKey', $scope.otherKey);
+    hotkeys.add('o', 'otherKey', $scope.otherKey);
+    hotkeys.add('p', 'otherKey', $scope.otherKey);
+    hotkeys.add('q', 'otherKey', $scope.otherKey);
+    hotkeys.add('f', 'otherKey', $scope.otherKey);
+    hotkeys.add('g', 'otherKey', $scope.otherKey);
+    hotkeys.add('h', 'otherKey', $scope.otherKey);
+    hotkeys.add('j', 'otherKey', $scope.otherKey);
+    hotkeys.add('k', 'otherKey', $scope.otherKey);
+    hotkeys.add('l', 'otherKey', $scope.otherKey);
+    hotkeys.add('m', 'otherKey', $scope.otherKey);
+    hotkeys.add('w', 'otherKey', $scope.otherKey);
+    hotkeys.add('x', 'otherKey', $scope.otherKey);
+    hotkeys.add('c', 'otherKey', $scope.otherKey);
+    hotkeys.add('v', 'otherKey', $scope.otherKey);
+    hotkeys.add('b', 'otherKey', $scope.otherKey);
+    hotkeys.add('n', 'otherKey', $scope.otherKey);
+    hotkeys.add('ctrl', 'otherKey', $scope.otherKey);
+    hotkeys.add('tab', 'otherKey', $scope.otherKey);
+    hotkeys.add('shift', 'otherKey', $scope.otherKey);
+    hotkeys.add('command', 'otherKey', $scope.otherKey);
+*/
+/*
+command   : '\u2318',     // ⌘
+          shift     : '\u21E7',     // ⇧
+          left      : '\u2190',     // ←
+          right     : '\u2192',     // →
+          up        : '\u2191',     // ↑
+          down      : '\u2193',     // ↓
+          'return'  : '\u23CE',     // ⏎
+backspace
+
+    hotkeys.add('fn', 'otherKey', $scope.otherKey);
+    hotkeys.add('alt', 'otherKey', $scope.otherKey);
+*/
 
 /*
     hotkeys.add('0', 'tozero', $scope.tozero);

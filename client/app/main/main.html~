@@ -238,7 +238,7 @@ leaks/wrench/etc in server files-->
 -->
 				<div class="streamcamera">
 
-					<img class="imagecam" ng-src={{address}} scrolling="no" frameBorder="0">
+					<img class="imagecam" ng-src={{addressUpdated}} scrolling="no" frameBorder="0">
 <!--					<img class="imagecam" ng-src="http://localhost:8081/?action=stream"   scrolling="no" frameBorder="0">
 					<img class="imagecam" src="http://{{ipaddress}}:8080/?action=stream" scrolling="no" frameBorder="0"> -->
 					<div class="splatchContainer">

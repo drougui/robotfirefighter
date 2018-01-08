@@ -14,13 +14,6 @@
 	color: #05BDFF;
 }
 
-.bestScores{
-	width: 95vw;
-	display: flex;
-	font-size: 3vh;
-	justify-content: space-around;
-	height: 90vh;
-}
 
 .scoresNames{
 	width: 30vw;
@@ -47,4 +40,74 @@
 
 .scoresScreen i{
 	color: #05BDFF;
+}
+
+
+/* jolislides*/
+
+
+.scoresPages{
+  position: relative;
+/*  display: flex;
+  width: 1024px;*/
+  overflow: hidden;
+  width: 95vw;
+  height: 80vh;
+}
+
+.bestScores{
+	width: 100%;
+	display: flex;
+	font-size: 3vh;
+	justify-content: space-around;
+	height: 100%;
+	transition: 2s ease-in-out;
+	z-index: 3;
+        opacity: 1;
+        position: absolute;
+        left: 0%;
+}
+
+
+.divleft{
+  /*position: absolute;*/
+  left: -100%;
+  opacity: 0;
+}
+
+.divright{
+  /*position: absolute;*/
+  left: 100%;
+  opacity: 0;
+}
+
+
+
+.controlBand{
+	display: flex;
+	width: 90vw;
+	/* TODO */
+	justify-content:  space-around;	
+}
+
+.nextprev{
+  width: 50vw;
+  display: flex;
+  justify-content: space-around;
+}
+
+.scoresGohome{
+	font-size: 2vw;
+	color: #05BDFF;
+	cursor: pointer;
+	margin-right: 2vw;
+	width: 25vw;
+}
+
+.scorespage{
+	font-size: 2vw;
+	color: #05BDFF;
+	cursor: pointer;
+	margin-right: 2vw;
+	width: 10vw;
 }

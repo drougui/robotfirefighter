@@ -491,6 +491,11 @@
 	font-size: 2vw;
 }
 
+.centeranykey{
+	width: 60%;
+	display: flex;
+	justify-content: center;
+}
 
 
 .infoBlock{

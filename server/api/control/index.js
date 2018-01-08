@@ -274,6 +274,7 @@ var pastRoboty = 0.0;
 var currentAutoMvt = false;
 
 var abortSession = false;
+// every second, called by rttlua
 serverGet.on('message', function(message, remote) {
   console.log("MESSAGE FROM RTTLUA:");
   pastRobotx = robotx;
@@ -712,6 +713,31 @@ router.post('/', function(req, res/*, next*/) {
   }
 });
 
+
+
+// other key
+router.post('/otherkey', function(req, res/*, next*/) {
+  if(req.body.token) {
+    var decoded = jwt.decode(req.body.token, secret);
+    if(decoded.auth && decoded.exp === global.expires){
+      if(req.body.key == 'otherkey') {
+        writeUsedKeys.push('otherkey');
+        console.log("otherkey pushed");
+      } 
+      res.json({});
+    }
+    else{
+      res.status(401).json("Invalid token");
+    }
+  }
+  else{
+    res.status(401).json("No token given");
+  }
+});
+
+
+
+
 // give pos/orientation/splatch/automanual to client
 router.get('/robot', function(req, res) {
   res.json([robotx[0],roboty[0],roboto[0],currentsplatch,autonomousRobot==1]);
@@ -1115,7 +1141,7 @@ export function launchgame(req, res) {
         stringWriteUsedKeys = "\'-1";
       }
       stringWriteUsedKeys = stringWriteUsedKeys + "\'";
-
+	
       var stringWriteClicks = "";
       if (writeClicks.length>0){
         for(var i=0;i<writeClicks.length;i++){
@@ -1513,6 +1539,8 @@ export function launchgame(req, res) {
         if (watlevelContainer>100){
           watlevelContainer = 100;
         }
+// TODO PBM HERE, NO HOPE ALARM WILL NOT POP (random every 200ms!!)
+// idea: on ne retire pas au sort si watlevelContainer n'était pas >=15
         if (watlevelContainer<15 && !alarmOverlayOpen && Math.random()>0.5 && !alarmSituations[7]){
           alarmOverlayOpen = true;
           alarmCause = 7;
@@ -1750,47 +1778,86 @@ router.get('/robotwater', function(req, res) {
 //var endOfGameTimeOut;
 // used in auth
 global.stopGame = function() {
-  var mychain = fs.readFileSync('../driving-human-robots-interaction/scores.json', 'UTF-8');
-  scores = JSON.parse(mychain);
 
-  // new best score ?  
-  // TODO comparer rewardsSum pour raffiner 
-  console.log("NEW BEST SCORE ?");
-  rank = 0;
-  while(rank<10 && scores[rank].score>=finalNumFightedFires){
-    rank++;
-    console.log("while...");
-  }
-  console.log("rank");
-  console.log(rank);
-  console.log("finalNumFightedFires");
-  console.log(finalNumFightedFires);
-  if(rank<10){
-    console.log("YES, WE HAVE A WINNER!");
-    newBestScore = true;
-    for(var i=9; i>rank; i--){
-      scores[i].name = scores[i-1].name;
-      scores[i].score = scores[i-1].score;
-      scores[i].date = scores[i-1].date;
-      scores[i].reward = scores[i-1].reward;
+  if (finalNumFightedFires>0){
+
+    var mychain = fs.readFileSync('../driving-human-robots-interaction/scores.json', 'UTF-8');
+    scores = JSON.parse(mychain);
+
+    // rank computation
+    rank = 0;
+    // TODO comparer .reward plutot que .score pour raffiner 
+    while(rank<scores.length && scores[rank].score>=finalNumFightedFires){
+      rank++;
+      console.log("while...");
     }
-    if(currentPseudo==''){
-      scores[rank].name = "anonym" + rewardsSum;
-    }else{
-      scores[rank].name = currentPseudo;
+    console.log("rank");
+    console.log(rank);
+    console.log("finalNumFightedFires");
+    console.log(finalNumFightedFires);
+    // score in the first page
+    if(rank<10){
+      console.log("YES, WE HAVE A WINNER!");
+      newBestScore = true;
     }
-    scores[rank].score = finalNumFightedFires;
-    var date = new Date();
-    var MyDateString = ('0' + (date.getMonth()+1)).slice(-2) + '/'
+
+    // last score
+    if(scores.length==rank){
+
+      // building last score
+      var newPseudo = '';
+      if(currentPseudo==''){
+        // anonym pseudo generation
+        newPseudo = "anonym" + rewardsSum;
+      }else{
+        newPseudo = currentPseudo;
+      }
+      var newScore = finalNumFightedFires;
+      var date = new Date();
+      var MyDateString = ('0' + (date.getMonth()+1)).slice(-2) + '/'
              + ('0' + date.getDate()).slice(-2) + '/'
              + date.getFullYear();
-    scores[rank].date =  MyDateString + ', ' + ('0' + date.getHours()).slice(-2) + ':' + ( '0' + date.getMinutes()).slice(-2);
-    scores[rank].reward = rewardsSum;
+      var newDate =  MyDateString + ', ' + ('0' + date.getHours()).slice(-2) + ':' + ( '0' + date.getMinutes()).slice(-2);
+      var newReward = rewardsSum;
+      var newObject = {"name":newPseudo,"score":newScore,"date":newDate,"reward":newReward};
+      scores.push(newObject);
+
+    }else{ // not last score
+
+      var newObject = scores[scores.length-1];
+      scores.push(newObject);
+      for(var i=scores.length-1; i>rank; i--){
+        scores[i].name = scores[i-1].name;
+        scores[i].score = scores[i-1].score;
+        scores[i].date = scores[i-1].date;
+        scores[i].reward = scores[i-1].reward;
+      }
+  
+      if(currentPseudo==''){
+        // anonym pseudo generation
+        scores[rank].name = "anonym" + rewardsSum;
+      }else{
+        scores[rank].name = currentPseudo;
+      }
+      scores[rank].score = finalNumFightedFires;
+      var date = new Date();
+      var MyDateString = ('0' + (date.getMonth()+1)).slice(-2) + '/'
+             + ('0' + date.getDate()).slice(-2) + '/'
+             + date.getFullYear();
+      scores[rank].date =  MyDateString + ', ' + ('0' + date.getHours()).slice(-2) + ':' + ( '0' + date.getMinutes()).slice(-2);
+      scores[rank].reward = rewardsSum;
+    }
+
+    // overwrite score file
     var newChaine = JSON.stringify(scores);
     fs.writeFileSync('../driving-human-robots-interaction/scores.json', newChaine, 'UTF-8');
-    finalNumFightedFires = 0;
-    rewardsSum = 0;
+
   }
+
+  // reset variables
+  finalNumFightedFires = 0;
+  rewardsSum = 0;
+
   global.newtoken();
 
 // TODO: global.newtoken(); lorsqu'on a 
