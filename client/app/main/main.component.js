@@ -409,7 +409,8 @@ down arrow 	40
 */
 
 // TODO server part
-// TODO also when it is pressed (till up)
+// TODO also when it is pressed (till up) !!!!!! + ENREGISTRER CA AVEC 'OTHERCLICK' DANS UNE NOUVELLE COLONNE
+// TODO last column to say when it is a real click or a keyboard shortcut
     window.onkeydown = function(e) {
       if (e.keyCode!=37 && e.keyCode!=38 && e.keyCode!=39 && e.keyCode!=40 && e.keyCode!=32 && e.keyCode!=68 && e.keyCode!=69 && e.keyCode!=83 && e.keyCode!=65){
         myToken = $rootScope.token;

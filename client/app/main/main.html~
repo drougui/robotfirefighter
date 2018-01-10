@@ -34,7 +34,7 @@
 		</div> 
 		<md-progress-circular md-mode="indeterminate"></md-progress-circular> -->
 
-<div class="screen" ng-class="{screenWrench: wrenchMode}">
+<div class="screen" ng-class="{screenWrench: wrenchMode}" ng-click="otherclick()">
 	<div ng-class="{overlayOpen: overlayOpen}" class="overlay">
 		<div class="gameover" ng-if="cause==1 || cause==2"> GAME OVER! </div>
                 <div class="gameover" ng-if="cause==0"> THE END </div>
@@ -187,7 +187,7 @@ leaks/wrench/etc in server files-->
 						</div>
 						<div class="buttonWheel">
 							<div class="buttonChar">
-								<div class="mainbuttonL" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctminus()"> 
+								<div class="mainbuttonL" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctminus(); $event.stopPropagation();"> 
 									<div class="undo"> <i class="fa fa-undo" aria-hidden="true"></i></div>
 									<div class="wheelsmall"> </div>
 								</div>

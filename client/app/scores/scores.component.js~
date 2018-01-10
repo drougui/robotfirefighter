@@ -53,6 +53,7 @@ export class ScoresComponent {
       if(pageInd+1<pagesNumber){
         $scope.divleft[pageInd] = true;
         $scope.divright[pageInd+1] = false;
+        $scope.pageNumber = $scope.pageNumber + 1;
       }
       $scope.firstPage =false;
       if(pageInd+2==pagesNumber){
@@ -69,11 +70,13 @@ export class ScoresComponent {
       if(pageInd>0){
         $scope.divright[pageInd] = true;
         $scope.divleft[pageInd-1] = false;
+        $scope.pageNumber = $scope.pageNumber - 1;
       }
       $scope.lastPage =false;
       if(pageInd==1){
         $scope.firstPage = true;
       }
+      $scope.pageNumber = pageInd+2;
     };
   
   }

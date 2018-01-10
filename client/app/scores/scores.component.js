@@ -76,7 +76,6 @@ export class ScoresComponent {
       if(pageInd==1){
         $scope.firstPage = true;
       }
-      $scope.pageNumber = pageInd+2;
     };
   
   }
