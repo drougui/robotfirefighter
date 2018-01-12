@@ -398,21 +398,8 @@ export class MainController {
     // -> use them to update corresponding variables of the map
     // -------------------------------------------------------------------------
     var pressedKeys = [];
-    window.onkeyup = function(e) {pressedKeys[e.keyCode]=false;}
-    window.onkeydown = function(e) {pressedKeys[e.keyCode]=true;}
-/*
-left arrow 	37
-up arrow 	38
-right arrow 	39
-down arrow 	40 
-(space) 	32 
-*/
-
-// TODO server part
-// TODO also when it is pressed (till up) !!!!!! + ENREGISTRER CA AVEC 'OTHERCLICK' DANS UNE NOUVELLE COLONNE
-// TODO last column to say when it is a real click or a keyboard shortcut
-    window.onkeydown = function(e) {
-      if (e.keyCode!=37 && e.keyCode!=38 && e.keyCode!=39 && e.keyCode!=40 && e.keyCode!=32 && e.keyCode!=68 && e.keyCode!=69 && e.keyCode!=83 && e.keyCode!=65){
+    window.onkeyup = function(e) {pressedKeys[e.keyCode]=false;
+            if (e.keyCode!=37 && e.keyCode!=38 && e.keyCode!=39 && e.keyCode!=40 && e.keyCode!=32 && e.keyCode!=68 && e.keyCode!=69 && e.keyCode!=83 && e.keyCode!=65){
         myToken = $rootScope.token;
         if(debug) {
           console.log('anyotherkey');
@@ -421,7 +408,7 @@ down arrow 	40
         }
         if(!pending) {
           pending = true;
-          $http.post('/api/control/otherkey', {key: 'otherkey',token: myToken}).then(response => {
+          $http.post('/api/control/otherkey', {key: 'otherkeyUp',token: myToken}).then(response => {
             pending = false;
             if(response.status === 200) {
               console.log('other sent');
@@ -434,10 +421,63 @@ down arrow 	40
 
       }
     }
+    window.onkeydown = function(e) {pressedKeys[e.keyCode]=true;
+            if (e.keyCode!=37 && e.keyCode!=38 && e.keyCode!=39 && e.keyCode!=40 && e.keyCode!=32 && e.keyCode!=68 && e.keyCode!=69 && e.keyCode!=83 && e.keyCode!=65){
+        myToken = $rootScope.token;
+        if(debug) {
+          console.log('anyotherkey');
+          console.log("pending:");
+          console.log(pending);
+        }
+        if(!pending) {
+          pending = true;
+          $http.post('/api/control/otherkey', {key: 'otherkeyDown',token: myToken}).then(response => {
+            pending = false;
+            if(response.status === 200) {
+              console.log('other sent');
+            } else if(debug) {
+              console.log('nok');
+            }
+
+          });
+        }
+
+      }
+    }
+/*
+left arrow 	37
+up arrow 	38
+right arrow 	39
+down arrow 	40 
+(space) 	32 
+*/
+
+// TODO server part
+// TODO also when it is pressed (till up) !!!!!! + ENREGISTRER CA AVEC 'OTHERCLICK' DANS UNE NOUVELLE COLONNE
+// TODO last column to say when it is a real click or a keyboard shortcut
+
     
 
     $scope.otherclick = function(){
       console.log("click!");
+      myToken = $rootScope.token;
+        if(debug) {
+          console.log('otherclick');
+          console.log("pending:");
+          console.log(pending);
+        }
+        if(!pending) {
+          pending = true;
+          $http.post('/api/control/otherkey', {key: 'otherClick',token: myToken}).then(response => {
+            pending = false;
+            if(response.status === 200) {
+              console.log('other sent');
+            } else if(debug) {
+              console.log('nok');
+            }
+
+          });
+        }
     };
 
 
@@ -764,6 +804,138 @@ down arrow 	40
       }
     };
 
+// using keys
+    $scope.faucetctrlfctplusKey = function() {
+      myToken = $rootScope.token;
+      if($scope.faucetcontrol < 3) {
+        if(!pendingButtons) {
+          pendingButtons = true;
+          $http.post('/api/control/watercontrol', {button: 'plusT',token: myToken}).then(response => {
+            pendingButtons = false;
+            if(response.status === 200) {
+              $scope.faucetcontrol = response.data.tapControl;
+              if(response.data.tapControl>0){
+                $scope.direction = 1;
+              } else if(response.data.tapControl<0) {
+                $scope.direction = -1;
+              } else {
+                $scope.direction = 0;
+              }
+              $scope.animtime = 7 - Math.abs($scope.faucetcontrol)*2;
+              if($scope.faucetcontrol>0) {
+                $scope.faucetcontrol = '+' + $scope.faucetcontrol;
+              }
+              //isPlaying = true;
+            } else if(debug) {
+              console.log('nok');
+            }
+
+            $http.post('/api/control/keyboard', {token: myToken}).then(response => {
+              pendingButtons = false;
+              if(response.status === 200) {
+                console.log("keyboard");
+              }
+            });
+
+          });
+        }
+      }
+    };
+
+    $scope.faucetctrlfctminusKey = function() {
+      myToken = $rootScope.token;
+      if($scope.faucetcontrol > -3) {
+        if(!pendingButtons) {
+          pendingButtons = true;
+          $http.post('/api/control/watercontrol', {button: 'minusT',token: myToken}).then(response => {
+            if(response.status === 200) {
+              $scope.faucetcontrol = response.data.tapControl;
+              if(response.data.tapControl>0){
+                $scope.direction = 1;
+              } else if(response.data.tapControl<0) {
+                $scope.direction = -1;
+              } else {
+                $scope.direction = 0;
+              }
+              //isPlaying = true;
+              $scope.animtime = 10 - Math.abs($scope.faucetcontrol)*3;
+              if($scope.faucetcontrol>0) {
+                $scope.faucetcontrol = '+' + $scope.faucetcontrol;
+              }
+            } else if(debug) {
+              console.log('nok');
+            }
+
+            $http.post('/api/control/keyboard', {token: myToken}).then(response => {
+              pendingButtons = false;
+              if(response.status === 200) {
+                console.log("keyboard");
+              }
+            });
+
+          });
+        }
+      }
+    };
+
+    $scope.waterPushButtonKey = function() {
+      myToken = $rootScope.token;
+      if(!pendingButtons) {
+        pendingButtons = true;
+        $http.post('/api/control/watercontrol', {button: 'pushButton',token: myToken}).then(response => {
+          if(response.status === 200) {
+            if(debug){
+              console.log("pushbutton well received");
+            }
+            //isPlaying = true;
+          } else if(debug) {
+            console.log('nok');
+          }
+
+          $http.post('/api/control/keyboard', {token: myToken}).then(response => {
+            pendingButtons = false;
+            if(response.status === 200) {
+              console.log("keyboard");
+            }
+          });
+
+        });
+      }
+    };
+
+    $scope.wrenchOnOffKey = function() {
+      myToken = $rootScope.token;
+      if(!pendingButtons) {
+        pendingButtons = true;
+        $http.post('/api/control/watercontrol', {button: 'wrenchButton',token: myToken}).then(response => {
+          if(response.status === 200) {
+            $scope.wrenchMode = response.data.wrenchMode;
+            if(debug){
+              console.log("wrench mode ON/OFF! MODE: " + $scope.wrenchMode );
+            }
+            //isPlaying = true;
+          } else if(debug) {
+            console.log('nok');
+          }
+
+          $http.post('/api/control/keyboard', {token: myToken}).then(response => {
+            pendingButtons = false;
+            if(response.status === 200) {
+              console.log("keyboard");
+            }
+          });
+
+
+        });
+      }
+    };
+
+
+
+
+
+
+
     $scope.clickLeak = function(leakId) {
       myToken = $rootScope.token;
       if(!pendingButtons) {
@@ -813,10 +985,10 @@ down arrow 	40
     hotkeys.add('space', 'water', $scope.water);
 
 //  WATER: SD A E
-    hotkeys.add('s', 'tapleft', $scope.faucetctrlfctminus);
-    hotkeys.add('d', 'tapright', $scope.faucetctrlfctplus);
-    hotkeys.add('e', 'pushbutton', $scope.waterPushButton);
-    hotkeys.add('a', 'wrench', $scope.wrenchOnOff);
+    hotkeys.add('s', 'tapleft', $scope.faucetctrlfctminusKey);
+    hotkeys.add('d', 'tapright', $scope.faucetctrlfctplusKey);
+    hotkeys.add('e', 'pushbutton', $scope.waterPushButtonKey);
+    hotkeys.add('a', 'wrench', $scope.wrenchOnOffKey);
 
 
 

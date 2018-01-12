@@ -90,6 +90,8 @@ var rank = 0;
 var writeAlarms = [];
 var writeUsedKeys = [];
 var writeClicks = [];
+var writeOthers = [];
+var keyboardShortcuts = [];
 // declare variables
 var xrobinet = 42;
 var mercurelevelfloat = 10;
@@ -191,6 +193,8 @@ function killall(req, res) {
       writeAlarms = [];
       writeUsedKeys = [];
       writeClicks = [];
+      writeOthers = [];
+      keyboardShortcuts = []
 
       xrobinet = 42;
       mercurelevelfloat = 10;
@@ -720,9 +724,17 @@ router.post('/otherkey', function(req, res/*, next*/) {
   if(req.body.token) {
     var decoded = jwt.decode(req.body.token, secret);
     if(decoded.auth && decoded.exp === global.expires){
-      if(req.body.key == 'otherkey') {
-        writeUsedKeys.push('otherkey');
-        console.log("otherkey pushed");
+      if(req.body.key == 'otherkeyUp') {
+        writeOthers.push('otherkeyUp');
+        console.log("otherkey up");
+      }
+      if(req.body.key == 'otherkeyDown') {
+        writeOthers.push('otherkeyDown');
+        console.log("otherkey up");
+      } 
+      if(req.body.key == 'otherClick') {
+        writeOthers.push('otherClick');
+        console.log("other click");
       } 
       res.json({});
     }
@@ -937,6 +949,22 @@ router.post('/pseudobegin', function(req, res/*, next*/) {
 });
 
 
+router.post('/keyboard', function(req, res/*, next*/) {
+  if(req.body.token) {
+    var decoded = jwt.decode(req.body.token, secret);
+    if(decoded.auth && decoded.exp === global.expires){
+      
+      res.json();
+    }
+    else{
+      res.status(401).json("Invalid token");
+    }
+  }
+  else{
+    res.status(401).json("No token given");
+  }
+});
+
 var waterwidth = 0;
 var wrenchmode = false;
 var openingcontrol = 0;
@@ -1087,7 +1115,7 @@ export function launchgame(req, res) {
       // new file at each game, with date and time ex: record_2017_09_04__03_11.txt
       wstream = fs.createWriteStream('records/record_' + date.getFullYear() + '_' + ('0' + (date.getMonth()+1)).slice(-2) + '_' + ('0' + date.getDate()).slice(-2) + '__' + ('0' + date.getHours()).slice(-2) + '_' + ('0' + date.getMinutes()).slice(-2) + '.txt');
       wstream.write('# ip: ' + ip + '\n');
-      wstream.write('# remaining_time, autonomous_robot, alarm, robot_x, robot_y, robot_angle, trees_state, battery_level, temperature, water_level, ground_tank_water_level, leaks_number, used_keys, clicks \n');
+      wstream.write('# remaining_time, autonomous_robot, alarm, robot_x, robot_y, robot_angle, trees_state, battery_level, temperature, water_level, ground_tank_water_level, leaks_number, used_keys, clicks, others, keyboard_shortcuts \n');
       
       var stringWriteAlarms = "";
       if (writeAlarms.length>0){
@@ -1156,10 +1184,43 @@ export function launchgame(req, res) {
       }
       stringWriteClicks = stringWriteClicks + "\'";
 
-      wstream.write(remainingtime + ', ' + autonomousRobot + ', ' + stringWriteAlarms + ', ' + robotx + ', ' + roboty + ', ' + roboto + ', ' + stringWriteTreesStates + ', ' + batteryLevel + ', ' + mercurelevelfloat + ', ' + watlevel + ', ' + watlevelContainer + ', ' + stringWriteleaks + ', ' + stringWriteUsedKeys + ', ' + stringWriteClicks + '\n');
+      var stringWriteOthers = "";
+      if (writeOthers.length>0){
+        for(var i=0;i<writeOthers.length;i++){
+          var comma = "\'";
+          if(i>0){
+            comma = ',';
+          }
+          stringWriteOthers = stringWriteOthers + comma + writeOthers[i];
+        }
+      } else{
+        stringWriteOthers = "\'-1";
+      }
+      stringWriteOthers = stringWriteOthers + "\'";
+
+
+      var stringKeyboardShortcuts = "";
+      if (keyboardShortcuts.length>0){
+        for(var i=0;i<keyboardShortcuts.length;i++){
+          var comma = "\'";
+          if(i>0){
+            comma = ',';
+          }
+          stringKeyboardShortcuts = stringKeyboardShortcuts + comma + keyboardShortcuts[i];
+        }
+      } else{
+        stringKeyboardShortcuts = "\'-1";
+      }
+      stringKeyboardShortcuts = stringKeyboardShortcuts + "\'"; 
+
+
+      wstream.write(remainingtime + ', ' + autonomousRobot + ', ' + stringWriteAlarms + ', ' + robotx + ', ' + roboty + ', ' + roboto + ', ' + stringWriteTreesStates + ', ' + batteryLevel + ', ' + mercurelevelfloat + ', ' + watlevel + ', ' + watlevelContainer + ', ' + stringWriteleaks + ', ' + stringWriteUsedKeys + ', ' + stringWriteClicks + ', ' + stringWriteOthers + ', ' + stringKeyboardShortcuts + '\n');
       writeAlarms = [];
       writeUsedKeys = [];
       writeClicks = [];
+      writeOthers = [];
+      keyboardShortcuts = [];
+
       for(var i = 0; i<firesStatesOfTrees.length;i++){
         if(!firesStatesOfTrees[i]){
           rewardsSum = rewardsSum+1;
@@ -1206,6 +1267,8 @@ export function launchgame(req, res) {
       writeAlarms = [];
       writeUsedKeys = [];
       writeClicks = [];
+      writeOthers = [];
+      keyboardShortcuts = [];
 
       newBestScore = false;
       rewardsSum = 0;
@@ -1636,11 +1699,41 @@ export function launchgame(req, res) {
           }
           stringWriteClicks = stringWriteClicks + "\'";
 
-          wstream.write(remainingtime + ', ' + autonomousRobot + ', ' + stringWriteAlarms + ', ' + robotx + ', ' + roboty + ', ' + roboto + ', ' + stringWriteTreesStates + ', ' + batteryLevel + ', ' + mercurelevelfloat + ', ' + watlevel + ', ' + watlevelContainer + ', ' + stringWriteleaks + ', ' + stringWriteUsedKeys + ', ' + stringWriteClicks + '\n');
+
+          var stringWriteOthers = "";
+          if (writeOthers.length>0){
+            for(var i=0;i<writeOthers.length;i++){
+              var comma = "\'";
+              if(i>0){
+                comma = ',';
+              }
+              stringWriteOthers = stringWriteOthers + comma + writeOthers[i];
+            }
+          } else{
+            stringWriteOthers = "\'-1";
+          }
+          stringWriteOthers = stringWriteOthers + "\'";
+
+          var stringKeyboardShortcuts = "";
+          if (keyboardShortcuts.length>0){
+            for(var i=0;i<keyboardShortcuts.length;i++){
+              var comma = "\'";
+              if(i>0){
+                comma = ',';
+              }
+              stringKeyboardShortcuts = stringKeyboardShortcuts + comma + keyboardShortcuts[i];
+            }
+          } else{
+            stringKeyboardShortcuts = "\'-1";
+          }
+          stringKeyboardShortcuts = stringKeyboardShortcuts + "\'"; 
+
+
+          wstream.write(remainingtime + ', ' + autonomousRobot + ', ' + stringWriteAlarms + ', ' + robotx + ', ' + roboty + ', ' + roboto + ', ' + stringWriteTreesStates + ', ' + batteryLevel + ', ' + mercurelevelfloat + ', ' + watlevel + ', ' + watlevelContainer + ', ' + stringWriteleaks + ', ' + stringWriteUsedKeys + ', ' + stringWriteClicks + ', ' + stringWriteOthers + ', ' + stringKeyboardShortcuts + '\n');
 
           // TODO ICI AJOUTER LE CLIENT TCP ENVOYANT A MINISERVER.PY
 	  // CONTENANT LE SCRIPT DE STREAM LSL
-          clientTCP.write(remainingtime + ' ' + autonomousRobot + ' ' + stringWriteAlarms + ' ' + robotx + ' ' + roboty + ' ' + roboto + ' ' + stringWriteTreesStates + ' ' + batteryLevel + ' ' + mercurelevelfloat + ' ' + watlevel + ' ' + watlevelContainer + ' ' + stringWriteleaks + ' ' + stringWriteUsedKeys + ' ' + stringWriteClicks);
+          clientTCP.write(remainingtime + ' ' + autonomousRobot + ' ' + stringWriteAlarms + ' ' + robotx + ' ' + roboty + ' ' + roboto + ' ' + stringWriteTreesStates + ' ' + batteryLevel + ' ' + mercurelevelfloat + ' ' + watlevel + ' ' + watlevelContainer + ' ' + stringWriteleaks + ' ' + stringWriteUsedKeys + ' ' + stringWriteClicks + ' ' + stringWriteOthers + ' ' + stringKeyboardShortcuts);
 //            clientTCP.destroy();
 /*
 float: 0,1,3,4,5,7,8,9,10
@@ -1664,7 +1757,10 @@ clientTCP.on('data', function(data) {
 
           writeAlarms = [];
           writeUsedKeys = [];
-          writeClicks = []; 
+          writeClicks = [];
+          writeOthers = []; 
+          keyboardShortcuts = [];
+
           for(var i = 0; i<firesStatesOfTrees.length;i++){
             if(!firesStatesOfTrees[i]){
               rewardsSum = rewardsSum+1;
@@ -1905,6 +2001,8 @@ global.stopGame = function() {
   writeAlarms = [];
   writeUsedKeys = [];
   writeClicks = [];
+  writeOthers = [];
+  keyboardShortcuts = [];
 
   xrobinet = 42;
   mercurelevelfloat = 10;

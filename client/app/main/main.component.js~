@@ -398,21 +398,8 @@ export class MainController {
     // -> use them to update corresponding variables of the map
     // -------------------------------------------------------------------------
     var pressedKeys = [];
-    window.onkeyup = function(e) {pressedKeys[e.keyCode]=false;}
-    window.onkeydown = function(e) {pressedKeys[e.keyCode]=true;}
-/*
-left arrow 	37
-up arrow 	38
-right arrow 	39
-down arrow 	40 
-(space) 	32 
-*/
-
-// TODO server part
-// TODO also when it is pressed (till up) !!!!!! + ENREGISTRER CA AVEC OTHERCLICK DANS UNE NOUVELLE COLONNE
-// TODO
-    window.onkeydown = function(e) {
-      if (e.keyCode!=37 && e.keyCode!=38 && e.keyCode!=39 && e.keyCode!=40 && e.keyCode!=32 && e.keyCode!=68 && e.keyCode!=69 && e.keyCode!=83 && e.keyCode!=65){
+    window.onkeyup = function(e) {pressedKeys[e.keyCode]=false;
+            if (e.keyCode!=37 && e.keyCode!=38 && e.keyCode!=39 && e.keyCode!=40 && e.keyCode!=32 && e.keyCode!=68 && e.keyCode!=69 && e.keyCode!=83 && e.keyCode!=65){
         myToken = $rootScope.token;
         if(debug) {
           console.log('anyotherkey');
@@ -421,7 +408,7 @@ down arrow 	40
         }
         if(!pending) {
           pending = true;
-          $http.post('/api/control/otherkey', {key: 'otherkey',token: myToken}).then(response => {
+          $http.post('/api/control/otherkey', {key: 'otherkeyUp',token: myToken}).then(response => {
             pending = false;
             if(response.status === 200) {
               console.log('other sent');
@@ -434,10 +421,63 @@ down arrow 	40
 
       }
     }
+    window.onkeydown = function(e) {pressedKeys[e.keyCode]=true;
+            if (e.keyCode!=37 && e.keyCode!=38 && e.keyCode!=39 && e.keyCode!=40 && e.keyCode!=32 && e.keyCode!=68 && e.keyCode!=69 && e.keyCode!=83 && e.keyCode!=65){
+        myToken = $rootScope.token;
+        if(debug) {
+          console.log('anyotherkey');
+          console.log("pending:");
+          console.log(pending);
+        }
+        if(!pending) {
+          pending = true;
+          $http.post('/api/control/otherkey', {key: 'otherkeyDown',token: myToken}).then(response => {
+            pending = false;
+            if(response.status === 200) {
+              console.log('other sent');
+            } else if(debug) {
+              console.log('nok');
+            }
+
+          });
+        }
+
+      }
+    }
+/*
+left arrow 	37
+up arrow 	38
+right arrow 	39
+down arrow 	40 
+(space) 	32 
+*/
+
+// TODO server part
+// TODO also when it is pressed (till up) !!!!!! + ENREGISTRER CA AVEC 'OTHERCLICK' DANS UNE NOUVELLE COLONNE
+// TODO last column to say when it is a real click or a keyboard shortcut
+
     
 
     $scope.otherclick = function(){
       console.log("click!");
+      myToken = $rootScope.token;
+        if(debug) {
+          console.log('otherclick');
+          console.log("pending:");
+          console.log(pending);
+        }
+        if(!pending) {
+          pending = true;
+          $http.post('/api/control/otherkey', {key: 'otherClick',token: myToken}).then(response => {
+            pending = false;
+            if(response.status === 200) {
+              console.log('other sent');
+            } else if(debug) {
+              console.log('nok');
+            }
+
+          });
+        }
     };
 
 
