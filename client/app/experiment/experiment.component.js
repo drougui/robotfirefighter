@@ -315,7 +315,7 @@ export class ExperimentComponent {
                     console.log("marker 2 nasatlx sent");
                   }
                 })
-                location.href='http://localhost:3000/experiment'; // TODO http://localhost:8080 ou plutot http://192.168.1.2:8080
+                location.href='http://192.168.1.2:8080/experiment'; // TODO http://localhost:8080 ou plutot http://192.168.1.2:8080
 	}
 	else
 	{
@@ -340,14 +340,15 @@ export class ExperimentComponent {
       $scope.rest = true;
       setTimeout(function() {
         console.log("2 sec");
-        location.href='http://localhost:3000'; // TODO http://localhost:8080 ou plutot http://192.168.1.2:8080
+        //location.href='http://localhost:3000'; // TODO http://localhost:8080 ou plutot http://192.168.1.2:8080
+        location.href='http://192.168.1.2:8080';
         $http.get('/api/control/markers').then(response => {
           if(response.status === 200){
             console.log("marker 2 sent");
             $scope.rest = false;
           }
         })
-      }, 2000); // TODO 1 minute!
+      }, 60000); // TODO 1 minute!
     
     }
 
