@@ -1,0 +1,143 @@
+.experiment{
+	width: 100vw;
+	height: 97vh;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 1.5vw;
+}
+
+
+.experiment td.bottom
+{
+	width: 0.6cm;
+        height: 0.4cm;
+	border-bottom: 1px solid black;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	margin: 0px; 
+	padding: 0px 0px 0px 0px;
+
+}
+
+.experiment table.scale
+{
+	margin: 0px;
+	padding: 0px 0px 0px 0px;
+      border-collapse: collapse
+}
+
+.experiment td.top1
+{
+	width: 0.6cm;
+      height: 0.4cm;
+	border-top: 1px solid black;
+	border-left: 1px solid black;
+	margin: 0px; 
+	padding: 0px 0px 0px 0px;
+}
+.experiment td.top2
+{
+	width: 0.6cm;
+      height: 0.4cm;
+	border-top: 1px solid black;
+	border-right: 1px solid black;
+	margin: 0px; 
+	padding: 0px 0px 0px 0px;
+}
+.experiment td.heading
+{
+	font: Bold 14px Arial, Helvetica, sans-serif;
+	text-align: center;
+}
+.experiment td.left
+{
+	font: 14px Arial, Helvetica, sans-serif;
+}
+.experiment td.right
+{
+	font: 14px Arial, Helvetica, sans-serif;
+	text-align: right;
+}
+
+.experiment td.def
+{
+	width: 12cm;	
+	padding: 0px 0px 0px 20px;
+	font: 12px Arial, Helvetica, sans-serif;
+}
+
+.experiment input.pair
+{
+	width: 5cm;
+	height: 1cm;
+	font: Bold 14px Arial, Helvetica, sans-serif;
+}
+
+.experiment .threeCrosses{
+	width: 60px;
+	height: 60px;
+	background-size: 100% 100%;
+	background-image: url("/assets/images/3crosses.png");
+}
+
+.experiment .threeCrossesPage{
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.experiment .game{
+	width: 100%;
+	height: 100%;
+	
+}
+
+.experiment .texte{
+	
+	transition: 2s ease-in-out;
+}
+
+.experiment .choix{
+	display: flex;
+	width: 100%;
+	height: 30%;
+	justify-content: space-around;
+}
+
+.experiment .restornasa{
+	width: 40%;
+	height: 100%;
+	font-size: 150%;
+	justify-content: space-around;
+	background-color: red;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #05BDFF;
+	border-radius: 0.5vw;
+	cursor: pointer;
+}
+
+.experiment .partone{
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.experiment .questionnaire{
+	font-size: 12px;
+	transform: scale(1.8);
+}
+
+.experiment .lowhigh{
+	display: flex;
+	justify-content: space-around;
+}
+
+.experiment .totheright{
+	text-align: right;
+}

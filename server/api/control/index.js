@@ -25,10 +25,47 @@ setTimeout(function() {
 // et kill le client proprement
 // le client doit etre lancé pour etre capté par Labrecorder
 
+
+// ==================================
+//   MARKERS
+// ==================================
+exec('python ~/driving-human-robots-interaction/EXPE_RF/miniServerMarkers.py');
+var clientTCP2;
+setTimeout(function() {
+  net = require('net');
+  clientTCP2 = new net.Socket();
+  clientTCP2.connect(1338, '127.0.0.1', function() {
+    console.log('Connected');
+  });
+}, 5000);
+
+router.get('/markers', function(req, res) {
+   clientTCP2.write('marker');
+  res.json();
+});
+
+
+// ==================================
+//   NASA-TLX
+// ==================================
+var fs = require('fs');
+router.post('/nasatlx', function(req, res/*, next*/) {
+      var nasadate = new Date();
+      fs.writeFile("../nasa-tlx_" + nasadate.getFullYear() + '_' + ('0' + (nasadate.getMonth()+1)).slice(-2) + '_' + ('0' + nasadate.getDate()).slice(-2) + '__' + ('0' + nasadate.getHours()).slice(-2) + '_' + ('0' + nasadate.getMinutes()).slice(-2) + '.html', req.body.nasatlx, function(err) {
+        if(err) {
+          return console.log(err);
+        }
+        console.log("The file was saved!");
+      }); 
+      res.json();
+});
+
+
+
 //=====================================================
 // define trees locations using treeslocs.json
 //=====================================================
-var fs = require('fs');
+
 //var chaine = fs.readFileSync('/home/drougard/driving-human-robots-interaction/treeslocs.json', 'UTF-8');
 var chaine = fs.readFileSync('../driving-human-robots-interaction/treeslocs.json', 'UTF-8');
 var treeslocations = JSON.parse(chaine);
@@ -1214,18 +1251,15 @@ export function launchgame(req, res) {
       stringKeyboardShortcuts = stringKeyboardShortcuts + "\'"; 
 
 
-      wstream.write(remainingtime + ', ' + autonomousRobot + ', ' + stringWriteAlarms + ', ' + robotx + ', ' + roboty + ', ' + roboto + ', ' + stringWriteTreesStates + ', ' + batteryLevel + ', ' + mercurelevelfloat + ', ' + watlevel + ', ' + watlevelContainer + ', ' + stringWriteleaks + ', ' + stringWriteUsedKeys + ', ' + stringWriteClicks + ', ' + stringWriteOthers + ', ' + stringKeyboardShortcuts + '\n');
+
       writeAlarms = [];
       writeUsedKeys = [];
       writeClicks = [];
       writeOthers = [];
       keyboardShortcuts = [];
 
-      for(var i = 0; i<firesStatesOfTrees.length;i++){
-        if(!firesStatesOfTrees[i]){
-          rewardsSum = rewardsSum+1;
-        }
-      }
+
+
       // creer un interval toutes (freq demi seconde) qui fait le wstream.write() d'une ligne bien formatée
       // creer une variable par info qui se vide apres avoir ecrit
       // temps, ACTIONS: autonomous/manual, alarmes, STATES: position du robot, etat des arbres, batterylevel, temp, 
@@ -1302,6 +1336,13 @@ export function launchgame(req, res) {
       numFightedFires = 0;
       finalNumFightedFires = 0;
       finalNumFightedFiresSent = 0;
+
+      wstream.write(remainingtime + ', ' + autonomousRobot + ', ' + stringWriteAlarms + ', ' + robotx + ', ' + roboty + ', ' + roboto + ', ' + stringWriteTreesStates + ', ' + batteryLevel + ', ' + mercurelevelfloat + ', ' + watlevel + ', ' + watlevelContainer + ', ' + stringWriteleaks + ', ' + stringWriteUsedKeys + ', ' + stringWriteClicks + ', ' + stringWriteOthers + ', ' + stringKeyboardShortcuts + '\n');
+      for(var i = 0; i<firesStatesOfTrees.length;i++){
+        if(!firesStatesOfTrees[i]){
+          rewardsSum = rewardsSum+1;
+        }
+      }
 
       // RANDOM AUTONOMOUS/MANUAL EVERY 10secs
       automanualInterval = setInterval(function() {
