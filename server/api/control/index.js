@@ -39,9 +39,9 @@ setTimeout(function() {
   });
 }, 5000);
 
-router.get('/markers', function(req, res) {
-   clientTCP2.write('marker');
-  res.json();
+router.post('/markers', function(req, res) {
+   clientTCP2.write(req.body.marker);
+   res.json();
 });
 
 
@@ -442,7 +442,7 @@ serverGet.on('message', function(message, remote) {
   }
 
   // alarm battery
-  if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*0.6&& !alarmSituations[0]){
+  if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*0.6 && !alarmSituations[0]){
     if(!alarmOverlayOpen && Math.random()>0.5){
       alarmOverlayOpen = true;
       alarmCause = 0;
@@ -1774,7 +1774,9 @@ export function launchgame(req, res) {
 
           // TODO ICI AJOUTER LE CLIENT TCP ENVOYANT A MINISERVER.PY
 	  // CONTENANT LE SCRIPT DE STREAM LSL
-          clientTCP.write(remainingtime + ' ' + autonomousRobot + ' ' + stringWriteAlarms + ' ' + robotx + ' ' + roboty + ' ' + roboto + ' ' + stringWriteTreesStates + ' ' + batteryLevel + ' ' + mercurelevelfloat + ' ' + watlevel + ' ' + watlevelContainer + ' ' + stringWriteleaks + ' ' + stringWriteUsedKeys + ' ' + stringWriteClicks + ' ' + stringWriteOthers + ' ' + stringKeyboardShortcuts);
+          var LSLstring = remainingtime + ' ' + autonomousRobot + ' ' + stringWriteAlarms + ' ' + robotx + ' ' + roboty + ' ' + roboto + ' ' + stringWriteTreesStates + ' ' + batteryLevel + ' ' + mercurelevelfloat + ' ' + watlevel + ' ' + watlevelContainer + ' ' + stringWriteleaks + ' ' + stringWriteUsedKeys + ' ' + stringWriteClicks + ' ' + stringWriteOthers + ' ' + stringKeyboardShortcuts;
+          console.log(LSLstring);
+          clientTCP.write(LSLstring);
 //            clientTCP.destroy();
 /*
 float: 0,1,3,4,5,7,8,9,10

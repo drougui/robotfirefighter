@@ -310,7 +310,7 @@ export class ExperimentComponent {
                   }
                 });
 		
-		$http.get('/api/control/markers').then(response => {
+		$http.post('/api/control/markers', {marker: 'nasatlxEnd'}).then(response => {
                   if(response.status === 200){
                     console.log("marker 2 nasatlx sent");
                   }
@@ -330,7 +330,7 @@ export class ExperimentComponent {
     $scope.rest = false;
     $scope.commencer = function()
     {
-      $http.get('/api/control/markers').then(response => {
+      $http.post('/api/control/markers', {marker: 'restBegin'}).then(response => {
         if(response.status === 200){
           console.log("marker 1 sent");
         }
@@ -342,7 +342,7 @@ export class ExperimentComponent {
         console.log("2 sec");
         //location.href='http://localhost:3000'; // TODO http://localhost:8080 ou plutot http://192.168.1.2:8080
         location.href='http://192.168.1.2:8080';
-        $http.get('/api/control/markers').then(response => {
+        $http.post('/api/control/markers', {marker: 'restEnd'}).then(response => {
           if(response.status === 200){
             console.log("marker 2 sent");
             $scope.rest = false;
@@ -363,7 +363,7 @@ export class ExperimentComponent {
       document.getElementById('crossesDiv').style.display = 'none';
       document.getElementById('choicepage').style.display = 'none'; 
       document.getElementById('div_part1').style.display = '';
-      $http.get('/api/control/markers').then(response => {
+      $http.post('/api/control/markers', {marker: 'nasatlxBegin'}).then(response => {
         if(response.status === 200){
           console.log("marker 1 nasatlx sent");
         }

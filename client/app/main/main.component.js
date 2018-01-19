@@ -24,10 +24,10 @@ export class MainController {
     //$scope.address = "http://dev.humanrobotinteraction.fr:8081/?action=stream";
     //---------------------
     // for local version
-    $scope.address = "http://localhost:8081/?action=stream";
+    //$scope.address = "http://localhost:8081/?action=stream";
     //---------------------
     // for PC SMI settings
-    //$scope.address = "http://192.168.1.2:8081/?action=stream";
+    $scope.address = "http://192.168.1.2:8081/?action=stream";
 
     // refresh every 2secs
     var tictac = 0;
