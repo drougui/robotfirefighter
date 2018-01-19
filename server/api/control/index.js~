@@ -442,7 +442,7 @@ serverGet.on('message', function(message, remote) {
   }
 
   // alarm battery
-  if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*0.6&& !alarmSituations[0]){
+  if(batteryLevel - 10 <= Math.sqrt( Math.pow(zoneslocations[1].x-robotx[0], 2) + Math.pow(zoneslocations[1].y-roboty[0], 2) )*0.6 && !alarmSituations[0]){
     if(!alarmOverlayOpen && Math.random()>0.5){
       alarmOverlayOpen = true;
       alarmCause = 0;

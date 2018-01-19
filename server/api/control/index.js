@@ -29,7 +29,7 @@ setTimeout(function() {
 // ==================================
 //   MARKERS
 // ==================================
-exec('python ~/driving-human-robots-interaction/EXPE_RF/miniServerMarkers.py');
+exec('python ~/driving-human-robots-interaction/miniServerMarkers.py');
 var clientTCP2;
 setTimeout(function() {
   net = require('net');
