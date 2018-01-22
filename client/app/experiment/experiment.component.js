@@ -383,7 +383,12 @@ export class ExperimentComponent {
     $scope.kss = function(){
       document.getElementById('crossesDiv').style.display = 'none';
       document.getElementById('choicepage').style.display = 'none';
-      document.getElementById('kss').style.display = ''; 
+      document.getElementById('kss').style.display = '';
+      $http.post('/api/control/markers', {marker: 'kssBegin'}).then(response => {
+        if(response.status === 200){
+          console.log("marker 1 nasatlx sent");
+        }
+      });
     }
 
 
@@ -560,8 +565,15 @@ export class ExperimentComponent {
             if(response.status === 200) {
               console.log("kss sent");
             }
+            location.href='http://192.168.1.2:8080/experiment';
+            $http.post('/api/control/markers', {marker: 'kssEnd'}).then(response => {
+              if(response.status === 200){
+                console.log("marker 2 kss sent");
+              }
+
+            });
           });
-          location.href='http://192.168.1.2:8080/experiment';
+          
         }
     }
   }
