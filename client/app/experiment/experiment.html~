@@ -7,29 +7,39 @@
 
 
 <div id="choicepage" class="threeCrossesPage"> 
-	<div id="consigne" class="texte"> 
-		<!-- Merci beaucoup de participer à notre expérience.-->
-		Thanks a lot for contributing to	 our experiment.	
+	<div ng-if="language=='english'" id="consigne" class="texte"> 
+		Thank you very much for contributing to	 our experiment.	
+	</div>
+	<div ng-if="language=='french'" id="consigne" class="texte"> 
+		Merci beaucoup de participer à notre expérience.	
 	</div>
 	<div class="choix">
-		<div class="restornasa" ng-click="fixacross()"> REST </div>
-		<div class="restornasa" ng-click="nasatlx()"> WORLOAD </div>
-		<div class="restornasa" ng-click="kss()"> SLEEPINESS </div>
+		<div ng-if="language=='english'" class="restornasa" ng-click="fixacross()"> REST </div>
+		<div ng-if="language=='english'" class="restornasa" ng-click="nasatlx()"> WORLOAD </div>
+		<div ng-if="language=='english'" class="restornasa" ng-click="kss()"> SLEEPINESS </div>
+		<div ng-if="language=='french'" class="restornasa" ng-click="fixacross()"> REPOS </div>
+		<div ng-if="language=='french'" class="restornasa" ng-click="nasatlx()"> CHARGE MENTALE </div>
+		<div ng-if="language=='french'" class="restornasa" ng-click="kss()"> FATIGUE </div>
 	</div>
 </div>
 
 <div id="kss" class="apart" style="display:none"> 
 	<div class="kssquiz">
-		<div class="texte"> 
+		<div ng-if="language=='english'" class="texte"> 
 			Please indicate your state of drowsiness at this time 
 			by checking the box near the number corresponding to your condition. 
 			You can also use intermediate conditions.
 		</div>
+		<div ng-if="language=='french'" class="texte"> 
+			Veuillez indiquer votre état de somnolence à ce moment précis, en entourant le chiffre
+			correspondant à votre état. Vous pouvez aussi utiliser les états intermédiaires.
 
+		</div>
 		<div>
 			<label class="number" for="Response1">1</label>
 			<input type="checkbox" id="Response1" />
-			<label class="description" for="Response1">Very awake</label>
+			<label ng-if="language=='english'" class="description" for="Response1">Very awake</label>
+			<label ng-if="language=='french'" class="description" for="Response1">Très éveillé</label>
 		</div>
 		<div>
 			<label class="number" for="Response2">2</label>
@@ -38,7 +48,8 @@
 		<div>
 			<label class="number" for="Response3">3</label>
 			<input type="checkbox" id="Response3" />
-			<label class="description" for="Response3">Awakened - normal level</label>
+			<label ng-if="language=='english'" class="description" for="Response3">Awakened - normal level</label>
+			<label ng-if="language=='french'" class="description" for="Response3">Eveillé - niveau normal</label>
 		</div>
 		<div>
 			<label class="number" for="Response4">4</label>
@@ -47,7 +58,8 @@
 		<div>
 			<label class="number" for="Response5">5</label>
 			<input type="checkbox" id="Response5" />
-			<label class="description" for="Response5">Neither awake nor drowsy</label>
+			<label ng-if="language=='english'" class="description" for="Response5">Neither awake nor drowsy</label>
+			<label ng-if="language=='french'" class="description" for="Response5">Ni éveillé ni somnolent</label>
 		</div>
 		<div>
 			<label class="number" for="Response6">6</label>
@@ -56,7 +68,8 @@
 		<div>
 			<label class="number" for="Response7">7</label>
 			<input type="checkbox" id="Response7" />
-			<label class="description" for="Response7">Sleepy, but without effort to stay awake</label>
+			<label ng-if="language=='english'" class="description" for="Response7">Sleepy, but without effort to stay awake</label>
+			<label ng-if="language=='french'" class="description" for="Response7">Somnolent, mais sans effort pour rester éveillé</label>
 		</div>
 		<div>
 			<label class="number" for="Response8">8</label>
@@ -65,19 +78,25 @@
 		<div>
 			<label class="number" for="Response9">9</label>
 			<input type="checkbox" id="Response9" />
-			<label class="description" for="Response9">Very sleepy with great effort to stay awake, struggling against sleep.</label>
+			<label ng-if="language=='english'" class="description" for="Response9">Very sleepy with great effort to stay awake, struggling against sleep</label>
+			<label ng-if="language=='french'" class="description" for="Response9">Très somnolent avec de grands efforts pour rester éveillé, luttant contre le sommeil</label>
 		</div>
-		<input class="next" value="Submit" type="button" ng-click="saveKss()">
+		<input ng-if="language=='english'" class="next" value="Submit" type="button" ng-click="saveKss()">
+		<input ng-if="language=='french'" class="next" value="Soumettre" type="button" ng-click="saveKss()">
 	</div>
 </div>
 
 
 <div id="crossesDiv" class="threeCrossesPage" style="display:none"> 
-	<div id="consigne" class="texte" ng-if="!rest"> 
+	<div ng-if="language=='english'" id="consigne" class="texte" ng-if="!rest"> 
+		Please, try to fix the crosses below during one minute and think of nothing. 	
+	</div>
+	<div ng-if="language=='french'" id="consigne" class="texte" ng-if="!rest"> 
 		S'il vous pla&icirc;t, essayez de regarder les croix ci-dessous pendant une minute en ne pensant &agrave; rien. 	
 	</div>
 	<div class="threeCrosses"> </div>
-	<input ng-if="!rest" class="next" id="commencer" value="Commencer" ng-click="commencer()" type="button">
+	<input ng-if="!rest && language=='english'" class="next" id="commencer" value="Start" ng-click="commencer()" type="button">
+	<input ng-if="!rest && language=='french'" class="next" id="commencer" value="Commencer" ng-click="commencer()" type="button">
 </div>
 
 

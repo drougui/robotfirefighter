@@ -91,14 +91,15 @@
 				<div class="robotblocktrain">
 					<div class="maincontainer">
 						<div class="iconCircle">
-							<i class="fa fa-gamepad" aria-hidden="true"></i>
+							<i style="color: #05BDFF;" class="fa fa-gamepad" aria-hidden="true"></i>
 						</div>
 						<div class="robotControl">
 							<div class="explainkeys">
 								<div class="littlesplatch">
 								</div>
 								<div class="spaceKey">
-									<div> SPACE </div>					
+									<div ng-if="language=='english'"> SPACE </div>	
+									<div ng-if="language=='french'"> ESPACE </div>					
 								</div>
 							</div>
 							<div class="explainkeys">
@@ -134,8 +135,10 @@
 				</div>
 			</div>
 			<div class="videoOrGoback">
-				<div ui-sref="videodemo" class="gohomeTrain"> <i class="fa fa-video-camera" aria-hidden="true"></i> see a video of the game </div>
-				<div ui-sref="welcome" class="gohomeTrain"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>	
+				<div ui-sref="videodemo" class="gohomeTrain" ng-if="language=='english'"> <i class="fa fa-video-camera" aria-hidden="true"></i> see a video of the game </div>
+				<div ui-sref="welcome" class="gohomeTrain" ng-if="language=='english'"> <i class="fa fa-reply" aria-hidden="true"></i> back to main menu </div>	
+				<div ui-sref="videodemo" class="gohomeTrain" ng-if="language=='french'"> <i class="fa fa-video-camera" aria-hidden="true"></i> voir une vidéo du jeu </div>
+				<div ui-sref="welcome" class="gohomeTrain" ng-if="language=='french'"> <i class="fa fa-reply" aria-hidden="true"></i> retour au menu principal</div>	
 			</div>
 			<!--<button ui-sref="welcome"> BACK </button>-->	
 		</div>

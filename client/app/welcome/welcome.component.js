@@ -9,6 +9,9 @@ export class WelcomeComponent {
   /*@ngInject*/
   constructor($http, $scope, socket, sharedProperties, $rootScope, $interval) {
     'ngInject';
+    if(!$rootScope.language){
+      $rootScope.language = 'english';
+    }
     this.$http = $http;
     this.socket = socket;
     //this.$scope = $scope;
@@ -86,8 +89,9 @@ export class WelcomeComponent {
         }
       })
     }; // play
-    $scope.language = 'english';
-    $rootScope.language = 'english';
+
+    $scope.language = $rootScope.language;
+//    $rootScope.language = 'english';
     $scope.french = function(){
       $rootScope.language = 'french';
       console.log($rootScope.language);

@@ -34,17 +34,6 @@ export class LoadingComponent {
           }
           if(response.data.isgameready || $scope.playEnabled){
             $scope.playEnabled = true;
-// TODO !!!!
-/*            $http.post('/api/control/pseudobegin', {pseudo: $scope.user.pseudo, token: myToken}).then(response => { // sans token, pas secure!
-              if(response.status === 200) {
-                console.log($scope.user.pseudo);
-                console.log("!!!!!!! new pseudo sent !!!!!!!!");
-              }else{
-                console.log('nok pseudo');
-              }
-            });
-*/       
-// TODO !!!!
           }
           if(response.data.istoolate || $scope.lostGame) {
             $scope.lostGame = true;
@@ -58,6 +47,16 @@ export class LoadingComponent {
       console.log($scope.lostGame);
       console.log("$scope.playEnabled");
       console.log($scope.playEnabled);
+      if($scope.playEnabled){
+        $http.post('/api/control/pseudobegin', {pseudo: $scope.user.pseudo, token: myToken}).then(response => { // sans token, pas secure!
+          if(response.status === 200) {
+            console.log($scope.user.pseudo);
+            console.log("!!!!!!! new pseudo sent !!!!!!!!");
+          }else{
+            console.log('nok pseudo');
+          }
+        });
+      }
     }, 1000);
 
 

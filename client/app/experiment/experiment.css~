@@ -148,7 +148,6 @@
 	flex-direction: column; 
 	width: 70%;
 	height: 80%;
-	background-color: red;
 }
 
 .experiment .number{

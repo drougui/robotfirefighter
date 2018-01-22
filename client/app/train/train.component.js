@@ -7,7 +7,7 @@ import routes from './train.routes';
 
 export class TrainComponent {
   /*@ngInject*/
-  constructor($http, $scope, socket, hotkeys, $interval) {
+  constructor($http, $scope, socket, hotkeys, $interval, $rootScope) {
 
 // TODO TODO TODO TODO setInterval-> $interval
 // clear intervals
@@ -16,6 +16,7 @@ export class TrainComponent {
 // display
 
     'ngInject';
+    $scope.language = $rootScope.language;
     
 
     //hotkeys.add('s', 'tapleft', $scope.faucetctrlfctminus);

@@ -67,7 +67,7 @@
 }
 
 .logosclose{
-	width: 40%;
+	width: 50%;
 	display: flex;
 	justify-content: space-around;
 }
@@ -175,4 +175,8 @@
 	font-size: 1.5vw;
 	padding: 0.3vw;
 	cursor: pointer;
+}
+
+.notegame{
+  width: 70%;
 }

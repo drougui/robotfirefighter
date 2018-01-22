@@ -7,8 +7,9 @@ import routes from './scores.routes';
 
 export class ScoresComponent {
   /*@ngInject*/
-  constructor($scope,$http) {
+  constructor($scope,$http,$rootScope) {
     'ngInject';
+    $scope.language = $rootScope.language;
     var pagesNumber = 0;
     $scope.divleft = [];
     $scope.divright = [];

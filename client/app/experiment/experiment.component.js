@@ -10,7 +10,7 @@ export class ExperimentComponent {
   constructor($http, $scope, hotkeys, $timeout, $interval, $rootScope) {
     'ngInject';
     this.message = 'Hello';
-
+    $scope.language = $rootScope.language;
 
     // NASA-TLX
     // Create a set of parallel arrays for each of the scales
