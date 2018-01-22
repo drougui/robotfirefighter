@@ -11,6 +11,7 @@ export class ExperimentComponent {
     'ngInject';
     this.message = 'Hello';
 
+
     // NASA-TLX
     // Create a set of parallel arrays for each of the scales
     var scale      = new Array();
@@ -326,6 +327,13 @@ export class ExperimentComponent {
 
 
 // -->
+    document.getElementById('crossesDiv').style.display = 'none'; 
+    document.getElementById('kss').style.display = 'none';
+    document.getElementById('div_part1').style.display = 'none';
+    document.getElementById('div_part2').style.display = 'none';
+    document.getElementById('div_part3').style.display = 'none';
+    document.getElementById('div_part4').style.display = 'none';
+    document.getElementById('choicepage').style.display = '';
 
     $scope.rest = false;
     $scope.commencer = function()
@@ -357,11 +365,13 @@ export class ExperimentComponent {
     {
       document.getElementById('crossesDiv').style.display = '';
       document.getElementById('choicepage').style.display = 'none'; 
+      document.getElementById('kss').style.display = 'none';
     }
 
     $scope.nasatlx = function(){
       document.getElementById('crossesDiv').style.display = 'none';
-      document.getElementById('choicepage').style.display = 'none'; 
+      document.getElementById('choicepage').style.display = 'none';
+      document.getElementById('kss').style.display = 'none';
       document.getElementById('div_part1').style.display = '';
       $http.post('/api/control/markers', {marker: 'nasatlxBegin'}).then(response => {
         if(response.status === 200){
@@ -370,7 +380,190 @@ export class ExperimentComponent {
       })
     }
 
+    $scope.kss = function(){
+      document.getElementById('crossesDiv').style.display = 'none';
+      document.getElementById('choicepage').style.display = 'none';
+      document.getElementById('kss').style.display = ''; 
+    }
 
+
+    $scope.click1 = function(){
+      if (document.getElementById("Response1").checked) {
+        document.getElementById("Response2").checked = false;
+        document.getElementById("Response3").checked = false;
+        document.getElementById("Response4").checked = false;
+        document.getElementById("Response5").checked = false;
+        document.getElementById("Response6").checked = false;
+        document.getElementById("Response7").checked = false;
+        document.getElementById("Response8").checked = false;
+        document.getElementById("Response9").checked = false;
+      }
+    }
+
+    $scope.click2 = function(){
+      if (document.getElementById("Response2").checked) {
+        document.getElementById("Response1").checked = false;
+        document.getElementById("Response3").checked = false;
+        document.getElementById("Response4").checked = false;
+        document.getElementById("Response5").checked = false;
+        document.getElementById("Response6").checked = false;
+        document.getElementById("Response7").checked = false;
+        document.getElementById("Response8").checked = false;
+        document.getElementById("Response9").checked = false;
+      }
+    }
+
+    $scope.click3 = function(){
+      if (document.getElementById("Response3").checked) {
+        document.getElementById("Response2").checked = false;
+        document.getElementById("Response1").checked = false;
+        document.getElementById("Response4").checked = false;
+        document.getElementById("Response5").checked = false;
+        document.getElementById("Response6").checked = false;
+        document.getElementById("Response7").checked = false;
+        document.getElementById("Response8").checked = false;
+        document.getElementById("Response9").checked = false;
+      }
+    }
+
+    $scope.click4 = function(){
+      if (document.getElementById("Response4").checked) {
+        document.getElementById("Response2").checked = false;
+        document.getElementById("Response3").checked = false;
+        document.getElementById("Response1").checked = false;
+        document.getElementById("Response5").checked = false;
+        document.getElementById("Response6").checked = false;
+        document.getElementById("Response7").checked = false;
+        document.getElementById("Response8").checked = false;
+        document.getElementById("Response9").checked = false;
+      }
+    }
+
+    $scope.click5 = function(){
+      if (document.getElementById("Response5").checked) {
+        document.getElementById("Response2").checked = false;
+        document.getElementById("Response3").checked = false;
+        document.getElementById("Response4").checked = false;
+        document.getElementById("Response1").checked = false;
+        document.getElementById("Response6").checked = false;
+        document.getElementById("Response7").checked = false;
+        document.getElementById("Response8").checked = false;
+        document.getElementById("Response9").checked = false;
+      }
+    }
+
+    $scope.click6 = function(){
+      if (document.getElementById("Response6").checked) {
+        document.getElementById("Response2").checked = false;
+        document.getElementById("Response3").checked = false;
+        document.getElementById("Response4").checked = false;
+        document.getElementById("Response5").checked = false;
+        document.getElementById("Response1").checked = false;
+        document.getElementById("Response7").checked = false;
+        document.getElementById("Response8").checked = false;
+        document.getElementById("Response9").checked = false;
+      }
+    }
+
+    $scope.click7 = function(){
+      if (document.getElementById("Response7").checked) {
+        document.getElementById("Response2").checked = false;
+        document.getElementById("Response3").checked = false;
+        document.getElementById("Response4").checked = false;
+        document.getElementById("Response5").checked = false;
+        document.getElementById("Response6").checked = false;
+        document.getElementById("Response1").checked = false;
+        document.getElementById("Response8").checked = false;
+        document.getElementById("Response9").checked = false;
+      }
+    }
+
+    $scope.click8 = function(){
+      if (document.getElementById("Response8").checked) {
+        document.getElementById("Response2").checked = false;
+        document.getElementById("Response3").checked = false;
+        document.getElementById("Response4").checked = false;
+        document.getElementById("Response5").checked = false;
+        document.getElementById("Response6").checked = false;
+        document.getElementById("Response7").checked = false;
+        document.getElementById("Response1").checked = false;
+        document.getElementById("Response9").checked = false;
+      }
+    }
+
+    $scope.click9 = function(){
+      if (document.getElementById("Response9").checked) {
+        document.getElementById("Response2").checked = false;
+        document.getElementById("Response3").checked = false;
+        document.getElementById("Response4").checked = false;
+        document.getElementById("Response5").checked = false;
+        document.getElementById("Response6").checked = false;
+        document.getElementById("Response7").checked = false;
+        document.getElementById("Response8").checked = false;
+        document.getElementById("Response1").checked = false;
+      }
+    }
+
+    document.getElementById("Response1").onchange = $scope.click1;
+    document.getElementById("Response2").onchange = $scope.click2;
+    document.getElementById("Response3").onchange = $scope.click3;
+    document.getElementById("Response4").onchange = $scope.click4;
+    document.getElementById("Response5").onchange = $scope.click5;
+    document.getElementById("Response6").onchange = $scope.click6;
+    document.getElementById("Response7").onchange = $scope.click7;
+    document.getElementById("Response8").onchange = $scope.click8;
+    document.getElementById("Response9").onchange = $scope.click9;
+
+    $scope.saveKss = function(){
+      	// Check to be sure they click on every scale
+        if(document.getElementById("Response1").checked == false &&
+        document.getElementById("Response2").checked == false &&
+        document.getElementById("Response3").checked == false &&
+        document.getElementById("Response4").checked == false &&
+        document.getElementById("Response5").checked == false &&
+        document.getElementById("Response6").checked == false &&
+        document.getElementById("Response7").checked == false &&
+        document.getElementById("Response8").checked == false &&
+        document.getElementById("Response9").checked == false ){
+          alert('A box must be checked!');
+        }
+	else{
+	  var answer = 0;
+          if(document.getElementById("Response1").checked){
+            answer = 1;
+          }
+          if(document.getElementById("Response2").checked){
+            answer = 2;
+          }
+          if(document.getElementById("Response3").checked){
+            answer = 3;
+          }
+          if(document.getElementById("Response4").checked){
+            answer = 4;
+          }
+          if(document.getElementById("Response5").checked){
+            answer = 5;
+          }
+          if(document.getElementById("Response6").checked){
+            answer = 6;
+          }
+          if(document.getElementById("Response7").checked){
+            answer = 7;
+          }
+          if(document.getElementById("Response8").checked){
+            answer = 8;
+          }
+          if(document.getElementById("Response9").checked){
+            answer = 9;
+          }
+          $http.post('/api/control/kss', {kss: answer}).then(response => {
+            if(response.status === 200) {
+              console.log("kss sent");
+            }
+          });
+          location.href='http://192.168.1.2:8080/experiment';
+        }
+    }
   }
 }
 

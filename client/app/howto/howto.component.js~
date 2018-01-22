@@ -8,7 +8,6 @@ import routes from './howto.routes';
 export class HowtoComponent {
   /*@ngInject*/
   constructor($scope,$rootScope) {
-    'ngInject';
     this.message = 'Hello';
     $scope.language = $rootScope.language;
   }

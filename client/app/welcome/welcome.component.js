@@ -86,6 +86,19 @@ export class WelcomeComponent {
         }
       })
     }; // play
+    $scope.language = 'english';
+    $rootScope.language = 'english';
+    $scope.french = function(){
+      $rootScope.language = 'french';
+      console.log($rootScope.language);
+      $scope.language = 'french';
+    };
+    $scope.english = function(){
+      $rootScope.language = 'english';
+      $scope.language = 'english';
+      console.log($rootScope.language);
+    };
+
   } // constructor
 } // component
 

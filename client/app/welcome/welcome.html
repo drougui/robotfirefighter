@@ -1,14 +1,20 @@
 <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
 <div class="page">
 	<div class="mainmsgs">
-		<div class="titleWelcome"> Welcome to the HoRIzON's webpage </div>
-		<div class="titleWelcome"> hosting the <span class="bold"> FIREFIGHTER ROBOT GAME </span> </div>
+		<div class="titleWelcome" ng-if="language=='english'"> Welcome to the HoRIzON webpage </div>
+		<div class="titleWelcome" ng-if="language=='english'"> hosting the <span class="bold"> FIREFIGHTER ROBOT GAME </span> </div>
+		<div class="titleWelcome" ng-if="language=='french'"> Bienvenu sur la page web du projet HoRIzon</div>
+		<div class="titleWelcome" ng-if="language=='french'"> proposant le <span class="bold"> JEU DU ROBOT POMPIER </span> </div>
 	</div>
-	<div class="mainmsgsrules">	
-		<div class="mainmsg"> <span> Try to fight fires </span> <div class="fireicon"> </div> <span> with a ground robot </span> <div class="brain"> </div> </div>
-		<div class="mainmsg"> <span> by controlling it </span> <div class="keyboard"> </div> <span> when it loses its autonomy </span> </div>
-		<div class="mainmsg"> <span> and by managing its water tank </span> <div class="tapwater"> </div>  </div>
-		<div class="mainmsg"> <div> <i class="fa fa-wifi" aria-hidden="true"></i> </div> <span> &nbsp; You need a good internet connection! </span> </div> 
+	<div class="mainmsgsrules">
+		<div class="mainmsg" ng-if="language=='english'"> <span> Try to fight fires </span> <div class="fireicon"> </div> <span> with a ground robot </span> <div class="brain"> </div> </div>
+		<div class="mainmsg" ng-if="language=='english'"> <span> by controlling it </span> <div class="keyboard"> </div> <span> when it loses its autonomy </span> </div>
+		<div class="mainmsg" ng-if="language=='english'"> <span> and by managing its water tank </span> <div class="tapwater"> </div>  </div>
+		<div class="mainmsg" ng-if="language=='english'"> <div> <i class="fa fa-wifi" aria-hidden="true"></i> </div> <span> &nbsp; You need a good internet connection! </span> </div>
+		<div class="mainmsg" ng-if="language=='french'"> <span> Essaie d'éteindre les feux </span> <div class="fireicon"> </div> <span> avec un robot terrestre </span> <div class="brain"> </div> </div>
+		<div class="mainmsg" ng-if="language=='french'"> <span> en le controlant </span> <div class="keyboard"> </div> <span> lorsqu'il perd son autonomie </span> </div>
+		<div class="mainmsg" ng-if="language=='french'"> <span> et en gérant ses réserves d'eau </span> <div class="tapwater"> </div>  </div>
+		<div class="mainmsg" ng-if="language=='french'"> <div> <i class="fa fa-wifi" aria-hidden="true"></i> </div> <span> &nbsp; Vous avez besoin d'une bonne connection internet! </span> </div> 
 	</div>
 	<div class="mainBand">
 		<div class="mainButton" ui-sref="howto"> RULES </div>
@@ -26,7 +32,16 @@
 	<div class="notegame"> This crowdsourcing platform has been developped by the department
 <a style="color: #05BDFF" href="https://www.isae-supaero.fr/en/research/departments/department-of-aerospace-vehicles-design-and-control-dcas-95/department-of-aerospace-vehicles-design-and-control-dcas/">DCAS</a>
  of <a style="color: #05BDFF" href="https://www.isae-supaero.fr/en/">ISAE-SUPAERO</a> in the context of the     <a style="color: #05BDFF" href="https://www.isae-supaero.fr/en/isae-supaero/mecenat-relations-avec-la-fondation-isae-supaero/chaire-dassault-aviation/">Dassault Aviation chair</a>. </div>
-	<div class="logos" ui-sref="experiment"> <div class="logosclose"> <div class="dassault"> </div>  <div class="supaero"> </div> </div>  </div>
+	<div class="logos">
+		<div class="languages">
+			<div class="language" ng-click="french()"> <span class="bold"> FRANCAIS </span> </div>
+			<div class="language" ng-click="english()"><span class="bold"> ENGLISH </span> </div>
+		</div>
+		<div class="logosclose"> 
+			<div class="dassault" ui-sref="experiment"> </div>  
+			<div class="supaero"> </div> 
+		</div>
+	</div>
 	<div class="allThanks">
 		<div class="thanks"> By <span class="bold"> Nicolas Drougard</span>. Many thanks to Corentin Chauffaut and Pascal Chauvin for the robotic framework. firstname.name@isae-supaero.fr </div>
 		<div class="thanks"> Also many thanks to Jonathan Carbasse for his great help with angular fullstack (firstname.name@gmail.com). Thanks to EmojiOne for providing free emoji icons. Font Awesome by Dave Gandy - http://fontawesome.io </div> 

@@ -60,6 +60,22 @@ router.post('/nasatlx', function(req, res/*, next*/) {
       res.json();
 });
 
+// ==================================
+//   KSS
+// ==================================
+var fs = require('fs');
+router.post('/kss', function(req, res/*, next*/) {
+      var kssdate = new Date();
+      fs.writeFile("../kss_" + kssdate.getFullYear() + '_' + ('0' + (kssdate.getMonth()+1)).slice(-2) + '_' + ('0' + kssdate.getDate()).slice(-2) + '__' + ('0' + kssdate.getHours()).slice(-2) + '_' + ('0' + kssdate.getMinutes()).slice(-2) + '.txt', req.body.kss, function(err) {
+        if(err) {
+          return console.log(err);
+        }
+        console.log("The file was saved!");
+      }); 
+      res.json();
+});
+
+
 
 
 //=====================================================

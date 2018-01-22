@@ -8,11 +8,66 @@
 
 <div id="choicepage" class="threeCrossesPage"> 
 	<div id="consigne" class="texte"> 
-		Merci beaucoup de participer à notre expérience. 	
+		<!-- Merci beaucoup de participer à notre expérience.-->
+		Thanks a lot for contributing to	 our experiment.	
 	</div>
 	<div class="choix">
-		<div class="restornasa" ng-click="fixacross()"> REPOS VOLONTAIRE </div>
-		<div class="restornasa" ng-click="nasatlx()"> QUESTIONNAIRE NASA-TLX </div>
+		<div class="restornasa" ng-click="fixacross()"> REST </div>
+		<div class="restornasa" ng-click="nasatlx()"> WORLOAD </div>
+		<div class="restornasa" ng-click="kss()"> SLEEPINESS </div>
+	</div>
+</div>
+
+<div id="kss" class="apart" style="display:none"> 
+	<div class="kssquiz">
+		<div class="texte"> 
+			Please indicate your state of drowsiness at this time 
+			by checking the box near the number corresponding to your condition. 
+			You can also use intermediate conditions.
+		</div>
+
+		<div>
+			<label class="number" for="Response1">1</label>
+			<input type="checkbox" id="Response1" />
+			<label class="description" for="Response1">Very awake</label>
+		</div>
+		<div>
+			<label class="number" for="Response2">2</label>
+			<input type="checkbox" id="Response2" />
+		</div>
+		<div>
+			<label class="number" for="Response3">3</label>
+			<input type="checkbox" id="Response3" />
+			<label class="description" for="Response3">Awakened - normal level</label>
+		</div>
+		<div>
+			<label class="number" for="Response4">4</label>
+			<input type="checkbox" id="Response4" />
+		</div>
+		<div>
+			<label class="number" for="Response5">5</label>
+			<input type="checkbox" id="Response5" />
+			<label class="description" for="Response5">Neither awake nor drowsy</label>
+		</div>
+		<div>
+			<label class="number" for="Response6">6</label>
+			<input type="checkbox" id="Response6" />
+		</div>
+		<div>
+			<label class="number" for="Response7">7</label>
+			<input type="checkbox" id="Response7" />
+			<label class="description" for="Response7">Sleepy, but without effort to stay awake</label>
+		</div>
+		<div>
+			<label class="number" for="Response8">8</label>
+			<input type="checkbox" id="Response8" />
+		</div>
+		<div>
+			<label class="number" for="Response9">9</label>
+			<input type="checkbox" id="Response9" />
+			<label class="description" for="Response9">Very sleepy with great effort to stay awake, struggling against sleep.</label>
+		</div>
+		<input class="next" value="Submit" type="button" ng-click="saveKss()">
 	</div>
 </div>
 
@@ -186,7 +241,7 @@ gratified, content, relaxed and complacent did you feel during the task?</td>
 </div>
 </div>
 
-<div id="div_part4" style="display:none">
+<div class="apart" id="div_part4" style="display:none">
 </div>
 
 

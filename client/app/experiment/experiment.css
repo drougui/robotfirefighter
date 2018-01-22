@@ -107,7 +107,7 @@
 }
 
 .experiment .restornasa{
-	width: 40%;
+	width: 30%;
 	height: 100%;
 	font-size: 150%;
 	justify-content: space-around;
@@ -140,4 +140,20 @@
 
 .experiment .totheright{
 	text-align: right;
+}
+
+.experiment .kssquiz{
+	display: flex;
+	justify-content: space-around;
+	flex-direction: column; 
+	width: 70%;
+	height: 80%;
+}
+
+.experiment .number{
+	width: 2%;
+}
+
+.experiment .description{
+	margin-left: 2%;
 }

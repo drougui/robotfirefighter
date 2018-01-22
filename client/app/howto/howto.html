@@ -5,8 +5,11 @@
 		<div class="leftpartrow">
 			<i class="fa fa-android" aria-hidden="true"></i>
 		</div>
-		<div class="rightpartrow">
+		<div class="rightpartrow" ng-if="language=='english'">
 			<span> A firefighter robot is present in a small area </span>
+		</div>
+		<div class="rightpartrow" ng-if="language=='french'">
+			<span> Un robot pompier se trouve dans une petite zone </span>
 		</div>
 	</div>
 	<div class="rowhowto">
