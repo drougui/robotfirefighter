@@ -4,17 +4,17 @@
 		<div class="titleWelcome" ng-if="language=='english'"> Welcome to the HoRIzON webpage </div>
 		<div class="titleWelcome" ng-if="language=='english'"> hosting the <span class="bold"> FIREFIGHTER ROBOT GAME </span> </div>
 		<div class="titleWelcome" ng-if="language=='french'"> Bienvenue sur la page web du projet HoRIzon</div>
-		<div class="titleWelcome" ng-if="language=='french'"> proposant le <span class="bold"> JEU DU ROBOT POMPIER </span> </div>
+		<div class="titleWelcome" ng-if="language=='french'"> le <span class="bold"> JEU DU ROBOT POMPIER </span> vous attend </div>
 	</div>
 	<div class="mainmsgsrules">
 		<div class="mainmsg" ng-if="language=='english'"> <span> Try to fight fires </span> <div class="fireicon"> </div> <span> with a ground robot </span> <div class="brain"> </div> </div>
 		<div class="mainmsg" ng-if="language=='english'"> <span> by controlling it </span> <div class="keyboard"> </div> <span> when it loses its autonomy </span> </div>
 		<div class="mainmsg" ng-if="language=='english'"> <span> and by managing its water tank </span> <div class="tapwater"> </div>  </div>
 		<div class="mainmsg" ng-if="language=='english'"> <div> <i class="fa fa-wifi" aria-hidden="true"></i> </div> <span> &nbsp; You need a good internet connection! </span> </div>
-		<div class="mainmsg" ng-if="language=='french'"> <span> Essaie d'éteindre les feux </span> <div class="fireicon"> </div> <span> avec un robot terrestre </span> <div class="brain"> </div> </div>
+		<div class="mainmsg" ng-if="language=='french'"> <span> Essayez d'éteindre les feux </span> <div class="fireicon"> </div> <span> avec un robot terrestre </span> <div class="brain"> </div> </div>
 		<div class="mainmsg" ng-if="language=='french'"> <span> en le controlant </span> <div class="keyboard"> </div> <span> lorsqu'il perd son autonomie </span> </div>
 		<div class="mainmsg" ng-if="language=='french'"> <span> et en gérant ses réserves d'eau </span> <div class="tapwater"> </div>  </div>
-		<div class="mainmsg" ng-if="language=='french'"> <div> <i class="fa fa-wifi" aria-hidden="true"></i> </div> <span> &nbsp; Vous avez besoin d'une bonne connection internet! </span> </div> 
+		<div class="mainmsg" ng-if="language=='french'"> <div> <i class="fa fa-wifi" aria-hidden="true"></i> </div> <span> &nbsp; Vous avez besoin d'une bonne connection internet ! </span> </div> 
 	</div>
 	<div class="mainBand">
 		<div class="mainButton" ui-sref="howto" ng-if="language=='english'"> RULES </div>
@@ -51,9 +51,9 @@
 		</div>
 	</div>
 	<div class="allThanks">
-		<div class="thanks" ng-if="language=='english'"> By <span class="bold"> Nicolas Drougard</span>. Many thanks to Corentin Chauffaut and Pascal Chauvin for the robotic framework, firstname.name@isae-supaero.fr, to Mario Cassaro for the water management design, firstname.name@onera.fr </div>
+		<div class="thanks" ng-if="language=='english'"> By <span class="bold"> Nicolas Drougard</span>. Many thanks to Corentin Chauffaut and Pascal Chauvin for the robotic framework (firstname.name@isae-supaero.fr) and to Mario Cassaro for the water management task design (firstname.name@onera.fr). </div>
 		<div class="thanks" ng-if="language=='english'"> Also many thanks to Jonathan Carbasse for his great help with angular fullstack (firstname.name@gmail.com). Thanks to EmojiOne for providing free emoji icons. Font Awesome by Dave Gandy - http://fontawesome.io </div> 
-		<div class="thanks" ng-if="language=='french'"> Par <span class="bold"> Nicolas Drougard</span>. Un grand merci à Corentin Chauffaut et Pascal Chauvin pour la partie robotique, prenom.nom@isae-supaero.fr, et à Mario Cassaro pour le module de gestion de l'eau, prenom.nom@onera.fr </div>
+		<div class="thanks" ng-if="language=='french'"> Par <span class="bold"> Nicolas Drougard</span>. Un grand merci à Corentin Chauffaut et Pascal Chauvin pour la partie robotique (prenom.nom@isae-supaero.fr) et à Mario Cassaro pour le module de gestion de l'eau (prenom.nom@onera.fr). </div>
 		<div class="thanks" ng-if="language=='french'"> Un grand merci aussi à Jonathan Carbasse pour son aide avec angular fullstack (prenom.nom@gmail.com). Merci à EmojiOne pour les emojis. Font Awesome par Dave Gandy - http://fontawesome.io </div> 
 	</div>
 </div>

@@ -20,6 +20,9 @@ export class ExperimentComponent {
     var def        = new Array();
     var NUM_SCALES = 6;
 
+
+
+    if($rootScope.language=='english'){
     scale[0]  = "Mental Demand"; 
     left[0]   = "Low";
     right[0]  = "High";
@@ -49,6 +52,38 @@ export class ExperimentComponent {
     left[5]   = "Low";
     right[5]  = "High";
     def[5]    = "How insecure, discouraged, irritated, stressed and annoyed versus secure, gratified, content, relaxed and complacent did you feel during the task?";
+    }
+    else if($rootScope.language=='french'){
+    scale[0]  = "Exigence Mentale"; 
+    left[0]   = "Faible";
+    right[0]  = "Elevée";
+    def[0]    = "Quelle a été l’importance de l’activité mentale et intellectuelle requise (ex. réflexion, décision, calcul, mémorisation, observation, recherche etc.) ? La tâche vous a-t-elle paru simple, nécessitant peu d’attention (faible) ou complexe, nécessitant beaucoup d’attention (élevée) ?";
+
+    scale[1]  = "Exigence Physique"; 
+    left[1]   = "Faible";
+    right[1]  = "Elevée";
+    def[1]    = "Quelle a été l’importance de l’activité physique requise (ex. pousser, porter, tourner, marcher, activer, etc.) ? La tâche vous a-t-elle paru facile, peu fatigante, calme (faible) ou pénible, fatigante, active (élevée) ?";
+
+    scale[2]  = "Exigence Temporelle"; 
+    left[2]   = "Faible";
+    right[2]  = "Elevée";
+    def[2]    = "Quelle a été l’importance de la pression temporelle causée par la rapidité nécessitée pour l'accomplissement de la tâche ? Etait-ce un rythme lent et tranquille (faible) ou rapide et précipité (élevé) ?";
+
+    scale[3]  = "Performance"; 
+    left[3]   = "Bonne";
+    right[3]  = "Mauvaise";
+    def[3]    = "Quelle réussite pensez-vous avoir eu dans l’accomplissement de votre tâche ? Comment pensez-vous avoir atteint les objectifs déterminés par la tâche ? ";
+
+    scale[4]  = "Effort"; 
+    left[4]   = "Faible";
+    right[4]  = "Elevé";
+    def[4]    = "Quel degré d’effort avez-vous dû fournir pour exécuter la tâche demandée, (mentalement et physiquement) ?";
+
+    scale[5]  = "Frustration"; 
+    left[5]   = "Faible";
+    right[5]  = "Elevée";
+    def[5]    = "Pendant l’exécution du travail vous êtes-vous senti satisfait, relaxé, sûr de vous (niveau de frustration faible), ou plutôt découragé, irrité, stressé, sans assurance (niveau de frustration élevé) ?";
+    }
 
     // Pairs of factors in order in the original instructions, numbers
     // refer to the index in the scale, left, right, def arrays.
