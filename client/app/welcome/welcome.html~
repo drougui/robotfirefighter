@@ -4,7 +4,7 @@
 		<div class="titleWelcome" ng-if="language=='english'"> Welcome to the HoRIzON webpage </div>
 		<div class="titleWelcome" ng-if="language=='english'"> hosting the <span class="bold"> FIREFIGHTER ROBOT GAME </span> </div>
 		<div class="titleWelcome" ng-if="language=='french'"> Bienvenue sur la page web du projet HoRIzon</div>
-		<div class="titleWelcome" ng-if="language=='french'"> le <span class="bold"> JEU DU ROBOT POMPIER </span> vous attend </div>
+		<div class="titleWelcome" ng-if="language=='french'"> le <span class="bold"> JEU DU ROBOT POMPIER </span> vous attend ! </div>
 	</div>
 	<div class="mainmsgsrules">
 		<div class="mainmsg" ng-if="language=='english'"> <span> Try to fight fires </span> <div class="fireicon"> </div> <span> with a ground robot </span> <div class="brain"> </div> </div>

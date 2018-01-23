@@ -14,6 +14,7 @@ export class MainController {
 
   /*@ngInject*/
   constructor($http, $scope, socket, hotkeys, $timeout, $interval, sharedProperties, $rootScope, $window) {
+    $scope.language = $rootScope.language;
     /*$scope.user = {};
     $scope.user.pseudo = "";*/
     //---------------------
