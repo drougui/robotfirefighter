@@ -57,7 +57,7 @@ export class MainController {
     if($scope.language=='english'){
       $scope.alarmText = ["Low battery", "Too-high temperature", "Less than one minute before the end of the mission", "The robot's tank will soon be empty (2 shoots left)", "The robot is in autonomous mode", "The robot is in manual mode","ground tank is leaking", "The ground tank's water level is low"];
     } else if($scope.language=='french'){
-      $scope.alarmText = ["Batterie faible", "Température trop haute", "Moins d'une minute avant la fin de la mission", "Le réservoir du robot est bientôt vite (2 tirs restants)", "Le robot est en mode autonome", "Le robot est en mode manuel","ground tank is leaking", "Le niveau d'eau du réservoir principal est faible"];
+      $scope.alarmText = ["Batterie faible", "Température trop haute", "Moins d'une minute avant la fin de la mission", "Le réservoir du robot est bientôt vide (2 tirs restants)", "Le robot est en mode autonome", "Le robot est en mode manuel","ground tank is leaking", "Le niveau d'eau du réservoir principal est faible"];
     }
     $scope.removeAlarm = function(){
       $scope.alarmOverlayOpen = false;

@@ -20,12 +20,12 @@ export class MainController {
     //---------------------
     // for online version:
     // -using nginx
-    //$scope.address = "http://dev.humanrobotinteraction.fr/test";
+    $scope.address = "http://dev.humanrobotinteraction.fr/test";
     // -without nginx (networks blocking ports cannot see the video)
     //$scope.address = "http://dev.humanrobotinteraction.fr:8081/?action=stream";
     //---------------------
     // for local version
-    $scope.address = "http://localhost:8081/?action=stream";
+    //$scope.address = "http://localhost:8081/?action=stream";
     //---------------------
     // for PC SMI settings
     //$scope.address = "http://192.168.1.2:8081/?action=stream";
