@@ -7,8 +7,10 @@ import routes from './videodemo.routes';
 
 export class VideodemoComponent {
   /*@ngInject*/
-  constructor() {
+  constructor($scope, $rootScope) {
+    'ngInject';
     this.message = 'Hello';
+    $scope.language = $rootScope.language;
   }
 }
 

@@ -77,8 +77,11 @@
 				<div class="iconCircle">
 					<i class="fa fa-trophy" aria-hidden="true"></i>
 				</div>
-				<div class="gametitle">
+				<div class="gametitle" ng-if="language=='english'">
 					Firefighter Human-Robot Team <div class="fireicon"> </div>
+				</div>
+				<div class="gametitle" ng-if="language=='french'">
+					Equipe de pompiers Homme-robot <div class="fireicon"> </div>
 				</div>
 				<div class="infonoff">	
 					<div class="missioninfo">
@@ -136,7 +139,7 @@ leaks/wrench/etc in server files-->
 <!--  -->
 							<div class="wrapLeaks">
 								<div class="leakContainer" ng-repeat="(key, value) in leakPlaces">
-									<div class="leak" ng-class="{nonvisible: noleakat[key]}" ng-style="{'transform': 'scale(' + leaksReverse[key] + ', 1)', 'left': leftValues[key] + '%'}"  ng-click="clickLeak(key)">
+									<div class="leak" ng-class="{nonvisible: noleakat[key]}" ng-style="{'transform': 'scale(' + leaksReverse[key] + ', 1)', 'left': leftValues[key] + '%'}"  ng-click="clickLeak(key); $event.stopPropagation();">
 									</div>
 								</div>
 							</div>
@@ -182,8 +185,9 @@ leaks/wrench/etc in server files-->
 					<div class="wmbuttons">
 						<!-- <i class="fa fa-mouse-pointer" aria-hidden="true"></i> -->
 						<div class="speed">  
-							<div class="wheelsmall2"> </div> 
-							<div> speed: {{faucetcontrol}} </div>
+							<div class="wheelsmall2"> </div>
+							<div ng-if="language=='english'"> speed: {{faucetcontrol}} </div>
+							<div ng-if="language=='french'"> vitesse: {{faucetcontrol}} </div>
 						</div>
 						<div class="buttonWheel">
 							<div class="buttonChar">
@@ -194,7 +198,7 @@ leaks/wrench/etc in server files-->
 								<div class="char"> s </div>
 							</div>
 							<div class="buttonletterChar">
-								<div class="mainbuttonR" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctplus()"> 
+								<div class="mainbuttonR" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctplus(); $event.stopPropagation();"> 
 									<div class="undo">  <i class="fa fa-undo" aria-hidden="true"></i> </div>
 									<div class="wheelsmall"> </div>
 								</div>
@@ -202,7 +206,7 @@ leaks/wrench/etc in server files-->
 							</div>
 						</div>
 						<div class="buttonletterChar">
-							<div class="pushButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="waterPushButton()">
+							<div class="pushButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="waterPushButton(); $event.stopPropagation();">
 								<!--<div class="pbcircle">
 									<div class="pbcirclesmall">
 									</div>
@@ -213,7 +217,7 @@ leaks/wrench/etc in server files-->
 							<div class="char"> e </div>
 						</div>
 						<div class="buttonletterChar">
-							<div class="wrenchButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="wrenchOnOff()">
+							<div class="wrenchButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="wrenchOnOff(); $event.stopPropagation();">
 								<i class="fa fa-wrench" aria-hidden="true"></i>
 							</div>
 							<div class="char"> a </div>
@@ -305,8 +309,10 @@ leaks/wrench/etc in server files-->
 								<div class="autonomy">
 									<div class="brain" ng-if="autonomous"> <!-- <i class="fa fa-signal" aria-hidden="true"></i> --> </div>
 									<div class="keyboard" ng-if="!autonomous"> </div>
-									<span ng-if="autonomous"> AUTONOMOUS </span>
-									<span ng-if="!autonomous"> MANUAL </span>  			
+									<span ng-if="autonomous && language=='english'"> AUTONOMOUS </span>
+									<span ng-if="!autonomous && language=='english'"> MANUAL </span>
+									<span ng-if="autonomous && language=='french'"> AUTONOME </span>
+									<span ng-if="!autonomous && language=='french'"> MANUEL </span>  			
 								</div>
 								<div class="batTemp">
 									<div class="connectbat">

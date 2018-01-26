@@ -9,7 +9,7 @@ export class ScoresComponent {
   /*@ngInject*/
   constructor($scope,$http,$rootScope) {
     'ngInject';
-    $scope.language = $rootScope.language;
+    $scope.language = $rootScope.language || 'english';
     var pagesNumber = 0;
     $scope.divleft = [];
     $scope.divright = [];

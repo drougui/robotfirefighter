@@ -11,7 +11,7 @@ export class LoadingComponent {
   /*@ngInject*/
   constructor($http, $scope, socket, $interval, $timeout, sharedProperties, $rootScope, $window) {
     'ngInject';
-    $scope.language = $rootScope.language;
+    $scope.language = $rootScope.language || 'english';
     $scope.user = {};
     $scope.user.pseudo = "";
     var myToken = $rootScope.token; // does nothing, usually $rootScope.token isn't filled yet.

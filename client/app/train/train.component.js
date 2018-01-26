@@ -16,7 +16,7 @@ export class TrainComponent {
 // display
 
     'ngInject';
-    $scope.language = $rootScope.language;
+    $scope.language = $rootScope.language || 'english';
     
 
     //hotkeys.add('s', 'tapleft', $scope.faucetctrlfctminus);

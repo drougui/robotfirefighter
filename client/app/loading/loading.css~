@@ -18,7 +18,6 @@
 .loadpart{
 	display: flex;
 	width: 50vw;
-	justify-content: center;
 }
 
 .robotControlLoading{

@@ -10,7 +10,7 @@ export class VideodemoComponent {
   constructor($scope, $rootScope) {
     'ngInject';
     this.message = 'Hello';
-    $scope.language = $rootScope.language;
+    $scope.language = $rootScope.language || 'english';
   }
 }
 

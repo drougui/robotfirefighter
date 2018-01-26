@@ -80,8 +80,8 @@ export class ExperimentComponent {
     def[4]    = "Quel degré d’effort avez-vous dû fournir pour exécuter la tâche demandée, (mentalement et physiquement) ?";
 
     scale[5]  = "Frustration"; 
-    left[5]   = "Low";
-    right[5]  = "High";
+    left[5]   = "Faible";
+    right[5]  = "Elevée";
     def[5]    = "Pendant l’exécution du travail vous êtes-vous senti satisfait, relaxé, sûr de vous (niveau de frustration faible), ou plutôt découragé, irrité, stressé, sans assurance (niveau de frustration élevé) ?";
     }
 

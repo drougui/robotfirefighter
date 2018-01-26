@@ -20,12 +20,12 @@ export class MainController {
     //---------------------
     // for online version:
     // -using nginx
-    $scope.address = "http://dev.humanrobotinteraction.fr/test";
+    //$scope.address = "http://dev.humanrobotinteraction.fr/test";
     // -without nginx (networks blocking ports cannot see the video)
     //$scope.address = "http://dev.humanrobotinteraction.fr:8081/?action=stream";
     //---------------------
     // for local version
-    //$scope.address = "http://localhost:8081/?action=stream";
+    $scope.address = "http://localhost:8081/?action=stream";
     //---------------------
     // for PC SMI settings
     //$scope.address = "http://192.168.1.2:8081/?action=stream";
@@ -53,7 +53,12 @@ export class MainController {
     // ALARMS OVERLAYS
     $scope.alarmOverlayOpen = false;
     $scope.alarmCause = 0;
-    $scope.alarmText = ["low battery", "too-high temperature", "60 seconds before the end of the mission", "robot's tank will soon be empty (2 shoots left)", "robot is in autonomous mode", "robot is in manual mode","ground tank is leaking", "ground tank's water level is low"];
+    $scope.language = $rootScope.language || 'english';
+    if($scope.language=='english'){
+      $scope.alarmText = ["Low battery", "Too-high temperature", "Less than one minute before the end of the mission", "The robot's tank will soon be empty (2 shoots left)", "The robot is in autonomous mode", "The robot is in manual mode","ground tank is leaking", "The ground tank's water level is low"];
+    } else if($scope.language=='french'){
+      $scope.alarmText = ["Batterie faible", "Température trop haute", "Moins d'une minute avant la fin de la mission", "Le réservoir du robot est bientôt vide (2 tirs restants)", "Le robot est en mode autonome", "Le robot est en mode manuel","ground tank is leaking", "Le niveau d'eau du réservoir principal est faible"];
+    }
     $scope.removeAlarm = function(){
       $scope.alarmOverlayOpen = false;
       $http.get('/api/control/removealarm').then(response => {

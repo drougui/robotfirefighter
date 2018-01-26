@@ -182,8 +182,9 @@ leaks/wrench/etc in server files-->
 					<div class="wmbuttons">
 						<!-- <i class="fa fa-mouse-pointer" aria-hidden="true"></i> -->
 						<div class="speed">  
-							<div class="wheelsmall2"> </div> 
-							<div> speed: {{faucetcontrol}} </div>
+							<div class="wheelsmall2"> </div>
+							<div ng-if="language=='english'"> speed: {{faucetcontrol}} </div>
+							<div ng-if="language=='french'"> vitesse: {{faucetcontrol}} </div>
 						</div>
 						<div class="buttonWheel">
 							<div class="buttonChar">
@@ -305,8 +306,10 @@ leaks/wrench/etc in server files-->
 								<div class="autonomy">
 									<div class="brain" ng-if="autonomous"> <!-- <i class="fa fa-signal" aria-hidden="true"></i> --> </div>
 									<div class="keyboard" ng-if="!autonomous"> </div>
-									<span ng-if="autonomous"> AUTONOMOUS </span>
-									<span ng-if="!autonomous"> MANUAL </span>  			
+									<span ng-if="autonomous && language=='english'"> AUTONOMOUS </span>
+									<span ng-if="!autonomous && language=='english'"> MANUAL </span>
+									<span ng-if="autonomous && language=='french'"> AUTONOME </span>
+									<span ng-if="!autonomous && language=='french'"> MANUEL </span>  			
 								</div>
 								<div class="batTemp">
 									<div class="connectbat">

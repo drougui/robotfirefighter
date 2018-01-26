@@ -7,7 +7,7 @@ import routes from './train.routes';
 
 export class TrainComponent {
   /*@ngInject*/
-  constructor($http, $scope, socket, hotkeys, $interval,$rootScope) {
+  constructor($http, $scope, socket, hotkeys, $interval, $rootScope) {
 
 // TODO TODO TODO TODO setInterval-> $interval
 // clear intervals

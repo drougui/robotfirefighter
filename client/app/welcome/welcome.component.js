@@ -90,7 +90,7 @@ export class WelcomeComponent {
       })
     }; // play
 
-    $scope.language = $rootScope.language;
+    $scope.language = $rootScope.language || 'english';
 //    $rootScope.language = 'english';
     $scope.french = function(){
       $rootScope.language = 'french';
