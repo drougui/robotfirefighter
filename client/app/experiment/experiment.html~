@@ -325,8 +325,8 @@ irrité, stressé, sans assurance (niveau de frustration élevé) ?
   <span ng-if="language=='french'"> Pour chacuns des 15 prochains écrans, cliquez sur le nom de l'échelle 
 qui contribue le plus à la charge mentale pour la tâche. </span> <br>
   <br>
-  <input class="next" id="next" value="Continue &gt;&gt;" ng-click="buttonPart2();" type="button">
-  <input class="next" id="next" value="Continue &gt;&gt;" ng-click="buttonPart2();" type="button">
+  <input  ng-if="language=='english'" class="next" id="next" value="Continue &gt;&gt;" ng-click="buttonPart2();" type="button">
+  <input  ng-if="language=='french'" class="next" id="next" value="Continuer &gt;&gt;" ng-click="buttonPart2();" type="button">
   </div>
 </div>
 

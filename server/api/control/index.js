@@ -2274,38 +2274,40 @@ global.stopGame = function() {
       newBestScore = true;
     }
 
-    // last score
-    if(scores.length==rank){
 
-      // building last score
-      var newPseudo = '';
-      if(currentPseudo==''){
-        // anonym pseudo generation
-        newPseudo = "anonym" + rewardsSum;
-      }else{
-        newPseudo = currentPseudo;
-      }
-      var newScore = finalNumFightedFires;
-      var date = new Date();
-      var MyDateString = ('0' + (date.getMonth()+1)).slice(-2) + '/'
+    // building last score
+    var newPseudo = '';
+    if(currentPseudo==''){
+    // anonym pseudo generation
+    newPseudo = "anonym" + rewardsSum;
+    }else{
+      newPseudo = currentPseudo;
+    }
+
+    var newScore = finalNumFightedFires;
+    var date = new Date();
+    var MyDateString = ('0' + (date.getMonth()+1)).slice(-2) + '/'
              + ('0' + date.getDate()).slice(-2) + '/'
              + date.getFullYear();
-      var newDate =  MyDateString + ', ' + ('0' + date.getHours()).slice(-2) + ':' + ( '0' + date.getMinutes()).slice(-2);
-      var newReward = rewardsSum;
-      var newObject = {"name":newPseudo,"score":newScore,"date":newDate,"reward":newReward};
+    var newDate =  MyDateString + ', ' + ('0' + date.getHours()).slice(-2) + ':' + ( '0' + date.getMinutes()).slice(-2);
+    var newReward = rewardsSum;
+    var newObject = {"name":newPseudo,"score":newScore,"date":newDate,"reward":newReward};
+    // last score
+    if(scores.length==rank){
       scores.push(newObject);
-
     }else{ // not last score
 
-      var newObject = scores[scores.length-1];
-      scores.push(newObject);
+      var lastObject = scores[scores.length-1];
+      scores.push(lastObject);
       for(var i=scores.length-1; i>rank; i--){
         scores[i].name = scores[i-1].name;
         scores[i].score = scores[i-1].score;
         scores[i].date = scores[i-1].date;
         scores[i].reward = scores[i-1].reward;
       }
-  
+
+      scores[rank] = newObject;
+  /*
       if(currentPseudo==''){
         // anonym pseudo generation
         scores[rank].name = "anonym" + rewardsSum;
@@ -2319,6 +2321,7 @@ global.stopGame = function() {
              + date.getFullYear();
       scores[rank].date =  MyDateString + ', ' + ('0' + date.getHours()).slice(-2) + ':' + ( '0' + date.getMinutes()).slice(-2);
       scores[rank].reward = rewardsSum;
+*/
     }
 
     // overwrite score file
