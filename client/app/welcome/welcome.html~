@@ -46,14 +46,25 @@
 			<div class="language" ng-click="english()"><span class="bold"> ENGLISH </span> </div>
 		</div>
 		<div class="logosclose"> 
-			<div class="dassault" ui-sref="experiment"> </div>  
+			<div class="dassault"> <!-- ui-sref="experiment">--> </div>  
 			<div class="supaero"> </div> 
 		</div>
 	</div>
 	<div class="allThanks">
-		<div class="thanks" ng-if="language=='english'"> By <span class="bold"> Nicolas Drougard</span>. Many thanks to Corentin Chauffaut and Pascal Chauvin for the robotic framework (firstname.name@isae-supaero.fr) and to Mario Cassaro for the water management task design (firstname.name@onera.fr). </div>
-		<div class="thanks" ng-if="language=='english'"> Also many thanks to Jonathan Carbasse for his great help with angular fullstack (firstname.name@gmail.com). Thanks to EmojiOne for providing free emoji icons. Font Awesome by Dave Gandy - http://fontawesome.io </div> 
-		<div class="thanks" ng-if="language=='french'"> Par <span class="bold"> Nicolas Drougard</span>. Un grand merci à Corentin Chauffaut et Pascal Chauvin pour la partie robotique (prenom.nom@isae-supaero.fr) et à Mario Cassaro pour le module de gestion de l'eau (prenom.nom@onera.fr). </div>
-		<div class="thanks" ng-if="language=='french'"> Un grand merci aussi à Jonathan Carbasse pour son aide avec angular fullstack (prenom.nom@gmail.com). Merci à EmojiOne pour les emojis. Font Awesome par Dave Gandy - http://fontawesome.io </div> 
-	</div>
+		<div class="thanks" ng-if="language=='english'"> 
+			By <span class="bold"> Nicolas Drougard</span>. 
+			Many thanks to Corentin Chauffaut and Pascal Chauvin for the robotic framework, 
+			to Christophe Garcia for the web hosting (firstname.name@isae-supaero.fr), 
+			and to Mario Cassaro for the water management task design (firstname.name@onera.fr). 
+			Also many thanks to Jonathan Carbasse for his great help with angular fullstack (firstname.name@gmail.com). 
+			Thanks to EmojiOne for providing free emoji icons. Font Awesome by Dave Gandy - http://fontawesome.io 
+		</div> 
+		<div class="thanks" ng-if="language=='french'"> 
+			Par <span class="bold"> Nicolas Drougard</span>. 
+			Un grand merci à Corentin Chauffaut et Pascal Chauvin pour la partie robotique, 
+			Christophe Garcia pour l'hébergement web (prenom.nom@isae-supaero.fr), 
+			et à Mario Cassaro pour le module de gestion de l'eau (prenom.nom@onera.fr). 
+			Un grand merci aussi à Jonathan Carbasse pour son aide précieuse avec angular fullstack (prenom.nom@gmail.com). 
+			Merci à EmojiOne pour les emojis. Font Awesome par Dave Gandy - http://fontawesome.io
+		</div>
 </div>

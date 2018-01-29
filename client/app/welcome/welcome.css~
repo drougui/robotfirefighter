@@ -101,6 +101,13 @@
 
 .thanks{
 	font-size: 0.8vw;
+	width: 99vw;
+}
+.allThanks{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center,
 }
 
 .timeBeforePlaying{
@@ -114,11 +121,7 @@
 	width: 27vw;
 }
 
-.allThanks{
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
+
 
 .bold{
 	font-weight: bold;
@@ -179,4 +182,5 @@
 
 .notegame{
   width: 70%;
+  text-align: center;
 }
