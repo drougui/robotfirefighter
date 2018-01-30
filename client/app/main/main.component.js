@@ -19,8 +19,10 @@ export class MainController {
     $scope.user.pseudo = "";*/
     //---------------------
     // for online version:
-    // -using nginx
-    $scope.address = "http://dev.humanrobotinteraction.fr/test";
+    // -using nginx 
+    //$scope.address = "http://dev.humanrobotinteraction.fr/test";
+    // -using nginx at ISAE 
+    $scope.address = "http://robot-isae.isae.fr/test";
     // -without nginx (networks blocking ports cannot see the video)
     //$scope.address = "http://dev.humanrobotinteraction.fr:8081/?action=stream";
     //---------------------
