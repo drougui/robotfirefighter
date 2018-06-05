@@ -1,0 +1,262 @@
+<div class="screen" ng-class="{screenWrench: wrenchMode}" ng-click="otherclick()">
+
+	<div class="leftPart">  
+		<div class="missionBlock">
+			<div  class="maincontainermission" ng-class="{maincontainermissionET: AOI==1}">
+				<div class="iconCircle">
+					<i class="fa fa-trophy" aria-hidden="true"></i>
+				</div>
+				<div class="gametitle">
+					Firefighter Human-Robot Team <div class="fireicon"> </div>
+				</div>
+				<div class="infonoff">	
+					<div class="missioninfo">
+						<div class="numbersinfo"> 
+							<!-- <i class="fa fa-star-o" aria-hidden="true"></i> -->
+							<i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+							{{nbfighted}} 
+						</div> 
+						<div  class="numbersinfo"> <i class="fa fa-clock-o" aria-hidden="true"></i>   {{remainingtime}} </div>
+							<!--<button ng-click="killall()" ui-sref="welcome">Kill all!</button>-->
+					</div>
+					<div class="onoff">						
+						<i ng-click="killall()" ui-sref="welcome" class="fa fa-power-off" aria-hidden="true"></i>	
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="waterBlock"> 
+			<div  class="maincontainerwater" ng-class="{maincontainerwaterET: AOI==2}">
+				<div class="iconCircle">
+					<i class="fa fa-tint" aria-hidden="true"></i>
+				</div>
+	            <div class="robinetcontainer">
+					<div class="robinet" ng-style="{left: xrobinet+2+'%', bottom: yrobinet/1.8 + 42 +'%'}"> 
+					</div>
+					<div class="wheel" ng-if="direction!=0" ng-class="{wheelinverse: direction<0}"  ng-style="{left: xrobinet+7.9+'%', bottom: yrobinet/1.8+58+'%', 'animation-duration': animtime + 's'}"> 
+					</div>
+					<div class="wheel" ng-if="direction==0" ng-style="{left: xrobinet+7.9+'%', bottom: yrobinet/1.8+58+'%'}"> 
+					</div>
+					<div class="string" ng-style="{left: xrobinet+11.5+'%', bottom: yrobinet/1.8+52+'%'}"> 
+					</div>
+					<div class="robinetwaterContainer" ng-style="{left: xrobinetwater-0.6+'%', bottom: yrobinet/1.8 + 37 +'%'}">
+						<div class="robinetwater" ng-style="{width: waterwidth + 'vw', 'background-size': waterwidth + 'vw 1vw'}">
+						
+						</div>
+					</div>
+					<div class="montainAxis"> 
+					</div>
+					<div class="neckcontainer">
+					</div>
+					<div class="tankcontainer">	
+						<div class="tankcontainerwaterpart">
+							<div class="tankcontainerwaterviz">
+								<div class="graduations"> </div>
+								<div class="tankcontainerwater" ng-style="{height: watlevelContainer + '%'}"> 
+								</div>
+							</div>
+<!-- TODO manage water level w.r.t leaks and pushbutton and tap position
+leaks/wrench/etc in server files-->
+						</div>    
+						<div class="tankcontainerleakspart">
+							<!--<div class="bigCross" ng-class="{nonvisible: !brokenContainer}">
+								<i class="fa fa-times" aria-hidden="true" ng-style="{'font-size': crossSize + 'vw'}"></i>
+							</div>-->
+<!--  -->
+							<div class="wrapLeaks">
+								<div class="leakContainer" ng-repeat="(key, value) in leakPlaces">
+									<div class="leak" ng-class="{nonvisible: noleakat[key]}" ng-style="{'transform': 'scale(' + leaksReverse[key] + ', 1)', 'left': leftValues[key] + '%'}"  ng-click="clickLeak(key); $event.stopPropagation();">
+									</div>
+								</div>
+							</div>
+<!--							<div class="topleaks">
+								<div class="leaks">
+									<div class="leaktop" ng-class="{nonvisible: noleakat[0]}" ng-click="clickLeak(0)">
+									</div>
+									<div class="leaktop" ng-class="{nonvisible: noleakat[1]}" ng-click="clickLeak(1)">
+									</div>
+								</div>	
+								<div class="containertap">
+								</div>
+								<div class="leaks">
+									<div class="leaktop" ng-class="{nonvisible: noleakat[2]}" ng-click="clickLeak(2)">
+									</div>
+									<div class="leaktop" ng-class="{nonvisible: noleakat[3]}" ng-click="clickLeak(3)">
+									</div>
+								</div>								
+							</div>
+							<div class="botleaks">
+								<div class="leak" ng-class="{nonvisible: noleakat[4]}" ng-click="clickLeak(4)">
+								</div>
+								<div class="leak" ng-class="{nonvisible: noleakat[5]}" ng-click="clickLeak(5)">
+								</div>
+								<div class="leak" ng-class="{nonvisible: noleakat[6]}" ng-click="clickLeak(6)">
+								</div>
+								<div class="leak" ng-class="{nonvisible: noleakat[7]}" ng-click="clickLeak(7)">
+								</div>
+							</div>
+-->
+						</div>
+						<div class="legsContainer">
+							<div class="legs">
+							</div>                           	
+						</div>
+					</div>
+<!--
+					<div> 
+						<span> TAP POSITION: {{faucetxaxis}} </span> 
+						 
+					</div>
+-->
+					<div class="wmbuttons">
+						<!-- <i class="fa fa-mouse-pointer" aria-hidden="true"></i> -->
+						<div class="speed">  
+							<div class="wheelsmall2"> </div>
+							<div ng-if="language=='english'"> speed: {{faucetcontrol}} </div>
+							<div ng-if="language=='french'"> vitesse: {{faucetcontrol}} </div>
+						</div>
+						<div class="buttonWheel">
+							<div class="buttonChar">
+								<div class="mainbuttonL" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctminus(); $event.stopPropagation();"> 
+									<div class="undo"> <i class="fa fa-undo" aria-hidden="true"></i></div>
+									<div class="wheelsmall"> </div>
+								</div>
+								<div class="char"> s </div>
+							</div>
+							<div class="buttonletterChar">
+								<div class="mainbuttonR" ng-class="{cursorPointer: !wrenchMode}" ng-click="faucetctrlfctplus(); $event.stopPropagation();"> 
+									<div class="undo">  <i class="fa fa-undo" aria-hidden="true"></i> </div>
+									<div class="wheelsmall"> </div>
+								</div>
+								<div class="char"> d </div>
+							</div>
+						</div>
+						<div class="buttonletterChar">
+							<div class="pushButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="waterPushButton(); $event.stopPropagation();">
+								<!--<div class="pbcircle">
+									<div class="pbcirclesmall">
+									</div>
+								</div>-->
+								<div class="buttonTap">
+								</div>
+							</div>
+							<div class="char"> e </div>
+						</div>
+						<div class="buttonletterChar">
+							<div class="wrenchButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="wrenchOnOff(); $event.stopPropagation();">
+								<i class="fa fa-wrench" aria-hidden="true"></i>
+							</div>
+							<div class="char"> a </div>
+						</div>
+<!--
+						<div class="newContainerButton" ng-class="{cursorPointer: !wrenchMode}" ng-click="newContainer()">
+							<div class="containerIcon">
+							</div>
+						</div>-->					
+					</div>
+				</div>				
+			</div>
+		</div>
+	</div>
+	<div class="rightPart"> 
+		<div class="videoBlock"> 
+			<div class="maincontainercam" ng-class="{maincontainercamET: AOI==3}">
+				<div class="streamcameraET">
+					<div class="imagecamET"> </div>			
+				</div>
+			</div>		
+		</div>
+		<div class="infoBlock"> 
+			<div class="maincontainer" ng-class="{maincontainerET: AOI==4 || AOI==5}">
+				<div class="iconCircle">
+					<i class="fa fa-info" aria-hidden="true"></i>
+				</div>
+				<div class="iconscontents">
+					<div class="linktoicon" ng-class="{linktoiconET: AOI==4}">
+						<i class="fa fa-globe" aria-hidden="true"></i>
+					</div>
+					<div class="maincontainersec" ng-class="{maincontainersecET: AOI==4}">
+						<div class="mapblock">
+							<div class="map">
+								<div class="point" ng-style="{top: propFromTop, left: propFromLeft, transform: 'rotate('+ rotindeg +'deg)'}">
+								</div>
+								<div class="tree" ng-repeat="(key, value) in trees" ng-style="{top: value.y, left: value.x}">
+								</div>
+								<div class="fire" ng-repeat="(key, value) in firesloc" ng-style="{top: value.y, left: value.x, opacity: opacityfire[key]}">
+								</div>
+								<div class="loadlocB" ng-style="{top: zones[1].y, left: zones[1].x}">
+									<i class="fa fa-bolt" aria-hidden="true"></i>					
+								</div>
+								<div class="loadlocW" ng-style="{top: zones[0].y, left: zones[0].x}">
+									<div>
+										<i class="fa fa-tint" aria-hidden="true"></i>
+									</div>						
+									<div class="waterlevelmap" ng-style="{height: watlevelContainerMap + 'px'}">
+									</div>				
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--<span> {{nbonfire}} </span>-->
+				</div>
+				<div class="iconscontents2">
+					<div class="linktoicon"  ng-class="{linktoiconET: AOI==5}">
+						<div class="robothead">
+						</div>
+					</div>
+					<div class="maincontainersec2"  ng-class="{maincontainersecET: AOI==5}">
+						<div class="warningsblock">
+							<div class="robtoppart">
+								<div class="autonomy">
+									<div class="brain" ng-if="autonomous"> <!-- <i class="fa fa-signal" aria-hidden="true"></i> --> </div>
+									<div class="keyboard" ng-if="!autonomous"> </div>
+									<span ng-if="autonomous && language=='english'"> AUTONOMOUS </span>
+									<span ng-if="!autonomous && language=='english'"> MANUAL </span>
+									<span ng-if="autonomous && language=='french'"> AUTONOME </span>
+									<span ng-if="!autonomous && language=='french'"> MANUEL </span>  			
+								</div>
+								<div class="batTemp">
+									<div class="connectbat">
+										<div class="battery">
+											<div class="batlev"  ng-style="{width: battlevel+'%'}">
+											</div>
+										</div>
+										<div class="batconnect">
+										</div>
+									</div>
+									<div class="therm">
+										<div class="temperature">
+											<div class="cercle">
+												<div class="bluecercle">
+												</div>								
+											</div>
+											<div class="someRed">
+											</div>
+											<div class="thermometer">
+												<div class="mercure" ng-style="{height: mercurelevel}"> 	
+												</div>	
+											</div>								
+										</div>	
+									</div>
+
+								</div>
+								
+							</div>
+							<div class="robotwaterres">
+								<div class="littlesplatchwhite">
+								</div>
+								<div class="waterlevelbar">
+									<div class="waterlevelcont">
+										<div class="waterlevel" ng-style="{width: watlevel +'%'}">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>

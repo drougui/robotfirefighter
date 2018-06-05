@@ -44,6 +44,7 @@
 /* Component styles are injected through gulp */
 /* inject:css */
 @import 'about/about.css';
+@import 'etcalib/etcalib.css';
 @import 'experiment/experiment.css';
 @import 'howto/howto.css';
 @import 'loading/loading.css';

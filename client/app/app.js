@@ -31,10 +31,11 @@ import TrainComponent from './train/train.component';
 import ScoresComponent from './scores/scores.component';
 import VideodemoComponent from './videodemo/videodemo.component';
 import ExperimentComponent from './experiment/experiment.component';
+import EtcalibComponent from './etcalib/etcalib.component';
 import './app.css';
 
 angular.module('videogameApp', [ngCookies, ngResource, ngSanitize, 'btford.socket-io', uiRouter,
-  uiBootstrap, navbar, footer, main, welcome, AboutComponent, LoadingComponent, TrainComponent, HowtoComponent, ScoresComponent, VideodemoComponent, ExperimentComponent, constants, socket, util, 'cfp.hotkeys'
+  uiBootstrap, navbar, footer, main, welcome, AboutComponent, LoadingComponent, TrainComponent, HowtoComponent, ScoresComponent, VideodemoComponent, ExperimentComponent, EtcalibComponent, constants, socket, util, 'cfp.hotkeys'
 ]).service('sharedProperties', function () {
         var property = "";
         return {
