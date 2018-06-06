@@ -13,7 +13,6 @@ export class EtcalibComponent {
     var debug = false;
     this.message = 'Hello';
 
-
     // get zones locations from json file
     var zoneslocations;
     $scope.zones = [];
@@ -65,9 +64,13 @@ export class EtcalibComponent {
           console.log($scope.trees[i].x);
           console.log($scope.trees[i].y);
         }
+        $scope.opacityfire[3] = 1;
+        $scope.opacityfire[8] = 1;
+        $scope.opacityfire[5] = 1;
+        $scope.opacityfire[1] = 1;
       }
     });
-   
+
     
     // map management functions/params
     var translationX = 19;
