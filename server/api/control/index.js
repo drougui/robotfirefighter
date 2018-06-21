@@ -7,7 +7,7 @@ var exec = require('child_process').exec;
 //=====================================================
 // LSL TCP client
 //=====================================================
-/*exec('python ~/driving-human-robots-interaction/miniServer.py');*/
+/*exec('python ~/driving-human-robots-interaction/miniServer.py');
 var clientTCP;
 var net;
 setTimeout(function() {
@@ -18,7 +18,7 @@ setTimeout(function() {
     //clientTCP.write('Hi LSL I am nodejs');
   });
 }, 5000);
-
+*/
 // TODO pour l'instant on lance le miniServer (i.e. LSL) avant de lancer le jeu
 // mais il faudra le lancer avec "exec" ensuite
 // et kill le client proprement
@@ -28,7 +28,7 @@ setTimeout(function() {
 // ==================================
 //   MARKERS
 // ==================================
-/*exec('python ~/driving-human-robots-interaction/miniServerMarkers.py');*/
+/*exec('python ~/driving-human-robots-interaction/miniServerMarkers.py');
 var clientTCP2;
 setTimeout(function() {
   net = require('net');
@@ -42,13 +42,14 @@ router.post('/markers', function(req, res) {
    clientTCP2.write(req.body.marker);
    res.json();
 });
-
+*/
 
 
 
 // ============================================
 //   highlighted AOIs TCP server
 // ============================================
+/*
 const mynet = require('net');
 
 const myPORT = 1339;
@@ -98,7 +99,7 @@ router.get('/AOI', function(req, res) {
 	res.json(m);
 	m = -1;
 });
-
+*/
 
 // ==================================
 //   NASA-TLX
@@ -2162,7 +2163,7 @@ export function launchgame(req, res) {
 	  // CONTENANT LE SCRIPT DE STREAM LSL
           var LSLstring = remainingtime + ' ' + autonomousRobot + ' ' + stringWriteAlarms + ' ' + robotx + ' ' + roboty + ' ' + roboto + ' ' + stringWriteTreesStates + ' ' + batteryLevel + ' ' + mercurelevelfloat + ' ' + watlevel + ' ' + watlevelContainer + ' ' + stringWriteleaks + ' ' + stringWriteUsedKeys + ' ' + stringWriteClicks + ' ' + stringWriteOthers + ' ' + stringKeyboardShortcuts;
           console.log(LSLstring);
-          clientTCP.write(LSLstring);
+          //clientTCP.write(LSLstring);
 //            clientTCP.destroy();
 /*
 float: 0,1,3,4,5,7,8,9,10

@@ -22,7 +22,7 @@ export class MainController {
     // -using nginx 
     //$scope.address = "http://dev.humanrobotinteraction.fr/test";
     // -using nginx at ISAE 
-    //$scope.address = "http://robot-isae.isae.fr/test";
+    $scope.address = "http://robot-isae.isae.fr/test";
     // -without nginx (networks blocking ports cannot see the video)
     //$scope.address = "http://dev.humanrobotinteraction.fr:8081/?action=stream";
     //---------------------
@@ -30,7 +30,7 @@ export class MainController {
     //$scope.address = "http://localhost:8081/?action=stream";
     //---------------------
     // for PC SMI settings
-    $scope.address = "http://192.168.1.2:8081/?action=stream";
+    //$scope.address = "http://192.168.1.2:8081/?action=stream";
 
     // refresh every 2secs
     var tictac = 0;
